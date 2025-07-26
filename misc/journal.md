@@ -22,6 +22,13 @@ It took claude three tries to get the "dotnet new unoapp" syntax right, and it h
 
 Then it added the Unicorn package.
 
-Then it wrote all of the code in the "Phase 1" commit.
+Then it wrote all of the code in the "Phase 1" commit, and [this](claude-phase1.md).
 
+Me: 
+
+> Implement phase 2.
+
+Claude:
+
+> I'll now implement Phase 2: Core Emulation Engine. Let me start by examining the current state and then implementing the Unicorn integration, memory management, and single-step execution functionality.
 
