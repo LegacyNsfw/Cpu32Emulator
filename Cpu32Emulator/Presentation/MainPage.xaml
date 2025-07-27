@@ -15,51 +15,181 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <!-- Title Bar -->
-    <Border Grid.Row="0" 
-            Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
-            Padding="20,10">
-      <TextBlock Text="CPU32 Emulator - Phase 3 UI"
+    <!-- Title Bar with Hamburger Button -->
+    <Grid Grid.Row="0" 
+          Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      
+      <!-- Hamburger Menu Button -->
+      <Button x:Name="HamburgerButton"
+              Grid.Column="0"
+              Style="{StaticResource NavigationBackButtonNormalStyle}"
+              Content="&#xE700;"
+              FontFamily="Segoe MDL2 Assets"
+              FontSize="16"
+              Margin="10,5"
+              Click="HamburgerButton_Click" />
+      
+      <!-- Title -->
+      <TextBlock Grid.Column="1"
+                 Text="CPU32 Emulator"
                  FontSize="24"
                  FontWeight="Bold"
-                 HorizontalAlignment="Center" />
-    </Border>
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Margin="0,10" />
+    </Grid>
 
-    <!-- Main Content -->
-    <Grid Grid.Row="1" Margin="20">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-
-      <!-- Control Panel -->
-      <StackPanel Grid.Row="0" 
-                  Orientation="Horizontal" 
-                  Spacing="10"
-                  Margin="0,0,0,20">
-        <Button Content="Load Program" 
-                Command="{Binding LoadProgramCommand}"
-                Style="{StaticResource AccentButtonStyle}" />
-        <Button Content="Run" 
-                Command="{Binding RunCommand}" />
-        <Button Content="Step" 
-                Command="{Binding StepCommand}" />
-        <Button Content="Stop" 
-                Command="{Binding StopCommand}" />
-        <Button Content="Reset" 
-                Command="{Binding ResetCommand}" />
-      </StackPanel>
-
-      <!-- Content Grid Layout -->
-      <Grid Grid.Row="1">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <!-- Main Content with SplitView -->
+    <SplitView x:Name="MainSplitView"
+               Grid.Row="1"
+               DisplayMode="Overlay"
+               IsPaneOpen="False"
+               OpenPaneLength="250">
+      
+      <!-- SplitView Pane (Left Menu) -->
+      <SplitView.Pane>
+        <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+          <ScrollViewer>
+            <StackPanel Margin="0,20,0,0">
+              
+              <!-- File Section -->
+              <TextBlock Text="File"
+                        FontWeight="Bold"
+                        FontSize="16"
+                        Margin="20,0,20,10"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+              
+              <!-- Project Operations -->
+              <Button Content="New Project"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding NewProjectCommand}" />
+              
+              <Button Content="Load Project"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding LoadProjectCommand}" />
+              
+              <Button Content="Save Project"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding SaveProjectCommand}" />
+              
+              <Button Content="Save Project As..."
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding SaveProjectAsCommand}" />
+              
+              <!-- Separator -->
+              <Border Height="1"
+                      Background="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      Margin="20,15" />
+              
+              <!-- ROM Operations -->
+              <Button Content="Load ROM"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding LoadRomCommand}" />
+              
+              <Button Content="Reload ROM"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding ReloadRomCommand}" />
+              
+              <!-- RAM Operations -->
+              <Button Content="Load RAM"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding LoadRamCommand}" />
+              
+              <Button Content="Reload RAM"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding ReloadRamCommand}" />
+              
+              <!-- LST Operations -->
+              <Button Content="Load .LST"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding LoadLstCommand}" />
+              
+              <Button Content="Reload .LST"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding ReloadLstCommand}" />
+              
+              <!-- Separator -->
+              <Border Height="1"
+                      Background="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      Margin="20,15" />
+              
+              <!-- Settings Section -->
+              <TextBlock Text="Settings"
+                        FontWeight="Bold"
+                        FontSize="16"
+                        Margin="20,10,20,10"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+              
+              <Button Content="Application Settings"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding SettingsCommand}" />
+              
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </SplitView.Pane>
+      
+      <!-- SplitView Content (Main Application) -->
+      <SplitView.Content>
+        <Grid Margin="20">
+          <!-- Content Grid Layout -->
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
         <!-- Top Row: Disassembly (spans both columns) -->
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
@@ -136,7 +266,9 @@
           </Border>
         </Grid>
       </Grid>
-    </Grid>
+        </Grid>
+      </SplitView.Content>
+    </SplitView>
 
     <!-- Status Bar -->
     <Border Grid.Row="2" 

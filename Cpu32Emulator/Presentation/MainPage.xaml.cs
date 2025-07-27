@@ -10,4 +10,9 @@ public sealed partial class MainPage : Page
     {
         this.InitializeComponent();
     }
+
+    private void HamburgerButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
+    }
 }

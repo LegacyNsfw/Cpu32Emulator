@@ -81,3 +81,9 @@ And then I ran it and found that the UI didn't look anything like I expected, or
 After some back-and-forth with poor results, I realized that I was talking about a "split" view but what I really wanted was a Grid. After rewriting the prompt, it produced the UI that I was hoping for.
 
 > Replace the tabs with a 2x2 grid view that fills the entire window. The top row of the ride will contain the disassembly view, spanning both columns. The bottom row will contain the register view on the left column and the memory view on the right column.
+
+And then it was time to fix the menu:
+
+> Use Uno's SplitView control to create a "hamburger" menu on the left side, containing buttons for the file operations listed in requirements.md
+
+That went pretty well, except for the fact that none of the buttons actually do anything.
