@@ -49,7 +49,20 @@ public partial class MainViewModel : ObservableObject
     private string _memoryText = "No memory watches";
 
     [ObservableProperty]
-    private string _statusMessage = "CPU32 Emulator - Phase 4: Register Display implemented with editing and undo/redo";
+    private string _statusMessage = "CPU32 Emulator - Phase 7: Execution Control with F5/F9/F10/F11 hotkeys implemented";
+
+    // Phase 7: Execution Control State
+    [ObservableProperty]
+    private bool _isRunning = false;
+
+    [ObservableProperty]
+    private bool _isExecutionStopped = true;
+
+    // Phase 7: Breakpoint Management
+    private readonly HashSet<uint> _breakpoints = new();
+
+    // Phase 7: Execution Control
+    private CancellationTokenSource? _executionCancellationSource;
 
     public MainViewModel()
     {
@@ -482,6 +495,337 @@ public partial class MainViewModel : ObservableObject
     public void ChangeMemoryWidth(MemoryWatchViewModel memoryWatch)
     {
         ShowMemoryWidthDialog(memoryWatch);
+    }
+
+    // Phase 7: Execution Control Commands
+
+    /// <summary>
+    /// F11 - Step Into: Single instruction execution with full display update
+    /// </summary>
+    [RelayCommand]
+    public void StepInto()
+    {
+        if (IsRunning)
+        {
+            StatusMessage = "Cannot step while execution is running";
+            return;
+        }
+
+        try
+        {
+            _logger.LogInformation("Step Into (F11) executed");
+            StatusMessage = "Stepping into next instruction...";
+            
+            // Execute a single instruction via Unicorn
+            ExecuteSingleInstruction();
+            
+            // Update all displays
+            RefreshAllRegisters();
+            RefreshAllMemoryWatches();
+            
+            // Update current PC in disassembly
+            var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+            if (pcRegister != null)
+            {
+                UpdateCurrentInstruction(pcRegister.GetNumericValue());
+            }
+            
+            StatusMessage = "Step Into completed";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during Step Into execution");
+            StatusMessage = $"Step Into failed: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// F10 - Step Over: JSR-aware stepping with subroutine skip logic
+    /// </summary>
+    [RelayCommand]
+    public void StepOver()
+    {
+        if (IsRunning)
+        {
+            StatusMessage = "Cannot step while execution is running";
+            return;
+        }
+
+        try
+        {
+            _logger.LogInformation("Step Over (F10) executed");
+            StatusMessage = "Stepping over next instruction...";
+            
+            // Check if current instruction is JSR (Jump to Subroutine)
+            var currentPc = GetCurrentPcValue();
+            var currentInstruction = GetInstructionAtAddress(currentPc);
+            
+            if (IsJsrInstruction(currentInstruction))
+            {
+                // Set temporary breakpoint after JSR and run until it
+                var nextPc = GetNextInstructionAddress(currentPc);
+                SetTemporaryBreakpoint(nextPc);
+                RunUntilBreakpoint();
+            }
+            else
+            {
+                // Regular single step
+                ExecuteSingleInstruction();
+            }
+            
+            // Update all displays
+            RefreshAllRegisters();
+            RefreshAllMemoryWatches();
+            
+            var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+            if (pcRegister != null)
+            {
+                UpdateCurrentInstruction(pcRegister.GetNumericValue());
+            }
+            
+            StatusMessage = "Step Over completed";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during Step Over execution");
+            StatusMessage = $"Step Over failed: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// F5 - Run: Continuous execution until breakpoint
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanExecute))]
+    public async Task Run()
+    {
+        if (IsRunning)
+        {
+            // Stop execution
+            StopExecution();
+            return;
+        }
+
+        try
+        {
+            _logger.LogInformation("Run (F5) executed");
+            IsRunning = true;
+            IsExecutionStopped = false;
+            StatusMessage = "Running program... (Press F5 to stop)";
+            
+            _executionCancellationSource = new CancellationTokenSource();
+            
+            await Task.Run(() => ExecuteContinuously(_executionCancellationSource.Token));
+        }
+        catch (OperationCanceledException)
+        {
+            StatusMessage = "Execution stopped by user";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during continuous execution");
+            StatusMessage = $"Execution failed: {ex.Message}";
+        }
+        finally
+        {
+            IsRunning = false;
+            IsExecutionStopped = true;
+            _executionCancellationSource?.Dispose();
+            _executionCancellationSource = null;
+        }
+    }
+
+    /// <summary>
+    /// F9 - Toggle Breakpoint: Breakpoint management system
+    /// </summary>
+    [RelayCommand]
+    public void ToggleBreakpoint()
+    {
+        try
+        {
+            var currentPc = GetCurrentPcValue();
+            
+            if (_breakpoints.Contains(currentPc))
+            {
+                _breakpoints.Remove(currentPc);
+                UpdateBreakpointDisplay(currentPc, false);
+                StatusMessage = $"Breakpoint removed at 0x{currentPc:X8}";
+                _logger.LogInformation("Breakpoint removed at 0x{PC:X8}", currentPc);
+            }
+            else
+            {
+                _breakpoints.Add(currentPc);
+                UpdateBreakpointDisplay(currentPc, true);
+                StatusMessage = $"Breakpoint set at 0x{currentPc:X8}";
+                _logger.LogInformation("Breakpoint set at 0x{PC:X8}", currentPc);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error toggling breakpoint");
+            StatusMessage = $"Failed to toggle breakpoint: {ex.Message}";
+        }
+    }
+
+    public bool CanExecute => !IsRunning || IsRunning; // Always enabled, text changes based on state
+
+    // Phase 7: Execution Control Helper Methods
+
+    /// <summary>
+    /// Executes a single instruction via the Unicorn emulator
+    /// </summary>
+    private void ExecuteSingleInstruction()
+    {
+        try
+        {
+            var currentPc = GetCurrentPcValue();
+            _logger.LogDebug("Executing instruction at 0x{PC:X8}", currentPc);
+            
+            // Execute one instruction
+            _emulatorService.StepInstruction();
+            
+            _logger.LogDebug("Instruction executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute single instruction");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Gets the current PC value from the registers
+    /// </summary>
+    private uint GetCurrentPcValue()
+    {
+        var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+        return pcRegister?.GetNumericValue() ?? 0;
+    }
+
+    /// <summary>
+    /// Gets the instruction at a specific address from the disassembly
+    /// </summary>
+    private string GetInstructionAtAddress(uint address)
+    {
+        var entry = _disassemblyService.FindEntryByAddress(address);
+        return entry?.Instruction ?? "";
+    }
+
+    /// <summary>
+    /// Checks if an instruction is a JSR (Jump to Subroutine)
+    /// </summary>
+    private bool IsJsrInstruction(string instruction)
+    {
+        if (string.IsNullOrWhiteSpace(instruction))
+            return false;
+            
+        var instr = instruction.Trim().ToUpperInvariant();
+        return instr.StartsWith("JSR") || instr.StartsWith("BSR");
+    }
+
+    /// <summary>
+    /// Gets the address of the next instruction after the current PC
+    /// </summary>
+    private uint GetNextInstructionAddress(uint currentPc)
+    {
+        var nextEntry = _disassemblyService.GetNextInstruction(currentPc);
+        return nextEntry?.Address ?? (currentPc + 2); // Default to +2 bytes if not found
+    }
+
+    /// <summary>
+    /// Sets a temporary breakpoint (used for step over)
+    /// </summary>
+    private void SetTemporaryBreakpoint(uint address)
+    {
+        // Add to temporary breakpoints set
+        _breakpoints.Add(address);
+        _logger.LogDebug("Temporary breakpoint set at 0x{Address:X8}", address);
+    }
+
+    /// <summary>
+    /// Runs execution until a breakpoint is hit
+    /// </summary>
+    private void RunUntilBreakpoint()
+    {
+        try
+        {
+            while (true)
+            {
+                ExecuteSingleInstruction();
+                var currentPc = GetCurrentPcValue();
+                
+                if (_breakpoints.Contains(currentPc))
+                {
+                    _logger.LogDebug("Breakpoint hit at 0x{PC:X8}", currentPc);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during run until breakpoint");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Stops continuous execution
+    /// </summary>
+    private void StopExecution()
+    {
+        _executionCancellationSource?.Cancel();
+        _logger.LogInformation("Execution stop requested");
+    }
+
+    /// <summary>
+    /// Executes instructions continuously until breakpoint or cancellation
+    /// </summary>
+    private void ExecuteContinuously(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                ExecuteSingleInstruction();
+                var currentPc = GetCurrentPcValue();
+                
+                // Check for breakpoints
+                if (_breakpoints.Contains(currentPc))
+                {
+                    _logger.LogInformation("Breakpoint hit at 0x{PC:X8}", currentPc);
+                    break;
+                }
+                
+                // Small delay to prevent UI freezing
+                Thread.Sleep(1);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during continuous execution");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Updates the breakpoint visual indicator in the disassembly
+    /// </summary>
+    private void UpdateBreakpointDisplay(uint address, bool hasBreakpoint)
+    {
+        try
+        {
+            var line = DisassemblyLines.FirstOrDefault(l => 
+                uint.TryParse(l.Address.Replace("0x", ""), System.Globalization.NumberStyles.HexNumber, null, out uint lineAddr) && 
+                lineAddr == address);
+                
+            if (line != null)
+            {
+                line.HasBreakpoint = hasBreakpoint;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update breakpoint display for address 0x{Address:X8}", address);
+        }
     }
 
     // File Menu Commands

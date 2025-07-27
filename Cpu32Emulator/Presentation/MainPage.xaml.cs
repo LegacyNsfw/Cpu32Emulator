@@ -35,6 +35,33 @@ public sealed partial class MainPage : Page
                     break;
             }
         }
+        else
+        {
+            // Handle execution control function keys
+            switch (e.Key)
+            {
+                case VirtualKey.F5:
+                    // Run - Continuous execution until breakpoint
+                    ViewModel.RunCommand.Execute(null);
+                    e.Handled = true;
+                    break;
+                case VirtualKey.F9:
+                    // Toggle Breakpoint at current line
+                    ViewModel.ToggleBreakpointCommand.Execute(null);
+                    e.Handled = true;
+                    break;
+                case VirtualKey.F10:
+                    // Step Over - JSR-aware stepping
+                    ViewModel.StepOverCommand.Execute(null);
+                    e.Handled = true;
+                    break;
+                case VirtualKey.F11:
+                    // Step Into - Single instruction execution
+                    ViewModel.StepIntoCommand.Execute(null);
+                    e.Handled = true;
+                    break;
+            }
+        }
     }
 
     private void HamburgerButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

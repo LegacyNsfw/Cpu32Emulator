@@ -179,17 +179,61 @@
       
       <!-- SplitView Content (Main Application) -->
       <SplitView.Content>
-        <Grid Margin="20">
-          <!-- Content Grid Layout -->
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="*" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <!-- Phase 7: Execution Control Toolbar -->
+          <Border Grid.Row="0" 
+                  Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+                  BorderThickness="0,0,0,1"
+                  Padding="10,8">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Button Content="▶ Run (F5)"
+                      Command="{Binding RunCommand}"
+                      Background="{ThemeResource SystemAccentColor}"
+                      Padding="12,6"
+                      MinWidth="100" />
+              
+              <Button Content="⏸ Step Into (F11)"
+                      Command="{Binding StepIntoCommand}" 
+                      Padding="12,6"
+                      MinWidth="120" />
+              
+              <Button Content="⏭ Step Over (F10)"
+                      Command="{Binding StepOverCommand}"
+                      Padding="12,6"
+                      MinWidth="120" />
+              
+              <Button Content="🔴 Breakpoint (F9)"
+                      Command="{Binding ToggleBreakpointCommand}"
+                      Padding="12,6"
+                      MinWidth="130" />
+              
+              <Rectangle Width="1" 
+                         Fill="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                         Margin="5,0" />
+              
+              <TextBlock Text="{Binding StatusMessage}"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+          </Border>
+          
+          <!-- Main Content -->
+          <Grid Grid.Row="1" Margin="20">
+            <!-- Content Grid Layout -->
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
 
         <!-- Top Row: Disassembly (spans both columns) -->
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
@@ -413,7 +457,8 @@
             </ScrollViewer>
           </Border>
         </Grid>
-      </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </SplitView.Content>
     </SplitView>
