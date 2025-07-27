@@ -9,6 +9,8 @@
         "build",
         "${workspaceFolder}/Cpu32Emulator.Skia.Gtk/Cpu32Emulator.Skia.Gtk.csproj",
         "/property:GenerateFullPaths=true",
+        "/property:Configuration=Debug",
+        "/property:DebugType=portable",
         "/consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile"
@@ -21,6 +23,8 @@
         "build",
         "${workspaceFolder}/Cpu32Emulator.Skia.WPF/Cpu32Emulator.Skia.WPF.csproj",
         "/property:GenerateFullPaths=true",
+        "/property:Configuration=Debug",
+        "/property:DebugType=portable",
         "/consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile"

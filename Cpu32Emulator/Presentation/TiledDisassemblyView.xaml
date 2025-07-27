@@ -1,0 +1,23 @@
+<UserControl x:Class="Cpu32Emulator.Presentation.TiledDisassemblyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="TiledDisassemblyRoot">
+  
+  <ScrollViewer x:Name="TileScrollViewer"
+                ZoomMode="Disabled"
+                HorizontalScrollMode="Auto"
+                VerticalScrollMode="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                Background="Black">
+    
+    <Canvas x:Name="DisassemblyCanvas" 
+            Background="Transparent"
+            SizeChanged="Canvas_SizeChanged"
+            Loaded="Canvas_Loaded">
+      <!-- Tiles will be added as Image controls dynamically -->
+    </Canvas>
+    
+  </ScrollViewer>
+  
+</UserControl>

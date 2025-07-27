@@ -27,6 +27,10 @@ public partial class MainViewModel : ObservableObject
     private readonly DisassemblyService _disassemblyService;
     private readonly FileService _fileService;
     private readonly ProjectService _projectService;
+    private readonly SettingsService _settingsService;
+
+    // Event to notify when current instruction changes (for UI scrolling)
+    public event EventHandler? CurrentInstructionChanged;
 
     [ObservableProperty]
     private string _disassemblyText = "No program loaded";
@@ -86,6 +90,15 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string? _loadedLstPath;
 
+    // Phase 1: Feature flag for tile-based disassembly view
+    [ObservableProperty]
+    // Phase 4: Migration complete - tile view is now the default and only implementation
+    private bool _useTileDisassemblyView = true;
+
+    // Phase 1: Current PC address for tile view centering
+    [ObservableProperty]
+    private uint _currentPCAddress = 0;
+
     public MainViewModel()
     {
         _logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<MainViewModel>.Instance;
@@ -94,6 +107,7 @@ public partial class MainViewModel : ObservableObject
         _disassemblyService = new DisassemblyService();
         _fileService = new FileService();
         _projectService = new ProjectService(_fileService);
+        _settingsService = new SettingsService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
@@ -102,6 +116,7 @@ public partial class MainViewModel : ObservableObject
         InitializeMemoryWatches();
         InitializeDisassembly();
         InitializeEmulator();
+        _ = InitializeAsync(); // Fire and forget async initialization
     }
 
     public MainViewModel(ILogger<MainViewModel> logger)
@@ -112,6 +127,7 @@ public partial class MainViewModel : ObservableObject
         _disassemblyService = new DisassemblyService();
         _fileService = new FileService();
         _projectService = new ProjectService(_fileService);
+        _settingsService = new SettingsService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
@@ -120,6 +136,7 @@ public partial class MainViewModel : ObservableObject
         InitializeMemoryWatches();
         InitializeDisassembly();
         InitializeEmulator();
+        _ = InitializeAsync(); // Fire and forget async initialization
     }
 
     private void InitializeEmulator()
@@ -134,6 +151,186 @@ public partial class MainViewModel : ObservableObject
         {
             _logger.LogError(ex, "Failed to initialize Unicorn emulator");
             StatusMessage = $"Emulator initialization failed: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Async initialization - loads settings and last project
+    /// </summary>
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            // Load application settings
+            await _settingsService.LoadAsync();
+            
+            // Try to reload the last project if it exists
+            var lastProjectPath = _settingsService.GetLastProjectPath();
+            if (!string.IsNullOrEmpty(lastProjectPath) && File.Exists(lastProjectPath))
+            {
+                _logger.LogInformation("Loading last project: {Path}", lastProjectPath);
+                StatusMessage = "Loading last project...";
+                
+                await LoadLastProjectInternal(lastProjectPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during async initialization");
+            StatusMessage = $"Initialization error: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Internal method to load the last project without showing dialogs
+    /// </summary>
+    private async Task LoadLastProjectInternal(string projectPath)
+    {
+        try
+        {
+            await _projectService.LoadProjectAsync(projectPath);
+            
+            var project = _projectService.CurrentProject;
+            if (project != null)
+            {
+                CurrentProjectName = project.ProjectName;
+                LoadedRomPath = project.RomFilePath;
+                LoadedRamPath = project.RamFilePath;
+                LoadedLstPath = project.LstFilePath;
+                HasUnsavedChanges = false;
+
+                // Load ROM file if specified
+                if (!string.IsNullOrEmpty(project.RomFilePath) && File.Exists(project.RomFilePath))
+                {
+                    try
+                    {
+                        var romMemoryRegion = await _fileService.LoadRomFileAsync(project.RomFilePath, project.RomBaseAddress);
+                        _emulatorService.MapMemoryRegion(romMemoryRegion);
+                        _logger.LogInformation("ROM loaded: {Path} at 0x{Address:X8}", project.RomFilePath, project.RomBaseAddress);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to load ROM from last project: {Path}", project.RomFilePath);
+                    }
+                }
+
+                // Load RAM file if specified
+                if (!string.IsNullOrEmpty(project.RamFilePath) && File.Exists(project.RamFilePath))
+                {
+                    try
+                    {
+                        var ramMemoryRegion = await _fileService.LoadRamFileAsync(project.RamFilePath, project.RamBaseAddress);
+                        _emulatorService.MapMemoryRegion(ramMemoryRegion);
+                        _logger.LogInformation("RAM loaded: {Path} at 0x{Address:X8}", project.RamFilePath, project.RamBaseAddress);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to load RAM from last project: {Path}", project.RamFilePath);
+                    }
+                }
+
+                // Load LST file if specified
+                if (!string.IsNullOrEmpty(project.LstFilePath) && File.Exists(project.LstFilePath))
+                {
+                    try
+                    {
+                        await LoadLstFileInternal(project.LstFilePath);
+                        _logger.LogInformation("LST file loaded: {Path}", project.LstFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to load LST from last project: {Path}", project.LstFilePath);
+                    }
+                }
+
+                // Restore memory watches
+                MemoryWatches.Clear();
+                // Keep the RESET pseudo-address
+                MemoryWatches.Add(new MemoryWatchViewModel("RESET", 0x00000000, MemoryWatchWidth.Long, true));
+                
+                foreach (var watchConfig in project.WatchedMemoryLocations)
+                {
+                    var memoryWatchWidth = ConvertDataWidthToMemoryWatchWidth(watchConfig.Width);
+                    var watch = new MemoryWatchViewModel(
+                        watchConfig.Label ?? $"0x{watchConfig.Address:X8}", 
+                        watchConfig.Address, 
+                        memoryWatchWidth);
+                    watch.RefreshValue(_memoryManagerService);
+                    MemoryWatches.Add(watch);
+                }
+
+                // Refresh all displays to reflect loaded data
+                RefreshAllRegisters();
+                RefreshAllMemoryWatches();
+                
+                // If we have a reset address, set the PC to it and refresh disassembly
+                if (project.ResetAddress != 0)
+                {
+                    try
+                    {
+                        _emulatorService.SetRegisterValue("PC", project.ResetAddress);
+                        RefreshAllRegisters(); // Update register display with new PC
+                        UpdateCurrentInstruction(project.ResetAddress); // Update disassembly highlighting
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to set PC to reset address 0x{Address:X8}", project.ResetAddress);
+                    }
+                }
+
+                StatusMessage = $"Last project '{project.ProjectName}' loaded successfully";
+                _logger.LogInformation("Last project loaded: {ProjectName}", project.ProjectName);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load last project: {Path}", projectPath);
+            StatusMessage = $"Failed to load last project: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Internal method to load and parse an LST file without UI dialogs
+    /// </summary>
+    private async Task LoadLstFileInternal(string filePath)
+    {
+        try
+        {
+            var text = await File.ReadAllTextAsync(filePath);
+            var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var entries = new List<LstEntry>();
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var entry = LstEntry.ParseLine(lines[i].Trim(), i + 1);
+                if (entry != null)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                _disassemblyService.LoadEntries(entries, filePath);
+                
+                // Refresh the disassembly display if we have entries
+                var currentPc = GetCurrentPcValue();
+                if (currentPc != 0)
+                {
+                    RefreshDisassemblyWindow(currentPc);
+                }
+                else
+                {
+                    RefreshDisassemblyDisplay();
+                }
+                
+                _logger.LogInformation("LST file parsed successfully: {Count} entries loaded", entries.Count);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load LST file internally: {Path}", filePath);
+            throw;
         }
     }
 
@@ -247,6 +444,9 @@ public partial class MainViewModel : ObservableObject
             {
                 line.UpdateCurrentInstruction(programCounter);
             }
+            
+            // Notify UI to scroll to current instruction
+            CurrentInstructionChanged?.Invoke(this, EventArgs.Empty);
             
             _logger.LogDebug("Current instruction updated to 0x{PC:X8}", programCounter);
         }
@@ -409,7 +609,6 @@ public partial class MainViewModel : ObservableObject
         // Update disassembly view to show current instruction
         UpdateCurrentInstruction(newPc);
         
-        // TODO: Scroll disassembly to center on current PC
         _logger.LogInformation("Program counter changed to 0x{PC:X8}", newPc);
     }
 
@@ -983,6 +1182,9 @@ public partial class MainViewModel : ObservableObject
                     }
 
                     StatusMessage = $"Project '{project.ProjectName}' loaded successfully";
+                    
+                    // Save this as the last project path
+                    await _settingsService.SetLastProjectPathAsync(file.Path);
                 }
             }
             else
@@ -1041,6 +1243,9 @@ public partial class MainViewModel : ObservableObject
             await _projectService.SaveProjectAsync();
             HasUnsavedChanges = false;
             StatusMessage = $"Project '{project.ProjectName}' saved successfully";
+            
+            // Save this as the last project path
+            await _settingsService.SetLastProjectPathAsync(_projectService.CurrentProjectPath);
         }
         catch (Exception ex)
         {
@@ -1108,6 +1313,9 @@ public partial class MainViewModel : ObservableObject
                 await _projectService.SaveProjectAsAsync(file.Path);
                 HasUnsavedChanges = false;
                 StatusMessage = $"Project saved as '{file.Name}' successfully";
+                
+                // Save this as the last project path
+                await _settingsService.SetLastProjectPathAsync(file.Path);
             }
             else
             {
@@ -1594,6 +1802,9 @@ public partial class MainViewModel : ObservableObject
                 
                 DisassemblyLines.Add(viewModel);
             }
+
+            // Notify UI to scroll to current instruction after refreshing the window
+            CurrentInstructionChanged?.Invoke(this, EventArgs.Empty);
 
             _logger.LogDebug("Disassembly window refreshed: 0x{Start:X8} - 0x{End:X8} ({Count} entries)", 
                            startAddress, endAddress, DisassemblyLines.Count);

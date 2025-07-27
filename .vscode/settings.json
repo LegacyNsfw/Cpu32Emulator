@@ -3,5 +3,14 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.xaml": "$(capture).xaml.cs"
-  }
+  },
+  "omnisharp.dotNetCliPaths": [],
+  "omnisharp.path": "latest",
+  "omnisharp.useGlobalMono": "never",
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "dotnet.server.useOmnisharp": true,
+  "csharp.debug.sourceFileMap": {},
+  "csharp.debug.justMyCode": false
 }

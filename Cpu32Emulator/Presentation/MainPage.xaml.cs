@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Windows.System;
+using System.Linq;
 
 namespace Cpu32Emulator.Presentation;
 
@@ -14,6 +15,88 @@ public sealed partial class MainPage : Page
         
         // Add keyboard accelerators for register operations
         this.KeyDown += MainPage_KeyDown;
+        
+        // Subscribe to ViewModel property changes to handle PC changes
+        this.Loaded += MainPage_Loaded;
+        this.Unloaded += MainPage_Unloaded;
+    }
+
+    private void MainPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        // Subscribe to current instruction change events to handle scrolling
+        if (ViewModel != null)
+        {
+            ViewModel.CurrentInstructionChanged += ViewModel_CurrentInstructionChanged;
+            
+            // Phase 1: Initialize tile view if needed
+            InitializeTileView();
+        }
+    }
+
+    private void MainPage_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        // Unsubscribe from events to prevent memory leaks
+        if (ViewModel != null)
+        {
+            ViewModel.CurrentInstructionChanged -= ViewModel_CurrentInstructionChanged;
+        }
+    }
+
+    private void ViewModel_CurrentInstructionChanged(object? sender, EventArgs e)
+    {
+        // When the current instruction changes, scroll to it
+        ScrollToCurrentInstruction();
+        
+        // Phase 1: Update current PC address for tile view
+        if (ViewModel != null)
+        {
+            // Get PC value from the register that stores it as a uint
+            var pcRegister = ViewModel.Registers?.FirstOrDefault(r => r.Name == "PC");
+            if (pcRegister != null)
+            {
+                ViewModel.CurrentPCAddress = pcRegister.GetNumericValue();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Phase 1: Initialize tile view with DisassemblyService
+    /// </summary>
+    private void InitializeTileView()
+    {
+        if (DisassemblyTileView != null && ViewModel != null)
+        {
+            // For Phase 1, we need to pass the DisassemblyService to the tile view
+            // Phase 2 will handle proper dependency injection
+            var disassemblyService = ViewModel.GetType()
+                .GetField("_disassemblyService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
+                .GetValue(ViewModel) as Cpu32Emulator.Services.DisassemblyService;
+            
+            if (disassemblyService != null)
+            {
+                DisassemblyTileView.SetDisassemblyService(disassemblyService);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Phase 4: Scrolls the disassembly tile view to show the current instruction
+    /// Replaces the old ListView-based ScrollToCurrentInstruction method
+    /// </summary>
+    public async void ScrollToCurrentInstruction()
+    {
+        if (DisassemblyTileView == null)
+            return;
+
+        try
+        {
+            // Use the new tile-based scrolling implementation
+            await DisassemblyTileView.ScrollToCurrentInstructionAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error scrolling to current instruction: {ex.Message}");
+        }
     }
 
     private void MainPage_KeyDown(object sender, KeyRoutedEventArgs e)

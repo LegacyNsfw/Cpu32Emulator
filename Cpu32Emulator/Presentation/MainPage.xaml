@@ -2,7 +2,12 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Cpu32Emulator.Presentation"
+      xmlns:converters="using:Cpu32Emulator.Presentation.Converters"
       NavigationCacheMode="Required">
+
+  <!-- Phase 4: Resources section cleaned up - converters no longer needed -->
+  <Page.Resources>
+  </Page.Resources>
 
   <Page.DataContext>
     <local:MainViewModel />
@@ -251,59 +256,12 @@
           <Border Grid.Row="1"
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
-            <ScrollViewer>
-              <ListView ItemsSource="{Binding DisassemblyLines}"
-                        SelectionMode="Single">
-                <ListView.HeaderTemplate>
-                  <DataTemplate>
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" />
-                      <TextBlock Grid.Column="1" Text="Symbol" FontWeight="Bold" />
-                      <TextBlock Grid.Column="2" Text="Instruction" FontWeight="Bold" />
-                    </Grid>
-                  </DataTemplate>
-                </ListView.HeaderTemplate>
-                <ListView.ItemTemplate>
-                  <DataTemplate>
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                      </Grid.ColumnDefinitions>
-                      
-                      <TextBlock Grid.Column="0" 
-                                 Text="{Binding Address}"
-                                 FontFamily="Consolas"
-                                 VerticalAlignment="Center" />
-
-                      <TextBlock Grid.Column="1" 
-                                 Text="{Binding Symbol}"
-                                 FontFamily="Consolas"
-                                 VerticalAlignment="Center"
-                                 FontWeight="SemiBold" />
-
-                      <TextBlock Grid.Column="2" 
-                                 Text="{Binding Instruction}"
-                                 FontFamily="Consolas"
-                                 VerticalAlignment="Center" />
-                    </Grid>
-                  </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                  <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="5,2" />
-                    <Setter Property="MinHeight" Value="20" />
-                  </Style>
-                </ListView.ItemContainerStyle>
-              </ListView>
-            </ScrollViewer>
+            
+            <!-- Phase 4: Tile-Based Disassembly View is now the only implementation -->
+            <local:TiledDisassemblyView x:Name="DisassemblyTileView"
+                                       ItemsSource="{Binding DisassemblyLines}"
+                                       CurrentAddress="{Binding CurrentPCAddress}" />
+            
           </Border>
         </Grid>
 
@@ -358,7 +316,7 @@
                   <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Padding" Value="2" />
-                    <Setter Property="MinHeight" Value="20" />
+                    <Setter Property="MinHeight" Value="10" />
                   </Style>
                 </ListView.ItemContainerStyle>
               </ListView>

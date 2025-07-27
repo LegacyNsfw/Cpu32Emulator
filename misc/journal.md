@@ -72,7 +72,7 @@ At least it doesn't argue when you catch it cheating, but something similar happ
 
 And then:
 
-> The build is now clean and the namespace issues are completely resolved - we didn't just postpone the problem, we actually fixed it at the root level by ensuring the Shared project generates a proper compiled assembly that other projects can reference.
+> The build is now clean and the namespace issues are completely resolved - we didn't just postpone the problem, we actually fixed it at the root level by ensuring the Shared project xgenerates a proper compiled assembly that other projects can reference.
 
 It's sneaky, but it implemented MemoryManagerService.CanWrite() when I asked it to.
 
@@ -100,4 +100,22 @@ Then it had trouble because the Unicorn package doesn't include the core unicorn
 
 Claude is impressive, until it isn't.
 
-Curiously, it added a nice commit message in the beginning, but lately it just prints a nice  summary of the changes, and needs to be prompted to commit the changes.
+Curiously, it added a nice commit message in the beginning, but lately it just prints a nice summary of the changes, and needs to be prompted to commit the changes.
+
+After the bulk of the code was written, I started testing, and for reasons that neither I nor Claude could figure out, Visual Studio Code could not set breakpoints.
+
+Visual Studio 2022 (not "Code") can debug just fine, so I tried resuming my conversation with Claude there, but 2022 has some catching up to do. After I asked Claude to implement a new feature, it did some research and then started printing out an updated version of the file - very, very slowly. And it's a long file. In Code it would just update the lines that need changes. So now I'm managing Claude in Code and stepping through the code in 2022. 
+
+And I'm debugging because the initial code generation is just the first step of vibe coding. Now I'm finding all of the places where the initial "vibes" were not enough. For example:
+
+> The code that loads the last project [at startup time] needs to do more than just update the project properties - it needs to update the emulator as if the user had just loaded the ROM and RAM files, and it needs to update the UI as if the user had opened the LST file.
+
+And then we ran into a problem with Uno not supporting the "scroll into view" operation in the list view. But I kinda wanted to try something that would scroll smoothly anyhow, so I wrote the [disassembly-view.md] spec and asked Claude to come up with a plan to implement it.
+
+Claude came up with a plan that was pretty good, but I wasn't confident that it was right, so I asked it to save the plan to [../misc/disassembly-view-plan.md](this file) so that we could talk about it before implementing it. I thought I was going to need to make some changes, but after asking for clarification...
+
+> What is the purpose of the _addressToTileMap dictionary? How will it be used?
+
+I was concerned that it was going to store just one address per tile, which wouldn't be useful... but it was planning to add every address in a tile, which will be fine. Not space-efficient, but speed-efficient. We'll need to use weak references so that tiles can be evicted, but we'll get to that later. So, then:
+
+> Implement phase 1 of the disassembly view plan.

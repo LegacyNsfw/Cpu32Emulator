@@ -1,4 +1,4 @@
-namespace Cpu32Emulator.Business.Models;
+namespace Cpu32Emulator.Models;
 
 public record AppConfig
 {
