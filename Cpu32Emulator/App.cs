@@ -66,8 +66,8 @@ public class App : Application
                     .AddRefitClient<IApiClient>(context))
                 .ConfigureServices((context, services) =>
                 {
-                    // TODO: Register your services
-                    //services.AddSingleton<IMyService, MyService>();
+                    // TODO: Register CPU32 Emulator services when project references are fixed
+                    // For now, Phase 3 UI works without the backend services
                 })
                 .UseNavigation(RegisterRoutes)
             );

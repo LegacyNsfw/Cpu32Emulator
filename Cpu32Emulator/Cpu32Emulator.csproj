@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cpu32Emulator.DataContracts\Cpu32Emulator.DataContracts.csproj" />
+    <ProjectReference Include="..\Cpu32Emulator.Shared\Cpu32Emulator.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
