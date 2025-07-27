@@ -76,5 +76,8 @@ And then:
 
 It's sneaky, but it implemented MemoryManagerService.CanWrite() when I asked it to.
 
-And then I ran it and found that the UI didn't look anything like I expected, or like Claude described in its plan. There are tabs instead of a 3-pane view. There are buttons instead of a side-out menu. Over-promised and under-delivered.
+And then I ran it and found that the UI didn't look anything like I expected, or like Claude described in its plan. There are tabs instead of a 3-pane view. There are buttons instead of a side-out menu. 
 
+After some back-and-forth with poor results, I realized that I was talking about a "split" view but what I really wanted was a Grid. After rewriting the prompt, it produced the UI that I was hoping for.
+
+> Replace the tabs with a 2x2 grid view that fills the entire window. The top row of the ride will contain the disassembly view, spanning both columns. The bottom row will contain the register view on the left column and the memory view on the right column.

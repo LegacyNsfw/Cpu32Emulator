@@ -50,10 +50,32 @@
                 Command="{Binding ResetCommand}" />
       </StackPanel>
 
-      <!-- Content Tabs -->
-      <TabView Grid.Row="1">
-        <TabViewItem Header="Disassembly">
-          <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+      <!-- Content Grid Layout -->
+      <Grid Grid.Row="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Top Row: Disassembly (spans both columns) -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <TextBlock Grid.Row="0" 
+                     Text="Disassembly" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Margin="0,0,0,5" />
+          
+          <Border Grid.Row="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
               <TextBlock Text="{Binding DisassemblyText}"
@@ -62,10 +84,23 @@
                         TextWrapping="NoWrap" />
             </ScrollViewer>
           </Border>
-        </TabViewItem>
+        </Grid>
 
-        <TabViewItem Header="Registers">
-          <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+        <!-- Bottom Left: Registers -->
+        <Grid Grid.Row="1" Grid.Column="0" Margin="0,10,5,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <TextBlock Grid.Row="0" 
+                     Text="Registers" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Margin="0,0,0,5" />
+          
+          <Border Grid.Row="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
               <TextBlock Text="{Binding RegistersText}"
@@ -74,10 +109,23 @@
                         TextWrapping="NoWrap" />
             </ScrollViewer>
           </Border>
-        </TabViewItem>
+        </Grid>
 
-        <TabViewItem Header="Memory">
-          <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+        <!-- Bottom Right: Memory -->
+        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <TextBlock Grid.Row="0" 
+                     Text="Memory" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Margin="0,0,0,5" />
+          
+          <Border Grid.Row="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
               <TextBlock Text="{Binding MemoryText}"
@@ -86,8 +134,8 @@
                         TextWrapping="NoWrap" />
             </ScrollViewer>
           </Border>
-        </TabViewItem>
-      </TabView>
+        </Grid>
+      </Grid>
     </Grid>
 
     <!-- Status Bar -->
