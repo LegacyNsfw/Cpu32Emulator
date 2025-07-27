@@ -100,6 +100,15 @@ namespace Cpu32Emulator.Services
         }
 
         /// <summary>
+        /// Checks if an address is writable (mapped to a RAM region)
+        /// </summary>
+        public bool CanWrite(uint address)
+        {
+            var region = FindRegionContaining(address);
+            return region != null && region.Type == MemoryRegionType.RAM;
+        }
+
+        /// <summary>
         /// Reads a byte from memory
         /// </summary>
         public byte ReadByte(uint address)
@@ -233,11 +242,11 @@ namespace Cpu32Emulator.Services
                 TotalRegions = _regionList.Count,
                 RomRegions = romRegions.Count,
                 RamRegions = ramRegions.Count,
-                TotalRomSize = romRegions.Sum(r => r.Size),
-                TotalRamSize = ramRegions.Sum(r => r.Size),
+                TotalRomSize = (uint)romRegions.Sum(r => r.Size),
+                TotalRamSize = (uint)ramRegions.Sum(r => r.Size),
                 LowestAddress = _regionList.Min(r => r.BaseAddress),
                 HighestAddress = _regionList.Max(r => r.EndAddress) - 1,
-                TotalAddressSpaceUsed = _regionList.Sum(r => r.Size)
+                TotalAddressSpaceUsed = (uint)_regionList.Sum(r => r.Size)
             };
         }
 

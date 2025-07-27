@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Cpu32Emulator.Services;
-using Cpu32Emulator.Models;
 
 namespace Cpu32Emulator.Presentation;
 
