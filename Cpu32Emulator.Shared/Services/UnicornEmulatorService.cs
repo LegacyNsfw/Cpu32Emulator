@@ -14,6 +14,7 @@ namespace Cpu32Emulator.Services
     {
         private Engine? _engine;
         private readonly List<MemoryRegion> _memoryRegions = new();
+        private MemoryManagerService? _memoryManager;
         private bool _disposed = false;
 
         /// <summary>
@@ -25,6 +26,14 @@ namespace Cpu32Emulator.Services
         /// Gets the current exception information if any
         /// </summary>
         public string? LastException { get; private set; }
+
+        /// <summary>
+        /// Sets the memory manager for enhanced memory operations
+        /// </summary>
+        public void SetMemoryManager(MemoryManagerService memoryManager)
+        {
+            _memoryManager = memoryManager ?? throw new ArgumentNullException(nameof(memoryManager));
+        }
 
         /// <summary>
         /// Initializes the Unicorn engine with M68K architecture
@@ -237,6 +246,13 @@ namespace Cpu32Emulator.Services
 
             try
             {
+                // If we have a memory manager, use it for validation and statistics
+                if (_memoryManager != null)
+                {
+                    if (!_memoryManager.IsAddressMapped(address))
+                        throw new InvalidOperationException($"Address 0x{address:X8} is not mapped");
+                }
+
                 var data = _engine.MemoryRead(address, size);
                 LastException = null;
                 return data;
@@ -263,6 +279,16 @@ namespace Cpu32Emulator.Services
 
             try
             {
+                // If we have a memory manager, use it for validation
+                if (_memoryManager != null)
+                {
+                    if (!_memoryManager.IsAddressMapped(address))
+                        throw new InvalidOperationException($"Address 0x{address:X8} is not mapped");
+
+                    if (!_memoryManager.CanWrite(address))
+                        throw new InvalidOperationException($"Cannot write to address 0x{address:X8}");
+                }
+
                 _engine.MemoryWrite(address, data);
                 
                 // Also update the memory region data if it exists
@@ -279,6 +305,88 @@ namespace Cpu32Emulator.Services
                 LastException = $"Failed to write memory: {ex.Message}";
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Reads a byte from memory using the memory manager if available
+        /// </summary>
+        public byte ReadByte(uint address)
+        {
+            if (_memoryManager != null)
+                return _memoryManager.ReadByte(address);
+            
+            return ReadMemory(address, 1)[0];
+        }
+
+        /// <summary>
+        /// Writes a byte to memory using the memory manager if available
+        /// </summary>
+        public void WriteByte(uint address, byte value)
+        {
+            if (_memoryManager != null)
+            {
+                _memoryManager.WriteByte(address, value);
+                return;
+            }
+            
+            WriteMemory(address, new[] { value });
+        }
+
+        /// <summary>
+        /// Reads a word (16-bit) from memory using the memory manager if available
+        /// </summary>
+        public ushort ReadWord(uint address)
+        {
+            if (_memoryManager != null)
+                return _memoryManager.ReadWord(address);
+            
+            var data = ReadMemory(address, 2);
+            return (ushort)((data[0] << 8) | data[1]);
+        }
+
+        /// <summary>
+        /// Writes a word (16-bit) to memory using the memory manager if available
+        /// </summary>
+        public void WriteWord(uint address, ushort value)
+        {
+            if (_memoryManager != null)
+            {
+                _memoryManager.WriteWord(address, value);
+                return;
+            }
+            
+            WriteMemory(address, new[] { (byte)(value >> 8), (byte)(value & 0xFF) });
+        }
+
+        /// <summary>
+        /// Reads a long (32-bit) from memory using the memory manager if available
+        /// </summary>
+        public uint ReadLong(uint address)
+        {
+            if (_memoryManager != null)
+                return _memoryManager.ReadLong(address);
+            
+            var data = ReadMemory(address, 4);
+            return (uint)((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);
+        }
+
+        /// <summary>
+        /// Writes a long (32-bit) to memory using the memory manager if available
+        /// </summary>
+        public void WriteLong(uint address, uint value)
+        {
+            if (_memoryManager != null)
+            {
+                _memoryManager.WriteLong(address, value);
+                return;
+            }
+            
+            WriteMemory(address, new[] { 
+                (byte)(value >> 24), 
+                (byte)((value >> 16) & 0xFF), 
+                (byte)((value >> 8) & 0xFF), 
+                (byte)(value & 0xFF) 
+            });
         }
 
         /// <summary>

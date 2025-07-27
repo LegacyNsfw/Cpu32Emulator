@@ -14,7 +14,7 @@ I should have added those initial versions to git, but didn't think about versio
 > 
 > Describe a plan for implementing this application.
 
-And Claude wrote [this](claude-plan.md), which looks like it might actually work, if it can in fact do what it thinks it can do. So I asked it to try:
+And Claude wrote [this plan](claude-plan.md), which looks like it might actually work, if it can in fact do what it thinks it can do. So I asked it to try:
 
 > Implement phase 1.
 
