@@ -76,3 +76,5 @@ And then:
 
 It's sneaky, but it implemented MemoryManagerService.CanWrite() when I asked it to.
 
+And then I ran it and found that the UI didn't look anything like I expected, or like Claude described in its plan. There are tabs instead of a 3-pane view. There are buttons instead of a side-out menu. Over-promised and under-delivered.
+
