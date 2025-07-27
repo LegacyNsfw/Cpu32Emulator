@@ -14,12 +14,36 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "build-skia-wpf",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/Cpu32Emulator.Skia.WPF/Cpu32Emulator.Skia.WPF.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "publish-skia-gtk",
       "command": "dotnet",
       "type": "process",
       "args": [
         "publish",
         "${workspaceFolder}/Cpu32Emulator.Skia.Gtk/Cpu32Emulator.Skia.Gtk.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publish-skia-wpf",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/Cpu32Emulator.Skia.WPF/Cpu32Emulator.Skia.WPF.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],

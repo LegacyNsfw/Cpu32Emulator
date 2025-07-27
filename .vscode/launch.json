@@ -23,5 +23,21 @@
       "console": "internalConsole",
       "stopAtEntry": false
     },
+    {
+      "name": "Skia.WPF (Debug)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-skia-wpf",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/Cpu32Emulator.Skia.WPF/bin/Debug/net8.0-windows/Cpu32Emulator.Skia.WPF.exe",
+      "args": [],
+      "env": {
+        "DOTNET_MODIFIABLE_ASSEMBLIES": "debug"
+      },
+      "cwd": "${workspaceFolder}/Cpu32Emulator.Skia.WPF",
+      // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
   ]
 }
