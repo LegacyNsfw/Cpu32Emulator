@@ -24,12 +24,19 @@ public partial class MainViewModel : ObservableObject
     private readonly ILogger<MainViewModel> _logger;
     private readonly UnicornEmulatorService _emulatorService;
     private readonly MemoryManagerService _memoryManagerService;
+    private readonly DisassemblyService _disassemblyService;
 
     [ObservableProperty]
     private string _disassemblyText = "No program loaded";
 
     // Phase 4: Register Display Collection
     public ObservableCollection<CpuRegisterViewModel> Registers { get; }
+
+    // Phase 5: Memory Watch Collection
+    public ObservableCollection<MemoryWatchViewModel> MemoryWatches { get; }
+
+    // Phase 6: Disassembly Display Collection
+    public ObservableCollection<DisassemblyLineViewModel> DisassemblyLines { get; }
 
     // Phase 4: Undo/Redo for register changes
     private readonly Stack<RegisterChangeAction> _undoStack = new();
@@ -49,9 +56,14 @@ public partial class MainViewModel : ObservableObject
         _logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<MainViewModel>.Instance;
         _emulatorService = new UnicornEmulatorService();
         _memoryManagerService = new MemoryManagerService();
+        _disassemblyService = new DisassemblyService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
+        MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
+        DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
         InitializeRegisters();
+        InitializeMemoryWatches();
+        InitializeDisassembly();
         InitializeEmulator();
     }
 
@@ -60,9 +72,14 @@ public partial class MainViewModel : ObservableObject
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _emulatorService = new UnicornEmulatorService();
         _memoryManagerService = new MemoryManagerService();
+        _disassemblyService = new DisassemblyService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
+        MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
+        DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
         InitializeRegisters();
+        InitializeMemoryWatches();
+        InitializeDisassembly();
         InitializeEmulator();
     }
 
@@ -106,6 +123,85 @@ public partial class MainViewModel : ObservableObject
 
         // Update all register values from emulator
         RefreshAllRegisters();
+    }
+
+    private void InitializeMemoryWatches()
+    {
+        // Initialize with some default memory watch locations
+        // Add special RESET pseudo-address
+        MemoryWatches.Add(new MemoryWatchViewModel("RESET", 0x00000000, MemoryWatchWidth.Long, true));
+        
+        // Add some common memory locations for demonstration
+        MemoryWatches.Add(new MemoryWatchViewModel("0x00000000", 0x00000000, MemoryWatchWidth.Long));
+        MemoryWatches.Add(new MemoryWatchViewModel("0x00000004", 0x00000004, MemoryWatchWidth.Long));
+        MemoryWatches.Add(new MemoryWatchViewModel("0x00000008", 0x00000008, MemoryWatchWidth.Word));
+        MemoryWatches.Add(new MemoryWatchViewModel("0x0000000A", 0x0000000A, MemoryWatchWidth.Word));
+        MemoryWatches.Add(new MemoryWatchViewModel("0x0000000C", 0x0000000C, MemoryWatchWidth.Byte));
+        
+        // Refresh all memory watch values
+        RefreshAllMemoryWatches();
+    }
+
+    /// <summary>
+    /// Refreshes all memory watch values from the memory manager
+    /// </summary>
+    public void RefreshAllMemoryWatches()
+    {
+        try
+        {
+            foreach (var memWatch in MemoryWatches)
+            {
+                memWatch.RefreshValue(_memoryManagerService);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh memory watch values");
+            StatusMessage = $"Error refreshing memory watches: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Initialize disassembly display with sample data
+    /// </summary>
+    private void InitializeDisassembly()
+    {
+        DisassemblyLines.Clear();
+        
+        // Add sample disassembly entries for demonstration
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001000", "START", "ORG    $1000"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001000", "", "MOVE.L #$12345678,D0"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001008", "", "ADD.L  D1,D0"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x0000100A", "", "CMP.L  #$0,D0"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001010", "", "BEQ    END"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001014", "LOOP", "MOVE.L D0,D1"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001016", "", "SUB.L  #$1,D0"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x0000101C", "", "BRA    LOOP"));
+        DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001020", "END", "RTS"));
+        
+        // Mark the first instruction as current
+        if (DisassemblyLines.Count > 0)
+        {
+            DisassemblyLines[0].IsCurrentInstruction = true;
+        }
+    }
+
+    /// <summary>
+    /// Updates the current instruction highlighting based on PC register
+    /// </summary>
+    public void UpdateCurrentInstruction(uint programCounter)
+    {
+        try
+        {
+            foreach (var line in DisassemblyLines)
+            {
+                line.UpdateCurrentInstruction(programCounter);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update current instruction highlighting");
+        }
     }
 
     /// <summary>
@@ -208,6 +304,9 @@ public partial class MainViewModel : ObservableObject
                         OnProgramCounterChanged(newValue);
                     }
                     
+                    // Refresh memory watches in case memory state changed
+                    RefreshAllMemoryWatches();
+                    
                     StatusMessage = $"Register {register.Name} updated to 0x{newValue:X8}";
                 }
                 else
@@ -255,7 +354,9 @@ public partial class MainViewModel : ObservableObject
 
     private void OnProgramCounterChanged(uint newPc)
     {
-        // TODO: Update disassembly view to show current instruction
+        // Update disassembly view to show current instruction
+        UpdateCurrentInstruction(newPc);
+        
         // TODO: Scroll disassembly to center on current PC
         _logger.LogInformation("Program counter changed to 0x{PC:X8}", newPc);
     }
@@ -282,6 +383,9 @@ public partial class MainViewModel : ObservableObject
                 {
                     OnProgramCounterChanged(action.OldValue);
                 }
+                
+                // Refresh memory watches in case memory state changed
+                RefreshAllMemoryWatches();
                 
                 StatusMessage = $"Undid register {action.RegisterName} change (0x{action.NewValue:X8} → 0x{action.OldValue:X8})";
             }
@@ -311,6 +415,9 @@ public partial class MainViewModel : ObservableObject
                     OnProgramCounterChanged(action.NewValue);
                 }
                 
+                // Refresh memory watches in case memory state changed
+                RefreshAllMemoryWatches();
+                
                 StatusMessage = $"Redid register {action.RegisterName} change (0x{action.OldValue:X8} → 0x{action.NewValue:X8})";
             }
         }
@@ -318,6 +425,64 @@ public partial class MainViewModel : ObservableObject
 
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
+
+    /// <summary>
+    /// Handles memory watch address editing
+    /// </summary>
+    [RelayCommand]
+    public void EditMemoryAddress(MemoryWatchViewModel memoryWatch)
+    {
+        if (memoryWatch.IsSpecialAddress)
+        {
+            StatusMessage = "Cannot edit special addresses";
+            return;
+        }
+        
+        ShowMemoryAddressEditDialog(memoryWatch);
+    }
+
+    /// <summary>
+    /// Handles memory watch value editing
+    /// </summary>
+    [RelayCommand]
+    public void EditMemoryValue(MemoryWatchViewModel memoryWatch)
+    {
+        ShowMemoryValueEditDialog(memoryWatch);
+    }
+
+    /// <summary>
+    /// Adds a new memory watch
+    /// </summary>
+    [RelayCommand]
+    public void AddMemoryWatch()
+    {
+        ShowAddMemoryWatchDialog();
+    }
+
+    /// <summary>
+    /// Removes a memory watch
+    /// </summary>
+    [RelayCommand]
+    public void RemoveMemoryWatch(MemoryWatchViewModel memoryWatch)
+    {
+        if (memoryWatch.IsSpecialAddress)
+        {
+            StatusMessage = "Cannot remove special memory watches";
+            return;
+        }
+        
+        MemoryWatches.Remove(memoryWatch);
+        StatusMessage = $"Removed memory watch at {memoryWatch.Address}";
+    }
+
+    /// <summary>
+    /// Changes the data width of a memory watch
+    /// </summary>
+    [RelayCommand]
+    public void ChangeMemoryWidth(MemoryWatchViewModel memoryWatch)
+    {
+        ShowMemoryWidthDialog(memoryWatch);
+    }
 
     // File Menu Commands
     
@@ -542,11 +707,33 @@ public partial class MainViewModel : ObservableObject
     {
         _logger.LogInformation("Load LST command executed");
         StatusMessage = "Loading LST file...";
-        await Task.Delay(300);
         
-        // Simulate loading LST content
-        DisassemblyText = "MAIN:00001000    ORG    $1000    ; Start of program\nMAIN:00001000    MOVE.L #$12345678,D0    ; Load constant\nMAIN:00001008    ADD.L  D1,D0    ; Add registers\nMAIN:0000100A    BRA    MAIN    ; Branch to start\n\nDATA:00002000    DC.L   $DEADBEEF    ; Data constant";
-        StatusMessage = "LST file loaded and disassembly updated";
+        try
+        {
+            var picker = new FileOpenPicker();
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, 
+                WinRT.Interop.WindowNative.GetWindowHandle(window));
+
+            picker.FileTypeFilter.Add(".lst");
+            picker.SuggestedStartLocation = PickerLocationId.Desktop;
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                await LoadLstFile(file);
+            }
+            else
+            {
+                StatusMessage = "LST file selection cancelled";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load LST file");
+            StatusMessage = $"Error loading LST file: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -554,8 +741,96 @@ public partial class MainViewModel : ObservableObject
     {
         _logger.LogInformation("Reload LST command executed");
         StatusMessage = "Reloading LST file...";
-        await Task.Delay(300);
-        StatusMessage = "LST file reloaded successfully";
+        
+        if (!string.IsNullOrEmpty(_disassemblyService.LoadedFilePath))
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(_disassemblyService.LoadedFilePath);
+                await LoadLstFile(file);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to reload LST file");
+                StatusMessage = $"Error reloading LST file: {ex.Message}";
+            }
+        }
+        else
+        {
+            StatusMessage = "No LST file to reload";
+        }
+    }
+
+    /// <summary>
+    /// Loads and parses an LST file
+    /// </summary>
+    private async Task LoadLstFile(StorageFile file)
+    {
+        try
+        {
+            var text = await FileIO.ReadTextAsync(file);
+            var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var entries = new List<LstEntry>();
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var entry = LstEntry.ParseLine(lines[i].Trim(), i + 1);
+                if (entry != null)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                _disassemblyService.LoadEntries(entries, file.Path);
+                RefreshDisassemblyDisplay();
+                StatusMessage = $"LST file loaded: {entries.Count} entries from {file.Name}";
+            }
+            else
+            {
+                StatusMessage = "No valid entries found in LST file";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to parse LST file");
+            StatusMessage = $"Error parsing LST file: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Refreshes the disassembly display from the loaded entries
+    /// </summary>
+    private void RefreshDisassemblyDisplay()
+    {
+        try
+        {
+            DisassemblyLines.Clear();
+
+            foreach (var entry in _disassemblyService.Entries)
+            {
+                var viewModel = new DisassemblyLineViewModel(
+                    $"0x{entry.Address:X8}",
+                    entry.SymbolName ?? "",
+                    entry.Instruction
+                );
+                DisassemblyLines.Add(viewModel);
+            }
+
+            // Update current instruction highlighting if we have a PC value
+            var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+            if (pcRegister != null)
+            {
+                UpdateCurrentInstruction(pcRegister.GetNumericValue());
+            }
+
+            _logger.LogInformation("Disassembly display refreshed with {Count} entries", DisassemblyLines.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh disassembly display");
+        }
     }
 
     [RelayCommand]
@@ -565,5 +840,230 @@ public partial class MainViewModel : ObservableObject
         StatusMessage = "Opening settings...";
         await Task.Delay(100);
         StatusMessage = "Settings dialog would open here";
+    }
+
+    /// <summary>
+    /// Show dialog for editing memory watch address
+    /// </summary>
+    private async void ShowMemoryAddressEditDialog(MemoryWatchViewModel memoryWatch)
+    {
+        try
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = $"Edit Memory Address",
+                Content = new TextBox()
+                {
+                    Text = $"{memoryWatch.GetNumericAddress():X8}",
+                    PlaceholderText = "Enter hex address (e.g., 00001000)"
+                },
+                PrimaryButtonText = "Update",
+                SecondaryButtonText = "Cancel"
+            };
+
+            // Set the dialog's XamlRoot for proper display
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window?.Content is FrameworkElement rootElement)
+            {
+                dialog.XamlRoot = rootElement.XamlRoot;
+            }
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var textBox = dialog.Content as TextBox;
+                var addressText = textBox?.Text ?? "";
+
+                if (TryParseRegisterValue(addressText, out uint newAddress))
+                {
+                    memoryWatch.SetAddress(newAddress);
+                    memoryWatch.RefreshValue(_memoryManagerService);
+                    StatusMessage = $"Memory watch address updated to 0x{newAddress:X8}";
+                }
+                else
+                {
+                    StatusMessage = $"Invalid address format: {addressText}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error editing memory address");
+            StatusMessage = $"Error editing memory address: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Show dialog for editing memory watch value
+    /// </summary>
+    private async void ShowMemoryValueEditDialog(MemoryWatchViewModel memoryWatch)
+    {
+        try
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = $"Edit Memory Value at 0x{memoryWatch.GetNumericAddress():X8}",
+                Content = new TextBox()
+                {
+                    Text = memoryWatch.Value,
+                    PlaceholderText = $"Enter hex value ({memoryWatch.Width})"
+                },
+                PrimaryButtonText = "Update",
+                SecondaryButtonText = "Cancel"
+            };
+
+            // Set the dialog's XamlRoot for proper display
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window?.Content is FrameworkElement rootElement)
+            {
+                dialog.XamlRoot = rootElement.XamlRoot;
+            }
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var textBox = dialog.Content as TextBox;
+                var valueText = textBox?.Text ?? "";
+
+                if (memoryWatch.TrySetValue(valueText, _memoryManagerService))
+                {
+                    StatusMessage = $"Memory value updated at 0x{memoryWatch.GetNumericAddress():X8}";
+                }
+                else
+                {
+                    StatusMessage = $"Failed to update memory value: {valueText}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error editing memory value at 0x{Address:X8}", memoryWatch.GetNumericAddress());
+            StatusMessage = $"Error editing memory value: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Show dialog for adding new memory watch
+    /// </summary>
+    private async void ShowAddMemoryWatchDialog()
+    {
+        try
+        {
+            var stackPanel = new StackPanel { Spacing = 10 };
+            
+            var addressBox = new TextBox
+            {
+                PlaceholderText = "Enter hex address (e.g., 00001000)"
+            };
+            
+            var widthCombo = new ComboBox
+            {
+                ItemsSource = Enum.GetValues<MemoryWatchWidth>(),
+                SelectedIndex = 0
+            };
+            
+            stackPanel.Children.Add(new TextBlock { Text = "Address:" });
+            stackPanel.Children.Add(addressBox);
+            stackPanel.Children.Add(new TextBlock { Text = "Data Width:" });
+            stackPanel.Children.Add(widthCombo);
+
+            var dialog = new ContentDialog()
+            {
+                Title = "Add Memory Watch",
+                Content = stackPanel,
+                PrimaryButtonText = "Add",
+                SecondaryButtonText = "Cancel"
+            };
+
+            // Set the dialog's XamlRoot for proper display
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window?.Content is FrameworkElement rootElement)
+            {
+                dialog.XamlRoot = rootElement.XamlRoot;
+            }
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var addressText = addressBox.Text ?? "";
+                var dataWidth = (MemoryWatchWidth)widthCombo.SelectedItem;
+
+                if (TryParseRegisterValue(addressText, out uint address))
+                {
+                    var newWatch = new MemoryWatchViewModel($"0x{address:X8}", address, dataWidth);
+                    newWatch.RefreshValue(_memoryManagerService);
+                    MemoryWatches.Add(newWatch);
+                    StatusMessage = $"Added memory watch at 0x{address:X8}";
+                }
+                else
+                {
+                    StatusMessage = $"Invalid address format: {addressText}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error adding memory watch");
+            StatusMessage = $"Error adding memory watch: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Show dialog for changing memory watch data width
+    /// </summary>
+    private async void ShowMemoryWidthDialog(MemoryWatchViewModel memoryWatch)
+    {
+        try
+        {
+            var widthCombo = new ComboBox
+            {
+                ItemsSource = Enum.GetValues<MemoryWatchWidth>(),
+                SelectedItem = memoryWatch.GetWidth()
+            };
+            
+            var stackPanel = new StackPanel { Spacing = 10 };
+            stackPanel.Children.Add(new TextBlock { Text = $"Data Width for 0x{memoryWatch.GetNumericAddress():X8}:" });
+            stackPanel.Children.Add(widthCombo);
+
+            var dialog = new ContentDialog()
+            {
+                Title = "Change Data Width",
+                Content = stackPanel,
+                PrimaryButtonText = "Update",
+                SecondaryButtonText = "Cancel"
+            };
+
+            // Set the dialog's XamlRoot for proper display
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window?.Content is FrameworkElement rootElement)
+            {
+                dialog.XamlRoot = rootElement.XamlRoot;
+            }
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var newWidth = (MemoryWatchWidth)widthCombo.SelectedItem;
+                if (newWidth != memoryWatch.GetWidth())
+                {
+                    memoryWatch.SetWidth(newWidth);
+                    memoryWatch.RefreshValue(_memoryManagerService);
+                    StatusMessage = $"Changed data width to {newWidth}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing memory data width");
+            StatusMessage = $"Error changing data width: {ex.Message}";
+        }
     }
 }

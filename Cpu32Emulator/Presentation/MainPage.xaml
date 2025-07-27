@@ -208,10 +208,57 @@
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
-              <TextBlock Text="{Binding DisassemblyText}"
-                        FontFamily="Consolas, Courier New"
-                        Padding="10"
-                        TextWrapping="NoWrap" />
+              <ListView ItemsSource="{Binding DisassemblyLines}"
+                        SelectionMode="Single">
+                <ListView.HeaderTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" />
+                      <TextBlock Grid.Column="1" Text="Symbol" FontWeight="Bold" />
+                      <TextBlock Grid.Column="2" Text="Instruction" FontWeight="Bold" />
+                    </Grid>
+                  </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      
+                      <TextBlock Grid.Column="0" 
+                                 Text="{Binding Address}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center" />
+
+                      <TextBlock Grid.Column="1" 
+                                 Text="{Binding Symbol}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center"
+                                 FontWeight="SemiBold" />
+
+                      <TextBlock Grid.Column="2" 
+                                 Text="{Binding Instruction}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center" />
+                    </Grid>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="5,2" />
+                    <Setter Property="MinHeight" Value="20" />
+                  </Style>
+                </ListView.ItemContainerStyle>
+              </ListView>
             </ScrollViewer>
           </Border>
         </Grid>
@@ -280,22 +327,89 @@
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
           
-          <TextBlock Grid.Row="0" 
-                     Text="Memory" 
-                     FontWeight="Bold" 
-                     FontSize="16"
-                     Margin="0,0,0,5" />
+          <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
+            <TextBlock Text="Memory Watch" 
+                       FontWeight="Bold" 
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0" />
+            <Button Content="Add" 
+                    Command="{Binding AddMemoryWatchCommand}"
+                    Margin="0,0,5,0" />
+          </StackPanel>
           
           <Border Grid.Row="1"
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
-              <TextBlock Text="{Binding MemoryText}"
-                        FontFamily="Consolas, Courier New"
-                        Padding="10"
-                        TextWrapping="NoWrap" />
+              <ListView ItemsSource="{Binding MemoryWatches}"
+                        SelectionMode="Single">
+                <ListView.HeaderTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="80" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" />
+                      <TextBlock Grid.Column="1" Text="Value" FontWeight="Bold" />
+                      <TextBlock Grid.Column="2" Text="Width" FontWeight="Bold" />
+                      <TextBlock Grid.Column="3" Text="Actions" FontWeight="Bold" />
+                    </Grid>
+                  </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="80" />
+                      </Grid.ColumnDefinitions>
+                      
+                      <TextBlock Grid.Column="0" 
+                                 Text="{Binding Address}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center"
+                                 Tapped="OnMemoryAddressTapped" />
+
+                      <TextBlock Grid.Column="1" 
+                                 Text="{Binding Value}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center"
+                                 Tapped="OnMemoryValueTapped" />
+
+                      <TextBlock Grid.Column="2" 
+                                 Text="{Binding Width}"
+                                 FontFamily="Consolas"
+                                 VerticalAlignment="Center"
+                                 Tapped="OnMemoryWidthTapped" />
+
+                      <StackPanel Grid.Column="3" Orientation="Horizontal">
+                        <Button Content="×" 
+                                Click="OnRemoveMemoryWatch"
+                                FontSize="12" 
+                                Width="20" 
+                                Height="20"
+                                ToolTipService.ToolTip="Remove memory watch" />
+                      </StackPanel>
+                    </Grid>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="5,2" />
+                    <Setter Property="MinHeight" Value="20" />
+                  </Style>
+                </ListView.ItemContainerStyle>
+              </ListView>
             </ScrollViewer>
           </Border>
         </Grid>

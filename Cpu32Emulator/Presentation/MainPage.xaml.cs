@@ -49,4 +49,40 @@ public sealed partial class MainPage : Page
             ViewModel.SetRegisterValueCommand.Execute(register);
         }
     }
+
+    private void OnMemoryAddressTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
+            element.DataContext is MemoryWatchViewModel memoryWatch)
+        {
+            ViewModel.EditMemoryAddressCommand.Execute(memoryWatch);
+        }
+    }
+
+    private void OnMemoryValueTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
+            element.DataContext is MemoryWatchViewModel memoryWatch)
+        {
+            ViewModel.EditMemoryValueCommand.Execute(memoryWatch);
+        }
+    }
+
+    private void OnMemoryWidthTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
+            element.DataContext is MemoryWatchViewModel memoryWatch)
+        {
+            ViewModel.ChangeMemoryWidthCommand.Execute(memoryWatch);
+        }
+    }
+
+    private void OnRemoveMemoryWatch(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
+            element.DataContext is MemoryWatchViewModel memoryWatch)
+        {
+            ViewModel.RemoveMemoryWatchCommand.Execute(memoryWatch);
+        }
+    }
 }

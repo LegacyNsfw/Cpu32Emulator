@@ -99,3 +99,5 @@ Claude:
 Then it had trouble because the Unicorn package doesn't include the core unicorn.dll, and it wasn't able to figure out that it needed to be downloaded separately. 
 
 Claude is impressive, until it isn't.
+
+Curiously, it added a nice commit message in the beginning, but lately it just prints a nice  summary of the changes, and needs to be prompted to commit the changes.
