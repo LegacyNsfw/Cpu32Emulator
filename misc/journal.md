@@ -110,9 +110,9 @@ And I'm debugging because the initial code generation is just the first step of 
 
 > The code that loads the last project [at startup time] needs to do more than just update the project properties - it needs to update the emulator as if the user had just loaded the ROM and RAM files, and it needs to update the UI as if the user had opened the LST file.
 
-And then we ran into a problem with Uno not supporting the "scroll into view" operation in the list view. But I kinda wanted to try something that would scroll smoothly anyhow, so I wrote the [disassembly-view.md] spec and asked Claude to come up with a plan to implement it.
+And then we ran into a problem with Uno not supporting the "scroll into view" operation in the list view. But I kinda wanted to try something that would scroll smoothly anyhow, so I wrote the [this spec](disassembly-view.md) and asked Claude to come up with a plan to implement it.
 
-Claude came up with a plan that was pretty good, but I wasn't confident that it was right, so I asked it to save the plan to [../misc/disassembly-view-plan.md](this file) so that we could talk about it before implementing it. I thought I was going to need to make some changes, but after asking for clarification...
+Claude came up with a plan that was pretty good, but I wasn't confident that it was right, so I asked it to save the plan to [this file](../misc/disassembly-view-plan.md) so that we could talk about it before implementing it. I thought I was going to need to make some changes, but after asking for clarification...
 
 > What is the purpose of the _addressToTileMap dictionary? How will it be used?
 
@@ -122,4 +122,10 @@ I was concerned that it was going to store just one address per tile, which woul
 
 It needed a couple small nudges to get through the whole plan, but the code is there now.
 
-And the problem is that it doesn't even get invoked, because
+And the problem is that the viewport stuff doesn't even get invoked, because there are bugs in the app-startup code path, initializing everything and loading the bin and LST files.
+
+The big question is how whether the amount of time I spent debugging this stuff will be smaller than the amount of time I would have spent writing this stuff. I'm optimistic but far from certain.
+
+TODO:
+
+The rows in the register list and the memory watch list have too much whitespace between them. They could each show almost twice as many rows if the whitespace was kept to a minimum, and that would make the app easier to use.

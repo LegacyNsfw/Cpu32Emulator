@@ -131,3 +131,9 @@ The application does not impose any constraints on the memory of the device bein
 This project /will eventually/ support the CPU32 version of the Motorola 68000 instruction set. 
 
 For the near term, it will be just use Unicorn's 68040 M68K support, which does not yet include some CPU32 instructions. But we are going to create a pull request for Unicorn to add full CPU32 support.
+
+# New Requirements for V2
+
+* Hotkey: Shift-F11 to step out of a function. Execution will continue automatically until after the next JSR instruction. After executing the JSR instruction, execution stops.
+
+* Hotkey: Ctrl+F10 to run to the currently selected instruction in the diassembly window. This works just like setting a breakpoint on that instruction, pressing F5, and removing the breakpoint when PC reaches that instruction.
