@@ -119,3 +119,7 @@ Claude came up with a plan that was pretty good, but I wasn't confident that it 
 I was concerned that it was going to store just one address per tile, which wouldn't be useful... but it was planning to add every address in a tile, which will be fine. Not space-efficient, but speed-efficient. We'll need to use weak references so that tiles can be evicted, but we'll get to that later. So, then:
 
 > Implement phase 1 of the disassembly view plan.
+
+It needed a couple small nudges to get through the whole plan, but the code is there now.
+
+And the problem is that it doesn't even get invoked, because

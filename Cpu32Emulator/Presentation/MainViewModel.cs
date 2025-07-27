@@ -112,10 +112,12 @@ public partial class MainViewModel : ObservableObject
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
         DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
+
+        InitializeEmulator();
         InitializeRegisters();
         InitializeMemoryWatches();
         InitializeDisassembly();
-        InitializeEmulator();
+        
         _ = InitializeAsync(); // Fire and forget async initialization
     }
 
@@ -132,10 +134,12 @@ public partial class MainViewModel : ObservableObject
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
         DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
+        
+        InitializeEmulator();
         InitializeRegisters();
         InitializeMemoryWatches();
         InitializeDisassembly();
-        InitializeEmulator();
+        
         _ = InitializeAsync(); // Fire and forget async initialization
     }
 
@@ -146,6 +150,9 @@ public partial class MainViewModel : ObservableObject
             _emulatorService.Initialize();
             _emulatorService.SetMemoryManager(_memoryManagerService);
             _logger.LogInformation("Unicorn emulator initialized successfully");
+            
+            // Now that emulator is initialized, refresh register values
+            RefreshAllRegisters();
         }
         catch (Exception ex)
         {
@@ -463,6 +470,13 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            // Only refresh if emulator is initialized
+            if (!_emulatorService.IsInitialized)
+            {
+                _logger.LogDebug("Emulator not initialized yet, skipping register refresh");
+                return;
+            }
+
             var cpuState = _emulatorService.GetCpuState();
             
             // Update data registers D0-D7

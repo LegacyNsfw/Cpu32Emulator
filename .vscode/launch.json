@@ -24,10 +24,21 @@
       "justMyCode": false,
       "suppressJITOptimizations": true,
       "sourceFileMap": {
-        ".": "${workspaceFolder}"
+        "C:\\GitHub\\Cpu32Emulator\\": "${workspaceFolder}\\"
+      },
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}/Cpu32Emulator/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.Shared/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.DataContracts/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.Skia.Gtk/bin/Debug/net8.0"
+        ]
       },
       "logging": {
-        "moduleLoad": false
+        "moduleLoad": true,
+        "diagnosticsLog": {
+          "protocolMessages": true
+        }
       }
     },
     {
@@ -47,10 +58,21 @@
       "justMyCode": false,
       "suppressJITOptimizations": true,
       "sourceFileMap": {
-        ".": "${workspaceFolder}"
+        "C:\\GitHub\\Cpu32Emulator\\": "${workspaceFolder}\\"
+      },
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}/Cpu32Emulator/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.Shared/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.DataContracts/bin/Debug/net8.0",
+          "${workspaceFolder}/Cpu32Emulator.Skia.WPF/bin/Debug/net8.0-windows"
+        ]
       },
       "logging": {
-        "moduleLoad": false
+        "moduleLoad": true,
+        "diagnosticsLog": {
+          "protocolMessages": true
+        }
       }
     },
     {
@@ -60,10 +82,7 @@
       "processId": "${command:pickProcess}",
       "justMyCode": false,
       "requireExactSource": false,
-      "suppressJITOptimizations": true,
-      "sourceFileMap": {
-        ".": "${workspaceFolder}"
-      }
+      "suppressJITOptimizations": true
     }
   ]
 }
