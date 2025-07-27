@@ -51,7 +51,7 @@ public partial class MainViewModel : ObservableObject
     private string _memoryText = "No memory watches";
 
     [ObservableProperty]
-    private string _statusMessage = "CPU32 Emulator - Phase 8: File Operations with ROM/RAM loading and Project Management implemented";
+    private string _statusMessage = "CPU32 Emulator - Phase 8.1: Enhanced File Operations with windowed disassembly display for improved performance";
 
     // Phase 7: Execution Control State
     [ObservableProperty]
@@ -66,7 +66,11 @@ public partial class MainViewModel : ObservableObject
     // Phase 7: Execution Control
     private CancellationTokenSource? _executionCancellationSource;
 
-    // Phase 8: File Operations
+    // Phase 8: File Operations - Disassembly Display Range
+    private const int DISASSEMBLY_WINDOW_SIZE = 200; // +/- bytes around PC
+    private uint _currentDisplayRangeStart = 0;
+    private uint _currentDisplayRangeEnd = 0;
+
     [ObservableProperty]
     private string _currentProjectName = "Untitled Project";
 
@@ -214,10 +218,12 @@ public partial class MainViewModel : ObservableObject
         DisassemblyLines.Add(new DisassemblyLineViewModel("0x0000101C", "", "BRA    LOOP"));
         DisassemblyLines.Add(new DisassemblyLineViewModel("0x00001020", "END", "RTS"));
         
-        // Mark the first instruction as current
+        // Mark the first instruction as current and set initial display range
         if (DisassemblyLines.Count > 0)
         {
             DisassemblyLines[0].IsCurrentInstruction = true;
+            _currentDisplayRangeStart = 0x00001000 - DISASSEMBLY_WINDOW_SIZE;
+            _currentDisplayRangeEnd = 0x00001000 + DISASSEMBLY_WINDOW_SIZE;
         }
     }
 
@@ -228,10 +234,21 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            // Check if PC is within current display range
+            if (programCounter < _currentDisplayRangeStart || programCounter > _currentDisplayRangeEnd)
+            {
+                // PC is outside current range, refresh the entire window
+                RefreshDisassemblyWindow(programCounter);
+                return;
+            }
+            
+            // PC is within range, just update the current instruction highlighting
             foreach (var line in DisassemblyLines)
             {
                 line.UpdateCurrentInstruction(programCounter);
             }
+            
+            _logger.LogDebug("Current instruction updated to 0x{PC:X8}", programCounter);
         }
         catch (Exception ex)
         {
@@ -1188,7 +1205,7 @@ public partial class MainViewModel : ObservableObject
 
                         StatusMessage = $"ROM '{file.Name}' loaded at 0x{baseAddress:X8} ({memoryRegion.Size} bytes)";
                         
-                        // Update disassembly display
+                        // Update disassembly display with ROM info and set display range
                         DisassemblyLines.Clear();
                         DisassemblyLines.Add(new DisassemblyLineViewModel(
                             $"0x{baseAddress:X8}",
@@ -1206,6 +1223,11 @@ public partial class MainViewModel : ObservableObject
                             HasBreakpoint = false,
                             IsCurrentInstruction = false
                         });
+                        
+                        // Set initial display range around ROM base address
+                        _currentDisplayRangeStart = baseAddress >= DISASSEMBLY_WINDOW_SIZE ? 
+                                                   baseAddress - DISASSEMBLY_WINDOW_SIZE : 0;
+                        _currentDisplayRangeEnd = baseAddress + DISASSEMBLY_WINDOW_SIZE;
                     }
                     else
                     {
@@ -1466,6 +1488,8 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            StatusMessage = $"Loading LST file: {file.Name}...";
+            
             var text = await FileIO.ReadTextAsync(file);
             var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
             var entries = new List<LstEntry>();
@@ -1482,8 +1506,21 @@ public partial class MainViewModel : ObservableObject
             if (entries.Count > 0)
             {
                 _disassemblyService.LoadEntries(entries, file.Path);
+                LoadedLstPath = file.Path;
+                HasUnsavedChanges = true;
+
+                // Update project if one is loaded
+                if (_projectService.CurrentProject != null)
+                {
+                    _projectService.CurrentProject.LstFilePath = file.Path;
+                    _projectService.CurrentProject.MarkAsModified();
+                }
+                
+                // Only show a window around the current PC instead of all entries
                 RefreshDisassemblyDisplay();
+                
                 StatusMessage = $"LST file loaded: {entries.Count} entries from {file.Name}";
+                _logger.LogInformation("LST file loaded with {Count} entries", entries.Count);
             }
             else
             {
@@ -1498,36 +1535,68 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Refreshes the disassembly display from the loaded entries
+    /// Refreshes the disassembly display from the loaded entries, showing only a window around the current PC
     /// </summary>
     private void RefreshDisassemblyDisplay()
     {
         try
         {
+            // Get current PC value
+            var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+            var currentPc = pcRegister?.GetNumericValue() ?? 0;
+            
+            RefreshDisassemblyWindow(currentPc);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh disassembly display");
+        }
+    }
+
+    /// <summary>
+    /// Refreshes the disassembly display window around a specific address
+    /// </summary>
+    private void RefreshDisassemblyWindow(uint centerAddress)
+    {
+        try
+        {
+            // Calculate the display range
+            var startAddress = centerAddress >= DISASSEMBLY_WINDOW_SIZE ? 
+                              centerAddress - DISASSEMBLY_WINDOW_SIZE : 0;
+            var endAddress = centerAddress + DISASSEMBLY_WINDOW_SIZE;
+            
+            // Update current display range
+            _currentDisplayRangeStart = startAddress;
+            _currentDisplayRangeEnd = endAddress;
+            
             DisassemblyLines.Clear();
 
-            foreach (var entry in _disassemblyService.Entries)
+            // Get entries within the display range from the disassembly service
+            var entriesInRange = _disassemblyService.GetEntriesInRange(startAddress, endAddress);
+            
+            foreach (var entry in entriesInRange)
             {
                 var viewModel = new DisassemblyLineViewModel(
                     $"0x{entry.Address:X8}",
                     entry.SymbolName ?? "",
                     entry.Instruction
                 );
+                
+                // Mark current instruction
+                if (entry.Address == centerAddress)
+                {
+                    viewModel.IsCurrentInstruction = true;
+                }
+                
                 DisassemblyLines.Add(viewModel);
             }
 
-            // Update current instruction highlighting if we have a PC value
-            var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
-            if (pcRegister != null)
-            {
-                UpdateCurrentInstruction(pcRegister.GetNumericValue());
-            }
-
-            _logger.LogInformation("Disassembly display refreshed with {Count} entries", DisassemblyLines.Count);
+            _logger.LogDebug("Disassembly window refreshed: 0x{Start:X8} - 0x{End:X8} ({Count} entries)", 
+                           startAddress, endAddress, DisassemblyLines.Count);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to refresh disassembly display");
+            _logger.LogError(ex, "Failed to refresh disassembly window around 0x{Address:X8}", centerAddress);
         }
     }
 
