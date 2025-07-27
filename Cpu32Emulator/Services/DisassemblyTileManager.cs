@@ -224,7 +224,8 @@ public class DisassemblyTileManager
     /// <summary>
     /// Gets or generates a tile containing the specified address
     /// </summary>
-    public async Task<DisassemblyTile?> GetOrGenerateTileAsync(uint address)
+    public async Task<DisassemblyTile?> GetOrGenerateTileAsync(uint address, 
+        IEnumerable<DisassemblyLineViewModel>? dataSource = null)
     {
         // Check if we already have a tile containing this address
         var existingTile = FindTileContaining(address);
@@ -234,14 +235,14 @@ public class DisassemblyTileManager
         }
 
         // Generate a new tile
-        return await GenerateTileAroundAddressAsync(address);
+        return await GenerateTileAroundAddressAsync(address, dataSource, true);
     }
 
     /// <summary>
     /// Phase 3: Generates a new tile centered around the specified address with enhanced data integration
     /// </summary>
     public async Task<DisassemblyTile?> GenerateTileAroundAddressAsync(uint centerAddress, 
-        IEnumerable<DisassemblyLineViewModel>? dataSource = null)
+        IEnumerable<DisassemblyLineViewModel>? dataSource = null, bool andNeighbors)
     {
         if (_disassemblyService == null)
             return null;
@@ -309,13 +310,13 @@ public class DisassemblyTileManager
             // Preload previous tile
             if (prevTileAddress > 0 && FindTileContaining(prevTileAddress) == null)
             {
-                await GenerateTileAroundAddressAsync(prevTileAddress, dataSource);
+                await GenerateTileAroundAddressAsync(prevTileAddress, dataSource, false);
             }
 
             // Preload next tile
             if (FindTileContaining(nextTileAddress) == null)
             {
-                await GenerateTileAroundAddressAsync(nextTileAddress, dataSource);
+                await GenerateTileAroundAddressAsync(nextTileAddress, dataSource, false);
             }
         }
         catch (Exception ex)

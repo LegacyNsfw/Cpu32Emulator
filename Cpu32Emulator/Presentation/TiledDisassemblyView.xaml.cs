@@ -259,8 +259,8 @@ namespace Cpu32Emulator.Presentation
 
             try
             {
-                // Generate or get the tile containing this address
-                var requiredTile = await _tileManager.GenerateTileAroundAddressAsync(targetAddress, ItemsSource);
+                // Get or create the tile containing this address (reuses existing tiles if available)
+                var requiredTile = await _tileManager.GetOrGenerateTileAsync(targetAddress, ItemsSource);
                 if (requiredTile != null)
                 {
                     // Clear existing tiles and display the new one

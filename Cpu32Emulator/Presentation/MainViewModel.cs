@@ -150,9 +150,6 @@ public partial class MainViewModel : ObservableObject
             _emulatorService.Initialize();
             _emulatorService.SetMemoryManager(_memoryManagerService);
             _logger.LogInformation("Unicorn emulator initialized successfully");
-            
-            // Now that emulator is initialized, refresh register values
-            RefreshAllRegisters();
         }
         catch (Exception ex)
         {

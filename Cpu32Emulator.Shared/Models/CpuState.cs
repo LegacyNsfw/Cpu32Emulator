@@ -116,7 +116,8 @@ namespace Cpu32Emulator.Models
                 4 => A4,
                 5 => A5,
                 6 => A6,
-                _ => throw new ArgumentOutOfRangeException(nameof(index), "Address register index must be 0-6")
+                7 => USP,
+                _ => throw new ArgumentOutOfRangeException(nameof(index), "Address register index must be 0-7")
             };
         }
 

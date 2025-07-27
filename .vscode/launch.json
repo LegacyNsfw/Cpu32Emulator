@@ -47,7 +47,7 @@
       "request": "launch",
       "preLaunchTask": "build-skia-wpf",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/Cpu32Emulator.Skia.WPF/bin/Debug/net8.0-windows/Cpu32Emulator.Skia.WPF.exe",
+      "program": "${workspaceFolder}/Cpu32Emulator.Skia.WPF/bin/Debug/net8.0-windows/win-x64/Cpu32Emulator.Skia.WPF.exe",
       "args": [],
       "cwd": "${workspaceFolder}/Cpu32Emulator.Skia.WPF",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

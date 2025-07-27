@@ -8,10 +8,6 @@
   <Page.Resources>
   </Page.Resources>
 
-  <Page.DataContext>
-    <local:MainViewModel />
-  </Page.DataContext>
-
   <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
@@ -30,11 +26,13 @@
       <!-- Hamburger Menu Button -->
       <Button x:Name="HamburgerButton"
               Grid.Column="0"
-              Style="{StaticResource NavigationBackButtonNormalStyle}"
-              Content="&#xE700;"
-              FontFamily="Segoe MDL2 Assets"
-              FontSize="16"
+              Content="☰"
+              FontSize="20"
+              Width="50"
+              Height="50"
               Margin="10,5"
+              Background="Transparent"
+              BorderThickness="0"
               Click="HamburgerButton_Click" />
       
       <!-- Title -->
@@ -52,7 +50,9 @@
                Grid.Row="1"
                DisplayMode="Overlay"
                IsPaneOpen="False"
-               OpenPaneLength="250">
+               OpenPaneLength="250"
+               CompactPaneLength="0"
+               PanePlacement="Left">
       
       <!-- SplitView Pane (Left Menu) -->
       <SplitView.Pane>

@@ -7,6 +7,8 @@ namespace Cpu32Emulator.Presentation;
 
 public sealed partial class MainPage : Page
 {
+    private MainViewModel? _currentViewModel;
+    
     public MainViewModel ViewModel => (MainViewModel)DataContext;
 
     public MainPage()
@@ -19,27 +21,51 @@ public sealed partial class MainPage : Page
         // Subscribe to ViewModel property changes to handle PC changes
         this.Loaded += MainPage_Loaded;
         this.Unloaded += MainPage_Unloaded;
+        
+        // Subscribe to DataContext changes to handle ViewModel changes
+        this.DataContextChanged += MainPage_DataContextChanged;
+    }
+
+    private void MainPage_DataContextChanged(Microsoft.UI.Xaml.FrameworkElement sender, Microsoft.UI.Xaml.DataContextChangedEventArgs args)
+    {
+        // Unsubscribe from previous ViewModel if any
+        if (_currentViewModel != null)
+        {
+            _currentViewModel.CurrentInstructionChanged -= ViewModel_CurrentInstructionChanged;
+        }
+
+        // Subscribe to new ViewModel
+        if (args.NewValue is MainViewModel newViewModel)
+        {
+            _currentViewModel = newViewModel;
+            _currentViewModel.CurrentInstructionChanged += ViewModel_CurrentInstructionChanged;
+            
+            // Initialize tile view with new ViewModel
+            InitializeTileView();
+        }
+        else
+        {
+            _currentViewModel = null;
+        }
     }
 
     private void MainPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        // Subscribe to current instruction change events to handle scrolling
-        if (ViewModel != null)
-        {
-            ViewModel.CurrentInstructionChanged += ViewModel_CurrentInstructionChanged;
-            
-            // Phase 1: Initialize tile view if needed
-            InitializeTileView();
-        }
+        // The DataContextChanged handler will take care of subscribing to events
+        // when the ViewModel is set by the navigation system
     }
 
     private void MainPage_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         // Unsubscribe from events to prevent memory leaks
-        if (ViewModel != null)
+        if (_currentViewModel != null)
         {
-            ViewModel.CurrentInstructionChanged -= ViewModel_CurrentInstructionChanged;
+            _currentViewModel.CurrentInstructionChanged -= ViewModel_CurrentInstructionChanged;
+            _currentViewModel = null;
         }
+        
+        // Unsubscribe from DataContext changes
+        this.DataContextChanged -= MainPage_DataContextChanged;
     }
 
     private void ViewModel_CurrentInstructionChanged(object? sender, EventArgs e)
@@ -149,7 +175,10 @@ public sealed partial class MainPage : Page
 
     private void HamburgerButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        // Add debug output to verify the click is firing
+        System.Diagnostics.Debug.WriteLine($"Hamburger button clicked. Current pane state: {MainSplitView.IsPaneOpen}");
         MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
+        System.Diagnostics.Debug.WriteLine($"New pane state: {MainSplitView.IsPaneOpen}");
     }
 
     private void RegisterList_ItemClick(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)

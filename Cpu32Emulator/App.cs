@@ -1,3 +1,5 @@
+using Cpu32Emulator.Presentation;
+
 namespace Cpu32Emulator;
 
 public class App : Application
@@ -66,6 +68,9 @@ public class App : Application
                     .AddRefitClient<IApiClient>(context))
                 .ConfigureServices((context, services) =>
                 {
+                    // Register ViewModels for dependency injection
+                    services.AddTransient<MainViewModel>();
+                    
                     // TODO: Register CPU32 Emulator services when project references are fixed
                     // For now, Phase 3 UI works without the backend services
                 })
