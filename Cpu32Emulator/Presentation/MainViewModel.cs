@@ -25,6 +25,8 @@ public partial class MainViewModel : ObservableObject
     private readonly UnicornEmulatorService _emulatorService;
     private readonly MemoryManagerService _memoryManagerService;
     private readonly DisassemblyService _disassemblyService;
+    private readonly FileService _fileService;
+    private readonly ProjectService _projectService;
 
     [ObservableProperty]
     private string _disassemblyText = "No program loaded";
@@ -49,7 +51,7 @@ public partial class MainViewModel : ObservableObject
     private string _memoryText = "No memory watches";
 
     [ObservableProperty]
-    private string _statusMessage = "CPU32 Emulator - Phase 7: Execution Control with F5/F9/F10/F11 hotkeys implemented";
+    private string _statusMessage = "CPU32 Emulator - Phase 8: File Operations with ROM/RAM loading and Project Management implemented";
 
     // Phase 7: Execution Control State
     [ObservableProperty]
@@ -64,12 +66,30 @@ public partial class MainViewModel : ObservableObject
     // Phase 7: Execution Control
     private CancellationTokenSource? _executionCancellationSource;
 
+    // Phase 8: File Operations
+    [ObservableProperty]
+    private string _currentProjectName = "Untitled Project";
+
+    [ObservableProperty]
+    private bool _hasUnsavedChanges = false;
+
+    [ObservableProperty]
+    private string? _loadedRomPath;
+
+    [ObservableProperty]
+    private string? _loadedRamPath;
+
+    [ObservableProperty]
+    private string? _loadedLstPath;
+
     public MainViewModel()
     {
         _logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<MainViewModel>.Instance;
         _emulatorService = new UnicornEmulatorService();
         _memoryManagerService = new MemoryManagerService();
         _disassemblyService = new DisassemblyService();
+        _fileService = new FileService();
+        _projectService = new ProjectService(_fileService);
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
@@ -86,6 +106,8 @@ public partial class MainViewModel : ObservableObject
         _emulatorService = new UnicornEmulatorService();
         _memoryManagerService = new MemoryManagerService();
         _disassemblyService = new DisassemblyService();
+        _fileService = new FileService();
+        _projectService = new ProjectService(_fileService);
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
@@ -835,35 +857,251 @@ public partial class MainViewModel : ObservableObject
     {
         _logger.LogInformation("New Project command executed");
         StatusMessage = "Creating new project...";
-        await Task.Delay(100);
-        StatusMessage = "New project created";
+        
+        try
+        {
+            // Check if there are unsaved changes
+            if (HasUnsavedChanges)
+            {
+                var result = await ShowUnsavedChangesDialog();
+                if (result == ContentDialogResult.None) // Cancel
+                {
+                    StatusMessage = "New project creation cancelled";
+                    return;
+                }
+                else if (result == ContentDialogResult.Primary) // Save
+                {
+                    await SaveProject();
+                }
+            }
+
+            // Create new project
+            _projectService.NewProject();
+            CurrentProjectName = _projectService.CurrentProject?.ProjectName ?? "Untitled Project";
+            HasUnsavedChanges = false;
+            
+            // Clear loaded files
+            LoadedRomPath = null;
+            LoadedRamPath = null;
+            LoadedLstPath = null;
+            
+            // Reset displays
+            DisassemblyLines.Clear();
+            
+            StatusMessage = "New project created successfully";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create new project");
+            StatusMessage = $"Error creating new project: {ex.Message}";
+        }
     }
 
     [RelayCommand]
     private async Task LoadProject()
     {
         _logger.LogInformation("Load Project command executed");
-        StatusMessage = "Loading project...";
-        await Task.Delay(300);
-        StatusMessage = "Project loaded successfully";
+        StatusMessage = "Opening project file...";
+
+        try
+        {
+            // Check if there are unsaved changes
+            if (HasUnsavedChanges)
+            {
+                var result = await ShowUnsavedChangesDialog();
+                if (result == ContentDialogResult.None) // Cancel
+                {
+                    StatusMessage = "Load project cancelled";
+                    return;
+                }
+                else if (result == ContentDialogResult.Primary) // Save
+                {
+                    await SaveProject();
+                }
+            }
+
+            // Create FileOpenPicker for project files
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".json");
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+            // For WinUI, we need to get the window handle for the picker
+            var window = Microsoft.UI.Xaml.Window.Current ?? 
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window != null)
+            {
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
+            }
+
+            // Show the file picker
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                StatusMessage = $"Loading project: {file.Name}...";
+                
+                await _projectService.LoadProjectAsync(file.Path);
+                
+                var project = _projectService.CurrentProject;
+                if (project != null)
+                {
+                    CurrentProjectName = project.ProjectName;
+                    LoadedRomPath = project.RomFilePath;
+                    LoadedRamPath = project.RamFilePath;
+                    LoadedLstPath = project.LstFilePath;
+                    HasUnsavedChanges = false;
+
+                    // Restore memory watches
+                    MemoryWatches.Clear();
+                    foreach (var watchConfig in project.WatchedMemoryLocations)
+                    {
+                        var memoryWatchWidth = ConvertDataWidthToMemoryWatchWidth(watchConfig.Width);
+                        var watch = new MemoryWatchViewModel(
+                            $"0x{watchConfig.Address:X8}", 
+                            watchConfig.Address, 
+                            memoryWatchWidth);
+                        watch.RefreshValue(_memoryManagerService);
+                        MemoryWatches.Add(watch);
+                    }
+
+                    StatusMessage = $"Project '{project.ProjectName}' loaded successfully";
+                }
+            }
+            else
+            {
+                StatusMessage = "Project file selection cancelled";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load project");
+            StatusMessage = $"Error loading project: {ex.Message}";
+        }
     }
 
     [RelayCommand]
     private async Task SaveProject()
     {
         _logger.LogInformation("Save Project command executed");
-        StatusMessage = "Saving project...";
-        await Task.Delay(200);
-        StatusMessage = "Project saved successfully";
+        
+        try
+        {
+            if (_projectService.CurrentProject == null)
+            {
+                StatusMessage = "No project to save";
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_projectService.CurrentProjectPath))
+            {
+                // No path set, use Save As instead
+                await SaveProjectAs();
+                return;
+            }
+
+            StatusMessage = "Saving project...";
+
+            // Update project configuration with current state
+            var project = _projectService.CurrentProject;
+            project.RomFilePath = LoadedRomPath;
+            project.RamFilePath = LoadedRamPath;
+            project.LstFilePath = LoadedLstPath;
+            
+            // Update watched memory locations
+            project.WatchedMemoryLocations.Clear();
+            foreach (var watch in MemoryWatches.Where(w => !w.IsSpecialAddress))
+            {
+                var config = new WatchedMemoryConfig
+                {
+                    Address = watch.GetNumericAddress(),
+                    Width = ConvertMemoryWatchWidthToDataWidth(watch.GetWidth()),
+                    Label = watch.Address
+                };
+                project.WatchedMemoryLocations.Add(config);
+            }
+
+            await _projectService.SaveProjectAsync();
+            HasUnsavedChanges = false;
+            StatusMessage = $"Project '{project.ProjectName}' saved successfully";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save project");
+            StatusMessage = $"Error saving project: {ex.Message}";
+        }
     }
 
     [RelayCommand]
     private async Task SaveProjectAs()
     {
         _logger.LogInformation("Save Project As command executed");
-        StatusMessage = "Saving project as...";
-        await Task.Delay(200);
-        StatusMessage = "Project saved to new location";
+        StatusMessage = "Opening save dialog...";
+
+        try
+        {
+            if (_projectService.CurrentProject == null)
+            {
+                StatusMessage = "No project to save";
+                return;
+            }
+
+            // Create FileSavePicker for project files
+            var picker = new FileSavePicker();
+            picker.FileTypeChoices.Add("CPU32 Emulator Project", new[] { ".json" });
+            picker.DefaultFileExtension = ".json";
+            picker.SuggestedFileName = _projectService.CurrentProject.ProjectName;
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+            // For WinUI, we need to get the window handle for the picker
+            var window = Microsoft.UI.Xaml.Window.Current ?? 
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window != null)
+            {
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
+            }
+
+            // Show the file picker
+            var file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                StatusMessage = $"Saving project as: {file.Name}...";
+
+                // Update project configuration with current state
+                var project = _projectService.CurrentProject;
+                project.RomFilePath = LoadedRomPath;
+                project.RamFilePath = LoadedRamPath;
+                project.LstFilePath = LoadedLstPath;
+                
+                // Update watched memory locations
+                project.WatchedMemoryLocations.Clear();
+                foreach (var watch in MemoryWatches.Where(w => !w.IsSpecialAddress))
+                {
+                    var config = new WatchedMemoryConfig
+                    {
+                        Address = watch.GetNumericAddress(),
+                        Width = ConvertMemoryWatchWidthToDataWidth(watch.GetWidth()),
+                        Label = watch.Address
+                    };
+                    project.WatchedMemoryLocations.Add(config);
+                }
+
+                await _projectService.SaveProjectAsAsync(file.Path);
+                HasUnsavedChanges = false;
+                StatusMessage = $"Project saved as '{file.Name}' successfully";
+            }
+            else
+            {
+                StatusMessage = "Save cancelled";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save project as");
+            StatusMessage = $"Error saving project: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -887,7 +1125,6 @@ public partial class MainViewModel : ObservableObject
 
             if (window != null)
             {
-                // Set the picker's window handle for proper modal display
                 var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
             }
@@ -898,25 +1135,22 @@ public partial class MainViewModel : ObservableObject
             {
                 StatusMessage = $"Loading ROM file: {file.Name}...";
 
-                // Read the file content
-                var buffer = await FileIO.ReadBufferAsync(file);
-                var data = new byte[buffer.Length];
-                using (var reader = DataReader.FromBuffer(buffer))
-                {
-                    reader.ReadBytes(data);
-                }
+                // Create a dialog for base address input
+                var addressInput = new TextBox() 
+                { 
+                    Text = "0x00000000",
+                    PlaceholderText = "Enter base address (e.g., 0x00000000)"
+                };
 
-                _logger.LogInformation($"Loaded ROM file: {file.Path}, Size: {data.Length} bytes");
+                var stackPanel = new StackPanel { Spacing = 10 };
+                stackPanel.Children.Add(new TextBlock { Text = $"Loading ROM: {file.Name}" });
+                stackPanel.Children.Add(new TextBlock { Text = "Enter the base address for this ROM:" });
+                stackPanel.Children.Add(addressInput);
 
-                // Create a simple dialog for base address input
                 var dialog = new ContentDialog()
                 {
                     Title = "ROM Base Address",
-                    Content = new TextBox() 
-                    { 
-                        Text = "0x00000000",
-                        PlaceholderText = "Enter base address (e.g., 0x00000000)"
-                    },
+                    Content = stackPanel,
                     PrimaryButtonText = "Load",
                     SecondaryButtonText = "Cancel"
                 };
@@ -930,25 +1164,48 @@ public partial class MainViewModel : ObservableObject
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    var textBox = dialog.Content as TextBox;
-                    var baseAddressText = textBox?.Text ?? "0x00000000";
+                    var baseAddressText = addressInput.Text ?? "0x00000000";
                     
                     // Parse the base address
                     if (TryParseAddress(baseAddressText, out uint baseAddress))
                     {
-                        // TODO: Integrate with Unicorn emulator services
-                        // For now, we'll show the loaded ROM information
+                        // Load ROM using FileService
+                        var memoryRegion = await _fileService.LoadRomFileAsync(file.Path, baseAddress);
                         
-                        StatusMessage = $"ROM file '{file.Name}' loaded successfully at 0x{baseAddress:X8} ({data.Length} bytes)";
+                        // Map the ROM in the emulator
+                        _emulatorService.MapMemoryRegion(memoryRegion);
+                        
+                        LoadedRomPath = file.Path;
+                        HasUnsavedChanges = true;
 
-                        // Update disassembly text to show ROM information
-                        DisassemblyText = $"ROM loaded: {file.Name}\n" +
-                                        $"Size: {data.Length} bytes\n" +
-                                        $"Path: {file.Path}\n" +
-                                        $"Base Address: 0x{baseAddress:X8}\n" +
-                                        $"End Address: 0x{baseAddress + (uint)data.Length - 1:X8}\n\n" +
-                                        $"First 16 bytes:\n" +
-                                        FormatHexDump(data, 0, Math.Min(16, data.Length));
+                        // Update project if one is loaded
+                        if (_projectService.CurrentProject != null)
+                        {
+                            _projectService.CurrentProject.RomFilePath = file.Path;
+                            _projectService.CurrentProject.RomBaseAddress = baseAddress;
+                            _projectService.CurrentProject.MarkAsModified();
+                        }
+
+                        StatusMessage = $"ROM '{file.Name}' loaded at 0x{baseAddress:X8} ({memoryRegion.Size} bytes)";
+                        
+                        // Update disassembly display
+                        DisassemblyLines.Clear();
+                        DisassemblyLines.Add(new DisassemblyLineViewModel(
+                            $"0x{baseAddress:X8}",
+                            "",
+                            $"ROM loaded: {file.Name}")
+                        {
+                            HasBreakpoint = false,
+                            IsCurrentInstruction = false
+                        });
+                        DisassemblyLines.Add(new DisassemblyLineViewModel(
+                            $"0x{baseAddress + memoryRegion.Size - 1:X8}",
+                            "",
+                            $"ROM end address: {memoryRegion.Size} bytes")
+                        {
+                            HasBreakpoint = false,
+                            IsCurrentInstruction = false
+                        });
                     }
                     else
                     {
@@ -1032,9 +1289,106 @@ public partial class MainViewModel : ObservableObject
     private async Task LoadRam()
     {
         _logger.LogInformation("Load RAM command executed");
-        StatusMessage = "Loading RAM file...";
-        await Task.Delay(300);
-        StatusMessage = "RAM file loaded successfully";
+        StatusMessage = "Opening file picker...";
+
+        try
+        {
+            // Create FileOpenPicker
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".bin");
+            picker.FileTypeFilter.Add(".ram");
+            picker.FileTypeFilter.Add("*");
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+            // For WinUI, we need to get the window handle for the picker
+            var window = Microsoft.UI.Xaml.Window.Current ?? 
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+
+            if (window != null)
+            {
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
+            }
+
+            // Show the file picker
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                StatusMessage = $"Loading RAM file: {file.Name}...";
+
+                // Create a dialog for base address input
+                var addressInput = new TextBox() 
+                { 
+                    Text = "0x00008000",
+                    PlaceholderText = "Enter base address (e.g., 0x00008000)"
+                };
+
+                var stackPanel = new StackPanel { Spacing = 10 };
+                stackPanel.Children.Add(new TextBlock { Text = $"Loading RAM: {file.Name}" });
+                stackPanel.Children.Add(new TextBlock { Text = "Enter the base address for this RAM:" });
+                stackPanel.Children.Add(addressInput);
+
+                var dialog = new ContentDialog()
+                {
+                    Title = "RAM Base Address",
+                    Content = stackPanel,
+                    PrimaryButtonText = "Load",
+                    SecondaryButtonText = "Cancel"
+                };
+
+                // Set the dialog's XamlRoot for proper display
+                if (window?.Content is FrameworkElement rootElement)
+                {
+                    dialog.XamlRoot = rootElement.XamlRoot;
+                }
+
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var baseAddressText = addressInput.Text ?? "0x00008000";
+                    
+                    // Parse the base address
+                    if (TryParseAddress(baseAddressText, out uint baseAddress))
+                    {
+                        // Load RAM using FileService
+                        var memoryRegion = await _fileService.LoadRamFileAsync(file.Path, baseAddress);
+                        
+                        // Map the RAM in the emulator
+                        _emulatorService.MapMemoryRegion(memoryRegion);
+                        
+                        LoadedRamPath = file.Path;
+                        HasUnsavedChanges = true;
+
+                        // Update project if one is loaded
+                        if (_projectService.CurrentProject != null)
+                        {
+                            _projectService.CurrentProject.RamFilePath = file.Path;
+                            _projectService.CurrentProject.RamBaseAddress = baseAddress;
+                            _projectService.CurrentProject.MarkAsModified();
+                        }
+
+                        StatusMessage = $"RAM '{file.Name}' loaded at 0x{baseAddress:X8} ({memoryRegion.Size} bytes)";
+                    }
+                    else
+                    {
+                        StatusMessage = $"Invalid base address format: {baseAddressText}";
+                    }
+                }
+                else
+                {
+                    StatusMessage = "RAM loading cancelled";
+                }
+            }
+            else
+            {
+                StatusMessage = "RAM file selection cancelled";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading RAM file");
+            StatusMessage = $"Error loading RAM file: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -1409,5 +1763,60 @@ public partial class MainViewModel : ObservableObject
             _logger.LogError(ex, "Error changing memory data width");
             StatusMessage = $"Error changing data width: {ex.Message}";
         }
+    }
+
+    // Phase 8: File Operations Helper Methods
+    
+    /// <summary>
+    /// Shows a dialog asking the user about unsaved changes
+    /// </summary>
+    private async Task<ContentDialogResult> ShowUnsavedChangesDialog()
+    {
+        var dialog = new ContentDialog()
+        {
+            Title = "Unsaved Changes",
+            Content = "You have unsaved changes. Do you want to save them before continuing?",
+            PrimaryButtonText = "Save",
+            SecondaryButtonText = "Don't Save",
+            CloseButtonText = "Cancel"
+        };
+
+        // Set the dialog's XamlRoot for proper display
+        var window = Microsoft.UI.Xaml.Window.Current ?? 
+                    ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+        if (window?.Content is FrameworkElement rootElement)
+        {
+            dialog.XamlRoot = rootElement.XamlRoot;
+        }
+
+        return await dialog.ShowAsync();
+    }
+
+    /// <summary>
+    /// Converts DataWidth enum to MemoryWatchWidth enum
+    /// </summary>
+    private MemoryWatchWidth ConvertDataWidthToMemoryWatchWidth(DataWidth dataWidth)
+    {
+        return dataWidth switch
+        {
+            DataWidth.Byte => MemoryWatchWidth.Byte,
+            DataWidth.Word => MemoryWatchWidth.Word,
+            DataWidth.Long => MemoryWatchWidth.Long,
+            _ => MemoryWatchWidth.Long
+        };
+    }
+
+    /// <summary>
+    /// Converts MemoryWatchWidth enum to DataWidth enum
+    /// </summary>
+    private DataWidth ConvertMemoryWatchWidthToDataWidth(MemoryWatchWidth memoryWatchWidth)
+    {
+        return memoryWatchWidth switch
+        {
+            MemoryWatchWidth.Byte => DataWidth.Byte,
+            MemoryWatchWidth.Word => DataWidth.Word,
+            MemoryWatchWidth.Long => DataWidth.Long,
+            _ => DataWidth.Long
+        };
     }
 }
