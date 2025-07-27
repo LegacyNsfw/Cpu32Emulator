@@ -51,11 +51,22 @@
     <ProjectReference Include="..\Cpu32Emulator.DataContracts\Cpu32Emulator.DataContracts.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\dependencies\unicorn.dll">
+    <None Include="..\dependencies\unicorn.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Link>unicorn.dll</Link>
-    </Content>
+    </None>
   </ItemGroup>
+  
+  <!-- Copy unicorn.dll to the main output directory after build -->
+  <Target Name="CopyUnicornDllToMainOutput" AfterTargets="Build">
+    <Copy SourceFiles="$(OutputPath)win-x64\unicorn.dll" 
+          DestinationFiles="$(OutputPath)unicorn.dll" 
+          Condition="Exists('$(OutputPath)win-x64\unicorn.dll')"
+          SkipUnchangedFiles="true" />
+    <Message Text="Copied unicorn.dll from $(OutputPath)win-x64\ to $(OutputPath)" 
+             Condition="Exists('$(OutputPath)win-x64\unicorn.dll')" 
+             Importance="high" />
+  </Target>
   <Import Project="..\Cpu32Emulator.Shared\base.props" />
 
   <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">

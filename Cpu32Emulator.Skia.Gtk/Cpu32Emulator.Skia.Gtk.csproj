@@ -34,6 +34,12 @@
     <ProjectReference Include="..\Cpu32Emulator\Cpu32Emulator.csproj" />
     <ProjectReference Include="..\Cpu32Emulator.DataContracts\Cpu32Emulator.DataContracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\dependencies\unicorn.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>unicorn.dll</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="..\Cpu32Emulator.Shared\base.props" />
 
   <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">
