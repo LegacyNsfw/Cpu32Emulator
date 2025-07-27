@@ -2,7 +2,6 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Cpu32Emulator.Presentation"
-      xmlns:converters="using:Cpu32Emulator.Presentation.Converters"
       NavigationCacheMode="Required">
 
   <!-- Phase 4: Resources section cleaned up - converters no longer needed -->

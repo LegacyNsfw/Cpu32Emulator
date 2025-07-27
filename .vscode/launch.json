@@ -20,6 +20,12 @@
       "console": "internalConsole",
       "stopAtEntry": false,
       "enableStepFiltering": false,
+      "requireExactSource": false,
+      "justMyCode": false,
+      "suppressJITOptimizations": true,
+      "sourceFileMap": {
+        ".": "${workspaceFolder}"
+      },
       "logging": {
         "moduleLoad": false
       }
@@ -37,8 +43,26 @@
       "console": "internalConsole",
       "stopAtEntry": false,
       "enableStepFiltering": false,
+      "requireExactSource": false,
+      "justMyCode": false,
+      "suppressJITOptimizations": true,
+      "sourceFileMap": {
+        ".": "${workspaceFolder}"
+      },
       "logging": {
         "moduleLoad": false
+      }
+    },
+    {
+      "name": "Attach to Process",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}",
+      "justMyCode": false,
+      "requireExactSource": false,
+      "suppressJITOptimizations": true,
+      "sourceFileMap": {
+        ".": "${workspaceFolder}"
       }
     }
   ]
