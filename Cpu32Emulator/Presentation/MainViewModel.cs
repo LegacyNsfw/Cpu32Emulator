@@ -1491,9 +1491,12 @@ public partial class MainViewModel : ObservableObject
             StatusMessage = $"Loading LST file: {file.Name}...";
             
             var text = await FileIO.ReadTextAsync(file);
+
+            StatusMessage = "Parsing LST file, step 1...";
             var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
             var entries = new List<LstEntry>();
 
+            StatusMessage = "Parsing LST file, step 2...";
             for (int i = 0; i < lines.Length; i++)
             {
                 var entry = LstEntry.ParseLine(lines[i].Trim(), i + 1);
@@ -1505,6 +1508,7 @@ public partial class MainViewModel : ObservableObject
 
             if (entries.Count > 0)
             {
+                StatusMessage = "Rebuilding address map...";
                 _disassemblyService.LoadEntries(entries, file.Path);
                 LoadedLstPath = file.Path;
                 HasUnsavedChanges = true;
