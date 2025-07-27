@@ -32,10 +32,18 @@ Claude:
 
 > I'll now implement Phase 2: Core Emulation Engine. Let me start by examining the current state and then implementing the Unicorn integration, memory management, and single-step execution functionality.
 
-And that's the Phase 2 commit. But before proceeding further, I wanted to build and run the code that's been generated so far. Because if there are bugs, it's only going to get harder to fix them as Claude adds more code.
+And that's the Phase 2 commit. 
 
-Claude created a launch.json file for VS Code that requires GTK, but I'm on Windows, without GTK, so:
+It makes me nervous to have this much generated code with no testing yet. Because if there are bugs, it's only going to get harder to fix them as Claude adds more code. But the UI doesn't get started until phase 3.
+
+Note to self: for the next vibe project, add some UI right after creating the app skeleton.
+
+Also, Claude created a launch.json file for VS Code that requires GTK, but I'm on Windows, without GTK, so:
 
 > Create a launch.json profile that will build and run the application with Skia and WPF.
 
 So it did.
+
+And then:
+
+> Implement phase 3.
