@@ -14,15 +14,15 @@ I should have added those initial versions to git, but didn't think about versio
 > 
 > Describe a plan for implementing this application.
 
-And Claude wrote [this](claude-plan.md).
+And Claude wrote [this](claude-plan.md), which looks like it might actually work, if it can in fact do what it thinks it can do. So I asked it to try:
 
 > Implement phase 1.
 
-It took claude three tries to get the "dotnet new unoapp" syntax right, and it had to run "dotnet new unoapp -h" to get help... but it got it right on the third try.
+It took claude three attempts to get the project started with "dotnet new unoapp" and it had to run "dotnet new unoapp -h" once to get help... but the fact that it asked for help and then figured out the problem was kind of impressive. And it got the arguments right on the third try, and the app framework was done.
 
 Then it added the Unicorn package.
 
-Then it wrote all of the code in the "Phase 1" commit, and [this](claude-phase1.md).
+Then it wrote all of the code in the "Phase 1" commit, and [this](claude-phase1.md). 
 
 Me: 
 
