@@ -233,10 +233,44 @@
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
-              <TextBlock Text="{Binding RegistersText}"
-                        FontFamily="Consolas, Courier New"
-                        Padding="10"
-                        TextWrapping="NoWrap" />
+              <!-- Phase 4: Data-bound register grid -->
+              <ListView ItemsSource="{Binding Registers}"
+                        SelectionMode="None"
+                        IsItemClickEnabled="True"
+                        ItemClick="RegisterList_ItemClick">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="5,2" MinWidth="200">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding Name}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="12"
+                                 VerticalAlignment="Center"
+                                 FontWeight="SemiBold"
+                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                      
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding Value}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="12"
+                                 VerticalAlignment="Center"
+                                 Margin="10,0,0,0" />
+                    </Grid>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                  <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="2" />
+                    <Setter Property="MinHeight" Value="20" />
+                  </Style>
+                </ListView.ItemContainerStyle>
+              </ListView>
             </ScrollViewer>
           </Border>
         </Grid>

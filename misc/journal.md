@@ -2,7 +2,7 @@
 
 # 7/26/2025
 
-I started by creating the requirements and design markdown files in the specs directory, and gave Claude Sonnet 4 this prompt:
+I started by creating the requirements and design markdown files in the specs directory, and gave GitHub Copilot + Claude Sonnet 4 this prompt:
 
 > We are going to create the application described in the requirements.md and design.md files. What other aspects of the requirements or design should be added to these documents before we begin?
 
@@ -95,3 +95,7 @@ So I asked it to implement the "Load ROM" button, and found a new problem: it ju
 Claude:
 
 > I can see the file has a completely different structure with outdated API calls. The current code uses Arch.M68K, Mode.M68K32, MemoryMap, MemoryRead, RegisterRead, etc. I need to completely rewrite this file with the correct UnicornEngine 2.1.3 API. Let me replace the entire file...
+
+Then it had trouble because the Unicorn package doesn't include the core unicorn.dll, and it wasn't able to figure out that it needed to be downloaded separately. 
+
+Claude is impressive, until it isn't.

@@ -195,6 +195,65 @@ namespace Cpu32Emulator.Services
         }
 
         /// <summary>
+        /// Sets a specific register value by name
+        /// </summary>
+        public void SetRegisterValue(string registerName, uint value)
+        {
+            if (_engine == null)
+                throw new InvalidOperationException("Emulator not initialized");
+
+            try
+            {
+                switch (registerName.ToUpperInvariant())
+                {
+                    // Data registers
+                    case "D0": _engine.RegWrite(M68k.UC_M68K_REG_D0, value); break;
+                    case "D1": _engine.RegWrite(M68k.UC_M68K_REG_D1, value); break;
+                    case "D2": _engine.RegWrite(M68k.UC_M68K_REG_D2, value); break;
+                    case "D3": _engine.RegWrite(M68k.UC_M68K_REG_D3, value); break;
+                    case "D4": _engine.RegWrite(M68k.UC_M68K_REG_D4, value); break;
+                    case "D5": _engine.RegWrite(M68k.UC_M68K_REG_D5, value); break;
+                    case "D6": _engine.RegWrite(M68k.UC_M68K_REG_D6, value); break;
+                    case "D7": _engine.RegWrite(M68k.UC_M68K_REG_D7, value); break;
+                    
+                    // Address registers
+                    case "A0": _engine.RegWrite(M68k.UC_M68K_REG_A0, value); break;
+                    case "A1": _engine.RegWrite(M68k.UC_M68K_REG_A1, value); break;
+                    case "A2": _engine.RegWrite(M68k.UC_M68K_REG_A2, value); break;
+                    case "A3": _engine.RegWrite(M68k.UC_M68K_REG_A3, value); break;
+                    case "A4": _engine.RegWrite(M68k.UC_M68K_REG_A4, value); break;
+                    case "A5": _engine.RegWrite(M68k.UC_M68K_REG_A5, value); break;
+                    case "A6": _engine.RegWrite(M68k.UC_M68K_REG_A6, value); break;
+                    case "A7":
+                    case "USP": _engine.RegWrite(M68k.UC_M68K_REG_A7, value); break;
+                    
+                    // Special registers
+                    case "PC": _engine.RegWrite(M68k.UC_M68K_REG_PC, value); break;
+                    case "SR": _engine.RegWrite(M68k.UC_M68K_REG_SR, value); break;
+                    
+                    // CPU32 registers that aren't directly supported - store locally for now
+                    case "SSP":
+                    case "VBR":
+                    case "SFC":
+                    case "DFC":
+                        // These would need CPU32 support or special handling
+                        // For now, we'll just ignore them
+                        break;
+                        
+                    default:
+                        throw new ArgumentException($"Unknown register name: {registerName}");
+                }
+
+                LastException = null;
+            }
+            catch (Exception ex)
+            {
+                LastException = $"Failed to set register {registerName}: {ex.Message}";
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Executes a single instruction
         /// </summary>
         public void StepInstruction()
