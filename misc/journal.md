@@ -36,7 +36,7 @@ And that's the Phase 2 commit.
 
 It makes me nervous to have this much generated code with no testing yet. Because if there are bugs, it's only going to get harder to fix them as Claude adds more code. But the UI doesn't get started until phase 3.
 
-Note to self: for the next vibe project, add some UI right after creating the app skeleton.
+**Note to self: for the next vibe project, add some UI right after creating the app skeleton.**
 
 Also, Claude created a launch.json file for VS Code that requires GTK, but I'm on Windows, without GTK, so:
 
@@ -86,4 +86,12 @@ And then it was time to fix the menu:
 
 > Use Uno's SplitView control to create a "hamburger" menu on the left side, containing buttons for the file operations listed in requirements.md
 
-That went pretty well, except for the fact that none of the buttons actually do anything.
+That went pretty well, except for the fact that none of the buttons actually do anything. To be fair, the implementations were scheduled for future phase.
+
+**Note to self: revise the order of Claude's proposed phases / stages so that hands-on testing can start sooner.**
+
+So I asked it to implement the "Load ROM" button, and found a new problem: it just hallucinated the Unicorn emulator API, from the namespace to the class name to everything else. That led to a lot of failed attempts to resolve those missing names by rebuilding, restoring packages, etc, before I realized what was going on. Pointing it at the sample code got it unblocked.
+
+Claude:
+
+> I can see the file has a completely different structure with outdated API calls. The current code uses Arch.M68K, Mode.M68K32, MemoryMap, MemoryRead, RegisterRead, etc. I need to completely rewrite this file with the correct UnicornEngine 2.1.3 API. Let me replace the entire file...

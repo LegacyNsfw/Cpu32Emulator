@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cpu32Emulator.Models;
-using Unicorn;
-using Unicorn.M68k;
+using Microsoft.Extensions.Logging;
+using UnicornEngine;
+using UnicornEngine.Const;
 
 namespace Cpu32Emulator.Services
 {
@@ -12,7 +13,7 @@ namespace Cpu32Emulator.Services
     /// </summary>
     public class UnicornEmulatorService : IDisposable
     {
-        private Engine? _engine;
+        private Unicorn? _engine;
         private readonly List<MemoryRegion> _memoryRegions = new();
         private MemoryManagerService? _memoryManager;
         private bool _disposed = false;
@@ -45,7 +46,7 @@ namespace Cpu32Emulator.Services
 
             try
             {
-                _engine = new Engine(Arch.M68K, Mode.M68K32);
+                _engine = new Unicorn(Common.UC_ARCH_M68K, Common.UC_MODE_BIG_ENDIAN);
                 LastException = null;
             }
             catch (Exception ex)
@@ -67,13 +68,13 @@ namespace Cpu32Emulator.Services
             {
                 // Map the memory region
                 var permissions = region.Type == MemoryRegionType.ROM 
-                    ? Permissions.Read | Permissions.Exec 
-                    : Permissions.Read | Permissions.Write | Permissions.Exec;
+                    ? Common.UC_PROT_READ | Common.UC_PROT_EXEC 
+                    : Common.UC_PROT_ALL;
 
-                _engine.MemoryMap(region.BaseAddress, region.Size, permissions);
+                _engine.MemMap(region.BaseAddress, region.Size, permissions);
                 
                 // Write the data to the mapped region
-                _engine.MemoryWrite(region.BaseAddress, region.Data);
+                _engine.MemWrite(region.BaseAddress, region.Data);
                 
                 _memoryRegions.Add(region);
                 LastException = null;
@@ -97,7 +98,7 @@ namespace Cpu32Emulator.Services
             {
                 foreach (var region in _memoryRegions)
                 {
-                    _engine.MemoryUnmap(region.BaseAddress, region.Size);
+                    _engine.MemUnmap(region.BaseAddress, region.Size);
                 }
                 _memoryRegions.Clear();
                 LastException = null;
@@ -123,21 +124,21 @@ namespace Cpu32Emulator.Services
                 // Read data registers
                 for (int i = 0; i < 8; i++)
                 {
-                    uint value = _engine.RegisterRead((int)(M68kRegister.D0 + i));
+                    uint value = (uint)_engine.RegRead(M68k.UC_M68K_REG_D0 + i);
                     state.SetDataRegister(i, value);
                 }
 
                 // Read address registers
                 for (int i = 0; i < 7; i++)
                 {
-                    uint value = _engine.RegisterRead((int)(M68kRegister.A0 + i));
+                    uint value = (uint)_engine.RegRead(M68k.UC_M68K_REG_A0 + i);
                     state.SetAddressRegister(i, value);
                 }
 
                 // Read special registers
-                state.USP = _engine.RegisterRead((int)M68kRegister.A7);
-                state.PC = _engine.RegisterRead((int)M68kRegister.PC);
-                state.SR = _engine.RegisterRead((int)M68kRegister.SR);
+                state.USP = (uint)_engine.RegRead(M68k.UC_M68K_REG_A7);
+                state.PC = (uint)_engine.RegRead(M68k.UC_M68K_REG_PC);
+                state.SR = (uint)_engine.RegRead(M68k.UC_M68K_REG_SR);
                 
                 // Note: Unicorn M68K doesn't expose all CPU32 registers directly
                 // We'll need to add CPU32 support later or use approximations
@@ -170,19 +171,19 @@ namespace Cpu32Emulator.Services
                 // Write data registers
                 for (int i = 0; i < 8; i++)
                 {
-                    _engine.RegisterWrite((int)(M68kRegister.D0 + i), state.GetDataRegister(i));
+                    _engine.RegWrite(M68k.UC_M68K_REG_D0 + i, state.GetDataRegister(i));
                 }
 
                 // Write address registers
                 for (int i = 0; i < 7; i++)
                 {
-                    _engine.RegisterWrite((int)(M68kRegister.A0 + i), state.GetAddressRegister(i));
+                    _engine.RegWrite(M68k.UC_M68K_REG_A0 + i, state.GetAddressRegister(i));
                 }
 
                 // Write special registers
-                _engine.RegisterWrite((int)M68kRegister.A7, state.USP);
-                _engine.RegisterWrite((int)M68kRegister.PC, state.PC);
-                _engine.RegisterWrite((int)M68kRegister.SR, state.SR);
+                _engine.RegWrite(M68k.UC_M68K_REG_A7, state.USP);
+                _engine.RegWrite(M68k.UC_M68K_REG_PC, state.PC);
+                _engine.RegWrite(M68k.UC_M68K_REG_SR, state.SR);
 
                 LastException = null;
             }
@@ -203,7 +204,7 @@ namespace Cpu32Emulator.Services
 
             try
             {
-                uint pc = _engine.RegisterRead((int)M68kRegister.PC);
+                uint pc = (uint)_engine.RegRead(M68k.UC_M68K_REG_PC);
                 _engine.EmuStart(pc, 0, 0, 1); // Execute 1 instruction
                 LastException = null;
             }
@@ -224,7 +225,7 @@ namespace Cpu32Emulator.Services
 
             try
             {
-                uint pc = _engine.RegisterRead((int)M68kRegister.PC);
+                uint pc = (uint)_engine.RegRead(M68k.UC_M68K_REG_PC);
                 uint end = endAddress ?? 0;
                 _engine.EmuStart(pc, end, 0, maxInstructions);
                 LastException = null;
@@ -253,7 +254,8 @@ namespace Cpu32Emulator.Services
                         throw new InvalidOperationException($"Address 0x{address:X8} is not mapped");
                 }
 
-                var data = _engine.MemoryRead(address, size);
+                var data = new byte[size];
+                _engine.MemRead(address, data);
                 LastException = null;
                 return data;
             }
@@ -289,7 +291,7 @@ namespace Cpu32Emulator.Services
                         throw new InvalidOperationException($"Cannot write to address 0x{address:X8}");
                 }
 
-                _engine.MemoryWrite(address, data);
+                _engine.MemWrite(address, data);
                 
                 // Also update the memory region data if it exists
                 if (region != null)
@@ -418,14 +420,14 @@ namespace Cpu32Emulator.Services
                 // Clear all registers
                 for (int i = 0; i < 8; i++)
                 {
-                    _engine.RegisterWrite((int)(M68kRegister.D0 + i), 0);
+                    _engine.RegWrite(M68k.UC_M68K_REG_D0 + i, 0);
                     if (i < 7)
-                        _engine.RegisterWrite((int)(M68kRegister.A0 + i), 0);
+                        _engine.RegWrite(M68k.UC_M68K_REG_A0 + i, 0);
                 }
 
-                _engine.RegisterWrite((int)M68kRegister.A7, 0);
-                _engine.RegisterWrite((int)M68kRegister.PC, 0);
-                _engine.RegisterWrite((int)M68kRegister.SR, 0x2700); // Supervisor mode, interrupts disabled
+                _engine.RegWrite(M68k.UC_M68K_REG_A7, 0);
+                _engine.RegWrite(M68k.UC_M68K_REG_PC, 0);
+                _engine.RegWrite(M68k.UC_M68K_REG_SR, 0x2700); // Supervisor mode, interrupts disabled
 
                 LastException = null;
             }

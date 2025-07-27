@@ -1,0 +1,1 @@
+dotnet run --project "Cpu32Emulator.Skia.WPF"

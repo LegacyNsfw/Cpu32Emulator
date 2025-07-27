@@ -1,0 +1,1 @@
+dotnet build Cpu32Emulator.Skia.WPF

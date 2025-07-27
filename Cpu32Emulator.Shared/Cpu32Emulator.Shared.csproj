@@ -6,10 +6,15 @@
 
   <ItemGroup>
     <Compile Include="Models\*.cs" />
-    <Compile Include="Services\MemoryManagerService.cs" />
+    <Compile Include="Services\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cpu32Emulator.DataContracts\Cpu32Emulator.DataContracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="UnicornEngine.Unicorn" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 </Project>
