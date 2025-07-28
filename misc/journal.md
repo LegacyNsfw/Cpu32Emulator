@@ -126,6 +126,20 @@ And the problem is that the viewport stuff doesn't even get invoked, because the
 
 The big question is how whether the amount of time I spent debugging this stuff will be smaller than the amount of time I would have spent writing this stuff. I'm optimistic but far from certain.
 
+> The rows in the register list and the memory watch list have too much whitespace between them. They could each show almost twice as many rows if the whitespace was kept to a minimum, and that would make the app easier to use.
+
+I gave that prompt to Claude, it made a few changes, none of them helped. Still tons of whitespace. Tried again:
+
+> The rows in the register list and the memory watch list STILL have too much whitespace between them. They could each show almost twice as many rows if the whitespace was kept to a minimum, and that would make the app easier to use.
+>
+> The previous attempt did not make a noticeable difference. What else could be causing the problem?
+
+That time, it worked.
+
+> The registers should be part of the project file. When saving the project, include all registers. When loading the project, restore all registers, and update the disassembly pane to show the new current instruction vertically centered in the pane.
+
 TODO:
 
-The rows in the register list and the memory watch list have too much whitespace between them. They could each show almost twice as many rows if the whitespace was kept to a minimum, and that would make the app easier to use.
+> After updating the PC register, the disassembly pane is redrawn, but the chosen address is not vertically centered - it is hidden below the bottom of the view.
+
+>

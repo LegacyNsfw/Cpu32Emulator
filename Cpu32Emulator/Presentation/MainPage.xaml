@@ -282,13 +282,10 @@
                   BorderThickness="1">
             <ScrollViewer>
               <!-- Phase 4: Data-bound register grid -->
-              <ListView ItemsSource="{Binding Registers}"
-                        SelectionMode="None"
-                        IsItemClickEnabled="True"
-                        ItemClick="RegisterList_ItemClick">
-                <ListView.ItemTemplate>
+              <ItemsControl ItemsSource="{Binding Registers}">
+                <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Grid Margin="2,0" MinWidth="200">
+                    <Grid Margin="1,0" MinWidth="200" Background="Transparent" Tapped="OnRegisterTapped">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
@@ -297,7 +294,7 @@
                       <TextBlock Grid.Column="0"
                                  Text="{Binding Name}"
                                  FontFamily="Consolas, Courier New"
-                                 FontSize="11"
+                                 FontSize="12"
                                  VerticalAlignment="Center"
                                  FontWeight="SemiBold"
                                  Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -305,21 +302,18 @@
                       <TextBlock Grid.Column="1"
                                  Text="{Binding Value}"
                                  FontFamily="Consolas, Courier New"
-                                 FontSize="11"
+                                 FontSize="10"
                                  VerticalAlignment="Center"
-                                 Margin="8,0,0,0" />
+                                 Margin="6,0,0,0" />
                     </Grid>
                   </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                  <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="1,0" />
-                    <Setter Property="MinHeight" Value="18" />
-                    <Setter Property="Margin" Value="0" />
-                  </Style>
-                </ListView.ItemContainerStyle>
-              </ListView>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
             </ScrollViewer>
           </Border>
         </Grid>
@@ -347,76 +341,73 @@
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
             <ScrollViewer>
-              <ListView ItemsSource="{Binding MemoryWatches}"
-                        SelectionMode="Single">
-                <ListView.HeaderTemplate>
-                  <DataTemplate>
-                    <Grid Margin="2,1">
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="60" />
-                        <ColumnDefinition Width="80" />
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" FontSize="11" />
-                      <TextBlock Grid.Column="1" Text="Value" FontWeight="Bold" FontSize="11" />
-                      <TextBlock Grid.Column="2" Text="Width" FontWeight="Bold" FontSize="11" />
-                      <TextBlock Grid.Column="3" Text="Actions" FontWeight="Bold" FontSize="11" />
-                    </Grid>
-                  </DataTemplate>
-                </ListView.HeaderTemplate>
-                <ListView.ItemTemplate>
-                  <DataTemplate>
-                    <Grid Margin="2,0">
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="60" />
-                        <ColumnDefinition Width="80" />
-                      </Grid.ColumnDefinitions>
-                      
-                      <TextBlock Grid.Column="0" 
-                                 Text="{Binding Address}"
-                                 FontFamily="Consolas"
-                                 FontSize="11"
-                                 VerticalAlignment="Center"
-                                 Tapped="OnMemoryAddressTapped" />
+              <StackPanel Spacing="0">
+                <!-- Header -->
+                <Grid Margin="1,2" Background="{ThemeResource SystemControlBackgroundAltMediumBrush}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="80" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" FontSize="10" />
+                  <TextBlock Grid.Column="1" Text="Value" FontWeight="Bold" FontSize="10" />
+                  <TextBlock Grid.Column="2" Text="Width" FontWeight="Bold" FontSize="10" />
+                  <TextBlock Grid.Column="3" Text="Actions" FontWeight="Bold" FontSize="10" />
+                </Grid>
+                
+                <!-- Data rows -->
+                <ItemsControl ItemsSource="{Binding MemoryWatches}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Grid Margin="1,0">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="100" />
+                          <ColumnDefinition Width="100" />
+                          <ColumnDefinition Width="60" />
+                          <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" 
+                                   Text="{Binding Address}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Tapped="OnMemoryAddressTapped" />
 
-                      <TextBlock Grid.Column="1" 
-                                 Text="{Binding Value}"
-                                 FontFamily="Consolas"
-                                 FontSize="11"
-                                 VerticalAlignment="Center"
-                                 Tapped="OnMemoryValueTapped" />
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding Value}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Tapped="OnMemoryValueTapped" />
 
-                      <TextBlock Grid.Column="2" 
-                                 Text="{Binding Width}"
-                                 FontFamily="Consolas"
-                                 FontSize="11"
-                                 VerticalAlignment="Center"
-                                 Tapped="OnMemoryWidthTapped" />
+                        <TextBlock Grid.Column="2" 
+                                   Text="{Binding Width}"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Tapped="OnMemoryWidthTapped" />
 
-                      <StackPanel Grid.Column="3" Orientation="Horizontal">
-                        <Button Content="×" 
-                                Click="OnRemoveMemoryWatch"
-                                FontSize="10" 
-                                Width="18" 
-                                Height="18"
-                                Padding="0"
-                                ToolTipService.ToolTip="Remove memory watch" />
-                      </StackPanel>
-                    </Grid>
-                  </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                  <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="1,0" />
-                    <Setter Property="MinHeight" Value="20" />
-                    <Setter Property="Margin" Value="0" />
-                  </Style>
-                </ListView.ItemContainerStyle>
-              </ListView>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                          <Button Content="×" 
+                                  Click="OnRemoveMemoryWatch"
+                                  FontSize="12"
+                                  Width="16"
+                                  Height="16"
+                                  Padding="0"
+                                  ToolTipService.ToolTip="Remove memory watch" />
+                        </StackPanel>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Spacing="0" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                </ItemsControl>
+              </StackPanel>
             </ScrollViewer>
           </Border>
         </Grid>

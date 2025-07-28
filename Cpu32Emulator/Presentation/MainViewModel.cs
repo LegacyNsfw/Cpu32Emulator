@@ -1192,6 +1192,27 @@ public partial class MainViewModel : ObservableObject
                         MemoryWatches.Add(watch);
                     }
 
+                    // Restore CPU state (all registers) if saved
+                    var savedCpuState = _projectService.GetSavedCpuState();
+                    if (savedCpuState != null)
+                    {
+                        _emulatorService.SetCpuState(savedCpuState);
+                        
+                        // Refresh all register displays
+                        RefreshAllRegisters();
+                        
+                        // Center the disassembly on the restored PC
+                        // Schedule the scroll operation to happen after the UI has updated
+                        _ = Task.Run(async () =>
+                        {
+                            // Small delay to ensure the disassembly view is fully initialized
+                            await Task.Delay(200);
+                            
+                            // Trigger the CurrentInstructionChanged event to update the disassembly
+                            CurrentInstructionChanged?.Invoke(this, EventArgs.Empty);
+                        });
+                    }
+
                     StatusMessage = $"Project '{project.ProjectName}' loaded successfully";
                     
                     // Save this as the last project path
@@ -1250,6 +1271,10 @@ public partial class MainViewModel : ObservableObject
                 };
                 project.WatchedMemoryLocations.Add(config);
             }
+
+            // Save current CPU state (all registers)
+            var currentCpuState = _emulatorService.GetCpuState();
+            _projectService.SetSavedCpuState(currentCpuState);
 
             await _projectService.SaveProjectAsync();
             HasUnsavedChanges = false;
@@ -1320,6 +1345,10 @@ public partial class MainViewModel : ObservableObject
                     };
                     project.WatchedMemoryLocations.Add(config);
                 }
+
+                // Save current CPU state (all registers)
+                var currentCpuState = _emulatorService.GetCpuState();
+                _projectService.SetSavedCpuState(currentCpuState);
 
                 await _projectService.SaveProjectAsAsync(file.Path);
                 HasUnsavedChanges = false;

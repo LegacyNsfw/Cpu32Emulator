@@ -189,6 +189,15 @@ public sealed partial class MainPage : Page
         }
     }
 
+    private void OnRegisterTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
+            element.DataContext is CpuRegisterViewModel register)
+        {
+            ViewModel.SetRegisterValueCommand.Execute(register);
+        }
+    }
+
     private void OnMemoryAddressTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
     {
         if (sender is Microsoft.UI.Xaml.FrameworkElement element && 
