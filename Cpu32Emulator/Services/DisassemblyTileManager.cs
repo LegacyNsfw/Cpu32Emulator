@@ -242,7 +242,7 @@ public class DisassemblyTileManager
     /// Phase 3: Generates a new tile centered around the specified address with enhanced data integration
     /// </summary>
     public async Task<DisassemblyTile?> GenerateTileAroundAddressAsync(uint centerAddress, 
-        IEnumerable<DisassemblyLineViewModel>? dataSource = null, bool andNeighbors)
+        IEnumerable<DisassemblyLineViewModel>? dataSource = null, bool andNeighbors = false)
     {
         if (_disassemblyService == null)
             return null;
@@ -263,7 +263,7 @@ public class DisassemblyTileManager
 
             // Phase 3: Create visual tile with full feature support
             var tileElement = CreateTilePreview(entries.ToList(), TILE_WIDTH, LINE_HEIGHT, dataSource);
-            
+
             // Store the FrameworkElement directly
             tile.TileElement = tileElement;
             tile.TileHeight = entries.Count * LINE_HEIGHT;
@@ -280,7 +280,10 @@ public class DisassemblyTileManager
             AddTileToCache(tile);
 
             // Phase 3: Preload adjacent tiles for smooth scrolling
-            await Task.Run(() => PreloadAdjacentTilesAsync(centerAddress, dataSource));
+            if (andNeighbors)
+            {
+                await Task.Run(() => PreloadAdjacentTilesAsync(centerAddress, dataSource));
+            }
 
             return tile;
         }

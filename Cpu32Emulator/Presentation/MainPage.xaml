@@ -288,7 +288,7 @@
                         ItemClick="RegisterList_ItemClick">
                 <ListView.ItemTemplate>
                   <DataTemplate>
-                    <Grid Margin="5,2" MinWidth="200">
+                    <Grid Margin="2,0" MinWidth="200">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
@@ -297,7 +297,7 @@
                       <TextBlock Grid.Column="0"
                                  Text="{Binding Name}"
                                  FontFamily="Consolas, Courier New"
-                                 FontSize="12"
+                                 FontSize="11"
                                  VerticalAlignment="Center"
                                  FontWeight="SemiBold"
                                  Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -305,17 +305,18 @@
                       <TextBlock Grid.Column="1"
                                  Text="{Binding Value}"
                                  FontFamily="Consolas, Courier New"
-                                 FontSize="12"
+                                 FontSize="11"
                                  VerticalAlignment="Center"
-                                 Margin="10,0,0,0" />
+                                 Margin="8,0,0,0" />
                     </Grid>
                   </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
                   <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="2" />
-                    <Setter Property="MinHeight" Value="10" />
+                    <Setter Property="Padding" Value="1,0" />
+                    <Setter Property="MinHeight" Value="18" />
+                    <Setter Property="Margin" Value="0" />
                   </Style>
                 </ListView.ItemContainerStyle>
               </ListView>
@@ -350,23 +351,23 @@
                         SelectionMode="Single">
                 <ListView.HeaderTemplate>
                   <DataTemplate>
-                    <Grid>
+                    <Grid Margin="2,1">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="60" />
                         <ColumnDefinition Width="80" />
                       </Grid.ColumnDefinitions>
-                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" />
-                      <TextBlock Grid.Column="1" Text="Value" FontWeight="Bold" />
-                      <TextBlock Grid.Column="2" Text="Width" FontWeight="Bold" />
-                      <TextBlock Grid.Column="3" Text="Actions" FontWeight="Bold" />
+                      <TextBlock Grid.Column="0" Text="Address" FontWeight="Bold" FontSize="11" />
+                      <TextBlock Grid.Column="1" Text="Value" FontWeight="Bold" FontSize="11" />
+                      <TextBlock Grid.Column="2" Text="Width" FontWeight="Bold" FontSize="11" />
+                      <TextBlock Grid.Column="3" Text="Actions" FontWeight="Bold" FontSize="11" />
                     </Grid>
                   </DataTemplate>
                 </ListView.HeaderTemplate>
                 <ListView.ItemTemplate>
                   <DataTemplate>
-                    <Grid>
+                    <Grid Margin="2,0">
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
@@ -377,27 +378,31 @@
                       <TextBlock Grid.Column="0" 
                                  Text="{Binding Address}"
                                  FontFamily="Consolas"
+                                 FontSize="11"
                                  VerticalAlignment="Center"
                                  Tapped="OnMemoryAddressTapped" />
 
                       <TextBlock Grid.Column="1" 
                                  Text="{Binding Value}"
                                  FontFamily="Consolas"
+                                 FontSize="11"
                                  VerticalAlignment="Center"
                                  Tapped="OnMemoryValueTapped" />
 
                       <TextBlock Grid.Column="2" 
                                  Text="{Binding Width}"
                                  FontFamily="Consolas"
+                                 FontSize="11"
                                  VerticalAlignment="Center"
                                  Tapped="OnMemoryWidthTapped" />
 
                       <StackPanel Grid.Column="3" Orientation="Horizontal">
                         <Button Content="×" 
                                 Click="OnRemoveMemoryWatch"
-                                FontSize="12" 
-                                Width="20" 
-                                Height="20"
+                                FontSize="10" 
+                                Width="18" 
+                                Height="18"
+                                Padding="0"
                                 ToolTipService.ToolTip="Remove memory watch" />
                       </StackPanel>
                     </Grid>
@@ -406,8 +411,9 @@
                 <ListView.ItemContainerStyle>
                   <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="5,2" />
+                    <Setter Property="Padding" Value="1,0" />
                     <Setter Property="MinHeight" Value="20" />
+                    <Setter Property="Margin" Value="0" />
                   </Style>
                 </ListView.ItemContainerStyle>
               </ListView>
