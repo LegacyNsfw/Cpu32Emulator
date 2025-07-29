@@ -10,6 +10,7 @@ using Cpu32Emulator.Services;
 using Cpu32Emulator.DataContracts;
 using System.Collections.ObjectModel;
 using Cpu32Emulator.Models;
+using Cpu32Emulator.Presentation.Helpers;
 using System.Linq;
 
 namespace Cpu32Emulator.Presentation;
@@ -519,14 +520,12 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            var textBox = HexTextBoxHelper.CreateRegisterTextBox(register.Value);
+            
             var dialog = new ContentDialog()
             {
                 Title = $"Edit Register {register.Name}",
-                Content = new TextBox()
-                {
-                    Text = register.Value,
-                    PlaceholderText = "Enter hex value (e.g., 0x12345678)"
-                },
+                Content = textBox,
                 PrimaryButtonText = "Update",
                 SecondaryButtonText = "Cancel"
             };
@@ -543,8 +542,7 @@ public partial class MainViewModel : ObservableObject
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                var textBox = dialog.Content as TextBox;
-                var valueText = textBox?.Text ?? "";
+                var valueText = textBox.Text ?? "";
 
                 if (TryParseRegisterValue(valueText, out uint newValue))
                 {
@@ -1871,14 +1869,12 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            var textBox = HexTextBoxHelper.CreateAddressTextBox(memoryWatch.GetNumericAddress());
+            
             var dialog = new ContentDialog()
             {
                 Title = $"Edit Memory Address",
-                Content = new TextBox()
-                {
-                    Text = $"{memoryWatch.GetNumericAddress():X8}",
-                    PlaceholderText = "Enter hex address (e.g., 00001000)"
-                },
+                Content = textBox,
                 PrimaryButtonText = "Update",
                 SecondaryButtonText = "Cancel"
             };
@@ -1895,8 +1891,7 @@ public partial class MainViewModel : ObservableObject
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                var textBox = dialog.Content as TextBox;
-                var addressText = textBox?.Text ?? "";
+                var addressText = textBox.Text ?? "";
 
                 if (TryParseRegisterValue(addressText, out uint newAddress))
                 {
@@ -1924,14 +1919,12 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            var textBox = HexTextBoxHelper.CreateMemoryValueTextBox(memoryWatch.Value, memoryWatch.Width);
+            
             var dialog = new ContentDialog()
             {
                 Title = $"Edit Memory Value at 0x{memoryWatch.GetNumericAddress():X8}",
-                Content = new TextBox()
-                {
-                    Text = memoryWatch.Value,
-                    PlaceholderText = $"Enter hex value ({memoryWatch.Width})"
-                },
+                Content = textBox,
                 PrimaryButtonText = "Update",
                 SecondaryButtonText = "Cancel"
             };
@@ -1948,8 +1941,7 @@ public partial class MainViewModel : ObservableObject
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                var textBox = dialog.Content as TextBox;
-                var valueText = textBox?.Text ?? "";
+                var valueText = textBox.Text ?? "";
 
                 if (memoryWatch.TrySetValue(valueText, _memoryManagerService))
                 {

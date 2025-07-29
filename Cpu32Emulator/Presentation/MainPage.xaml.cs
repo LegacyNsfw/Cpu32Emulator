@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
 using Windows.System;
 using System.Linq;
+using System;
 
 namespace Cpu32Emulator.Presentation;
 
@@ -233,4 +235,5 @@ public sealed partial class MainPage : Page
             ViewModel.RemoveMemoryWatchCommand.Execute(memoryWatch);
         }
     }
+
 }

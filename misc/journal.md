@@ -138,8 +138,20 @@ That time, it worked.
 
 > The registers should be part of the project file. When saving the project, include all registers. When loading the project, restore all registers, and update the disassembly pane to show the new current instruction vertically centered in the pane.
 
+This worked:
+
+> When editing register values or watch addresses, the dialog boxes appear with "0x00000000" in the textbox. All of the 0 characters following the x should be automatically selected when the dialog box appears, so that the user can just type the address immediately, without deleting any existing zeroes. Implement this in a such a way that the code to select the zeroes is shared by the dialog boxes that edit register values, watch addresss, and (if applicable) the values in the watch window.
+
+This didn't, until I simpified the problem:
+
+> The register and memory panes should take up 25% of the total window area, or enough height to display all registers without scrolling, whichever is less.
+
+> When I made the window smaller, the registers and memory panes disappeared rather than taking up 25% of the window.
+
+> Let's try a different approach to laying out the panes. Make the register and memory-watch panes take up 25% of the window at all times.
+
 TODO:
 
 > After updating the PC register, the disassembly pane is redrawn, but the chosen address is not vertically centered - it is hidden below the bottom of the view.
 
->
+
