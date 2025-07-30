@@ -36,7 +36,12 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _disassemblyText = "No program loaded";
 
-    // Phase 4: Register Display Collection
+    // Phase 4: Register Display Collections - separated by register type
+    public ObservableCollection<CpuRegisterViewModel> DRegisters { get; }
+    public ObservableCollection<CpuRegisterViewModel> ARegisters { get; }
+    public ObservableCollection<CpuRegisterViewModel> OtherRegisters { get; }
+    
+    // Keep the original collection for backward compatibility and bulk operations
     public ObservableCollection<CpuRegisterViewModel> Registers { get; }
 
     // Phase 5: Memory Watch Collection
@@ -111,6 +116,9 @@ public partial class MainViewModel : ObservableObject
         _settingsService = new SettingsService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
+        DRegisters = new ObservableCollection<CpuRegisterViewModel>();
+        ARegisters = new ObservableCollection<CpuRegisterViewModel>();
+        OtherRegisters = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
         DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
 
@@ -133,6 +141,9 @@ public partial class MainViewModel : ObservableObject
         _settingsService = new SettingsService();
         
         Registers = new ObservableCollection<CpuRegisterViewModel>();
+        DRegisters = new ObservableCollection<CpuRegisterViewModel>();
+        ARegisters = new ObservableCollection<CpuRegisterViewModel>();
+        OtherRegisters = new ObservableCollection<CpuRegisterViewModel>();
         MemoryWatches = new ObservableCollection<MemoryWatchViewModel>();
         DisassemblyLines = new ObservableCollection<DisassemblyLineViewModel>();
         
@@ -344,23 +355,48 @@ public partial class MainViewModel : ObservableObject
         // Initialize data registers D0-D7
         for (int i = 0; i < 8; i++)
         {
-            Registers.Add(new CpuRegisterViewModel($"D{i}", 0));
+            var dRegister = new CpuRegisterViewModel($"D{i}", 0);
+            Registers.Add(dRegister);
+            DRegisters.Add(dRegister);
         }
 
-        // Initialize address registers A0-A7
-        for (int i = 0; i < 8; i++)
+        // Initialize address registers A0-A6 and USP (A7)
+        for (int i = 0; i < 7; i++)
         {
-            Registers.Add(new CpuRegisterViewModel($"A{i}", 0));
+            var aRegister = new CpuRegisterViewModel($"A{i}", 0);
+            Registers.Add(aRegister);
+            ARegisters.Add(aRegister);
         }
+        
+        // Add USP (A7) to address registers
+        var uspRegister = new CpuRegisterViewModel("USP", 0);
+        Registers.Add(uspRegister);
+        ARegisters.Add(uspRegister);
 
-        // Initialize special registers
-        Registers.Add(new CpuRegisterViewModel("PC", 0));
-        Registers.Add(new CpuRegisterViewModel("SR", 0));
-        Registers.Add(new CpuRegisterViewModel("USP", 0));
-        Registers.Add(new CpuRegisterViewModel("SSP", 0));
-        Registers.Add(new CpuRegisterViewModel("VBR", 0));
-        Registers.Add(new CpuRegisterViewModel("SFC", 0));
-        Registers.Add(new CpuRegisterViewModel("DFC", 0));
+        // Initialize special/other registers
+        var pcRegister = new CpuRegisterViewModel("PC", 0);
+        var ccr = new CpuRegisterViewModel("CCR", 0);
+        var srRegister = new CpuRegisterViewModel("SR", 0);
+        var sspRegister = new CpuRegisterViewModel("SSP", 0);
+        var vbrRegister = new CpuRegisterViewModel("VBR", 0);
+        var sfcRegister = new CpuRegisterViewModel("SFC", 0);
+        var dfcRegister = new CpuRegisterViewModel("DFC", 0);
+        
+        Registers.Add(pcRegister);
+        Registers.Add(ccr);
+        Registers.Add(srRegister);
+        Registers.Add(sspRegister);
+        Registers.Add(vbrRegister);
+        Registers.Add(sfcRegister);
+        Registers.Add(dfcRegister);
+        
+        OtherRegisters.Add(pcRegister);
+        OtherRegisters.Add(ccr);
+        OtherRegisters.Add(srRegister);
+        OtherRegisters.Add(sspRegister);
+        OtherRegisters.Add(vbrRegister);
+        OtherRegisters.Add(sfcRegister);
+        OtherRegisters.Add(dfcRegister);
 
         // Update all register values from emulator
         RefreshAllRegisters();
@@ -483,16 +519,17 @@ public partial class MainViewModel : ObservableObject
                 Registers[i].UpdateValue(cpuState.GetDataRegister(i));
             }
 
-            // Update address registers A0-A7
-            for (int i = 0; i < 8; i++)
+            // Update address registers A0-A6 and USP
+            for (int i = 0; i < 7; i++)
             {
                 Registers[8 + i].UpdateValue(cpuState.GetAddressRegister(i));
             }
+            Registers[15].UpdateValue(cpuState.USP);     // USP
 
             // Update special registers
             Registers[16].UpdateValue(cpuState.PC);      // PC
-            Registers[17].UpdateValue(cpuState.SR);      // SR  
-            Registers[18].UpdateValue(cpuState.USP);     // USP
+            Registers[17].UpdateValue(cpuState.CCR);     // CCR
+            Registers[18].UpdateValue(cpuState.SR);      // SR  
             Registers[19].UpdateValue(cpuState.SSP);     // SSP
             Registers[20].UpdateValue(cpuState.VBR);     // VBR
             Registers[21].UpdateValue(cpuState.SFC);     // SFC

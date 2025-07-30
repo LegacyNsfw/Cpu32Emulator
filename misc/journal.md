@@ -163,3 +163,9 @@ Fixed by implementing proper scrolling functionality in the TiledDisassemblyView
 - The disassembly view now properly centers the chosen address when the PC register is updated
 
 After several more iterations, it's getting better but still not working consistently.
+
+Also, VS Code has gotten very laggy, sometimes hanging for around 10 seconds. All of the above was done in a single session. I restarted and the lag problem is gone, but the chat window also lost all of its context.
+
+Next prompt:
+
+> The requirements and design documents for this project are in the /specs folder. But let's change the way registers are displayed. Instead of one pane containing all registers, let's have three register panes, one with the A registers, one with the D registers and one with all of the other registers. Each pane should take 20% of the width of the window. The memory watch pane should take the remaining 40% of the width.

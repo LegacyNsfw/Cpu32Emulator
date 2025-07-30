@@ -235,12 +235,18 @@
                 <RowDefinition x:Name="RegisterMemoryRow" Height="1*" />
               </Grid.RowDefinitions>
               <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <!-- D Registers: 20% width -->
+                <ColumnDefinition Width="1*" />
+                <!-- A Registers: 20% width -->
+                <ColumnDefinition Width="1*" />
+                <!-- Other Registers: 20% width -->
+                <ColumnDefinition Width="1*" />
+                <!-- Memory Watch: 40% width -->
+                <ColumnDefinition Width="2*" />
               </Grid.ColumnDefinitions>
 
-        <!-- Top Row: Disassembly (spans both columns) -->
-        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
+        <!-- Top Row: Disassembly (spans all columns) -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="4" Margin="0,0,0,10">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -264,7 +270,7 @@
           </Border>
         </Grid>
 
-        <!-- Bottom Left: Registers -->
+        <!-- Bottom Row: D Registers -->
         <Grid Grid.Row="1" Grid.Column="0" Margin="0,10,5,0">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -272,7 +278,7 @@
           </Grid.RowDefinitions>
           
           <TextBlock Grid.Row="0" 
-                     Text="Registers" 
+                     Text="D Registers" 
                      FontWeight="Bold" 
                      FontSize="16"
                      Margin="0,0,0,5" />
@@ -280,14 +286,119 @@
           <Border Grid.Row="1"
                   BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
                   BorderThickness="1">
-            <ScrollViewer x:Name="RegisterScrollViewer">
-              <!-- Phase 4: Data-bound register grid -->
-              <ItemsControl x:Name="RegisterItemsControl" ItemsSource="{Binding Registers}">
+            <ScrollViewer x:Name="DRegisterScrollViewer">
+              <ItemsControl x:Name="DRegisterItemsControl" ItemsSource="{Binding DRegisters}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Grid Margin="1,0" MinWidth="200" Background="Transparent" Tapped="OnRegisterTapped">
+                    <Grid Margin="1,0" MinWidth="150" Background="Transparent" Tapped="OnRegisterTapped">
                       <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding Name}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="12"
+                                 VerticalAlignment="Center"
+                                 FontWeight="SemiBold"
+                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                      
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding Value}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="10"
+                                 VerticalAlignment="Center"
+                                 Margin="6,0,0,0" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </ScrollViewer>
+          </Border>
+        </Grid>
+
+        <!-- Bottom Row: A Registers -->
+        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10,5,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <TextBlock Grid.Row="0" 
+                     Text="A Registers" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Margin="0,0,0,5" />
+          
+          <Border Grid.Row="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+                  BorderThickness="1">
+            <ScrollViewer x:Name="ARegisterScrollViewer">
+              <ItemsControl x:Name="ARegisterItemsControl" ItemsSource="{Binding ARegisters}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="1,0" MinWidth="150" Background="Transparent" Tapped="OnRegisterTapped">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding Name}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="12"
+                                 VerticalAlignment="Center"
+                                 FontWeight="SemiBold"
+                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                      
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding Value}"
+                                 FontFamily="Consolas, Courier New"
+                                 FontSize="10"
+                                 VerticalAlignment="Center"
+                                 Margin="6,0,0,0" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </ScrollViewer>
+          </Border>
+        </Grid>
+
+        <!-- Bottom Row: Other Registers -->
+        <Grid Grid.Row="1" Grid.Column="2" Margin="5,10,5,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+          
+          <TextBlock Grid.Row="0" 
+                     Text="Other Registers" 
+                     FontWeight="Bold" 
+                     FontSize="16"
+                     Margin="0,0,0,5" />
+          
+          <Border Grid.Row="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" 
+                  BorderThickness="1">
+            <ScrollViewer x:Name="OtherRegisterScrollViewer">
+              <ItemsControl x:Name="OtherRegisterItemsControl" ItemsSource="{Binding OtherRegisters}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="1,0" MinWidth="150" Background="Transparent" Tapped="OnRegisterTapped">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
                         <ColumnDefinition Width="*" />
                       </Grid.ColumnDefinitions>
                       
@@ -319,7 +430,7 @@
         </Grid>
 
         <!-- Bottom Right: Memory -->
-        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10,0,0">
+        <Grid Grid.Row="1" Grid.Column="3" Margin="5,10,0,0">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

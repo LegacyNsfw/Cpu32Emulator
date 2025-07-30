@@ -14,17 +14,18 @@ The top pane of the application shows the disassembly window. This pane automati
 
 The first release of the application, which we're working on now, does not support syntax highlighting, but that may be added in a future version.
 
-### Bottom Left - Register Pane
+### Bottom Panes - Register Display
 
-The left side of the bottom half of the application shows rows of CPU registers, with the register name on the left and the register value on the right. 
+The bottom half of the application is divided into four panes, with registers displayed in three separate grouped panes:
 
-Double-clicking on a register allows the user to enter the value for that register, in hex or decimal. When the user edits the PC register, the disassembly window jumps to that location. The
+#### D Register Pane (20% width)
+Shows the D data registers (D0-D7), with the register name on the left and the register value on the right.
 
-The registers are:
+#### A Register Pane (20% width) 
+Shows the A address registers (A0-A6, USP), with the register name on the left and the register value on the right.
 
-* D0-D7
-* A0-A6
-* USP (User Stack Pointer), also known as A7
+#### Other Register Pane (20% width)
+Shows all other CPU registers:
 * PC (Program Counter)
 * CCR (Condition Code Register)
 * SSP (Supervisor Stack Pointer)
@@ -33,9 +34,11 @@ The registers are:
 * SFC
 * DFC
 
-Registers are displayed in hexadecimal. 
+Double-clicking on a register in any pane allows the user to enter the value for that register, in hex or decimal. When the user edits the PC register, the disassembly window jumps to that location.
 
-### Bottom Right - Memory Pane
+All registers are displayed in hexadecimal. 
+
+### Bottom Right - Memory Pane (40% width)
 
 This pane is analogous to the "watch" window in a debugging IDE.
 
