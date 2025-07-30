@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Cpu32Emulator.Presentation
 {
@@ -16,12 +18,14 @@ namespace Cpu32Emulator.Presentation
     /// Phase 4: Custom control for tile-based disassembly view - now the primary implementation
     /// Feature flag support removed as this is now the only disassembly view
     /// </summary>
-    public sealed partial class TiledDisassemblyView : UserControl, INotifyPropertyChanged
+    public sealed partial class TiledDisassemblyView : UserControl, INotifyPropertyChanged, IDisposable
     {
         private DisassemblyTileManager? _tileManager;
         private readonly List<Image> _visibleTileImages = new();
         private uint _currentAddress;
         private bool _isInitialized;
+        private readonly SemaphoreSlim _uiUpdateSemaphore = new(1, 1); // Prevent concurrent UI updates
+        private bool _disposed;
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
@@ -75,7 +79,18 @@ namespace Cpu32Emulator.Presentation
         {
             if (d is TiledDisassemblyView view && view._isInitialized)
             {
-                _ = view.ScrollToAddressAsync((uint)e.NewValue);
+                var newAddress = (uint)e.NewValue;
+                var oldAddress = (uint)e.OldValue;
+                
+                // Try to update highlighting in existing tiles first
+                if (view.TryUpdateCurrentInstructionHighlighting(oldAddress, newAddress))
+                {
+                    // Successfully updated existing tiles, no need to scroll/regenerate
+                    return;
+                }
+                
+                // Address not in current tiles, need to scroll to new address
+                _ = view.ScrollToAddressAsync(newAddress);
             }
         }
 
@@ -125,14 +140,19 @@ namespace Cpu32Emulator.Presentation
 
         /// <summary>
         /// Refreshes all tiles based on current data source
+        /// Adds semaphore protection to prevent race conditions that cause duplicate dependency property exceptions
         /// </summary>
         private async Task RefreshTilesAsync()
         {
-            if (_tileManager == null || ItemsSource == null)
+            if (_disposed || _tileManager == null || ItemsSource == null)
                 return;
 
+            // Use semaphore to prevent concurrent UI updates that can cause duplicate dependency property errors
+            await _uiUpdateSemaphore.WaitAsync();
             try
             {
+                if (_disposed) return; // Double-check after acquiring semaphore
+
                 // Clear existing tiles
                 ClearVisibleTiles();
 
@@ -142,6 +162,11 @@ namespace Cpu32Emulator.Presentation
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error refreshing tiles: {ex.Message}");
+            }
+            finally
+            {
+                if (!_disposed)
+                    _uiUpdateSemaphore.Release();
             }
         }
 
@@ -181,6 +206,26 @@ namespace Cpu32Emulator.Presentation
 
                     // Add to canvas
                     DisassemblyCanvas.Children.Add(tilePreview);
+                    
+                    // Update the Canvas size based on the tile's actual size
+                    // We need to wait for the tile to be measured and arranged
+                    tilePreview.Loaded += (sender, e) =>
+                    {
+                        if (sender is FrameworkElement element)
+                        {
+                            // Set Canvas height to accommodate the tile content
+                            var requiredHeight = element.ActualHeight;
+                            if (requiredHeight > 0)
+                            {
+                                DisassemblyCanvas.Height = Math.Max(requiredHeight, TileScrollViewer.ViewportHeight);
+                                System.Diagnostics.Debug.WriteLine($"Canvas height set to: {DisassemblyCanvas.Height} (tile: {requiredHeight}, viewport: {TileScrollViewer.ViewportHeight})");
+                            }
+                        }
+                    };
+                    
+                    // Also set an initial height estimate based on line count
+                    var estimatedHeight = lstEntries.Count * 18; // lineHeight
+                    DisassemblyCanvas.Height = Math.Max(estimatedHeight, 400); // Minimum height for scrolling
                 }
 
                 await Task.Delay(100); // Simulate processing time
@@ -251,14 +296,19 @@ namespace Cpu32Emulator.Presentation
 
         /// <summary>
         /// Phase 3: Immediately jumps to a specific address (outside visible range)
+        /// Adds semaphore protection to prevent race conditions during Canvas updates
         /// </summary>
         private async Task ScrollToAddressImmediateAsync(uint targetAddress)
         {
-            if (_tileManager == null)
+            if (_disposed || _tileManager == null)
                 return;
 
+            // Use semaphore to prevent concurrent UI updates that can cause duplicate dependency property errors
+            await _uiUpdateSemaphore.WaitAsync();
             try
             {
+                if (_disposed) return; // Double-check after acquiring semaphore
+
                 // Get or create the tile containing this address (reuses existing tiles if available)
                 var requiredTile = await _tileManager.GetOrGenerateTileAsync(targetAddress, ItemsSource);
                 if (requiredTile != null)
@@ -272,6 +322,11 @@ namespace Cpu32Emulator.Presentation
                         Canvas.SetLeft(requiredTile.TileElement, 0);
                         Canvas.SetTop(requiredTile.TileElement, 0);
                         DisassemblyCanvas.Children.Add(requiredTile.TileElement);
+                        
+                        // Update Canvas height to accommodate the tile
+                        var tileHeight = requiredTile.TileHeight > 0 ? requiredTile.TileHeight : 400;
+                        DisassemblyCanvas.Height = Math.Max(tileHeight, TileScrollViewer.ViewportHeight);
+                        System.Diagnostics.Debug.WriteLine($"Canvas height set to: {DisassemblyCanvas.Height} for tile height: {tileHeight}");
                     }
 
                     // Center the target address in the viewport
@@ -285,6 +340,11 @@ namespace Cpu32Emulator.Presentation
             {
                 System.Diagnostics.Debug.WriteLine($"Error jumping to address 0x{targetAddress:X8}: {ex.Message}");
             }
+            finally
+            {
+                if (!_disposed)
+                    _uiUpdateSemaphore.Release();
+            }
         }
 
         /// <summary>
@@ -292,21 +352,24 @@ namespace Cpu32Emulator.Presentation
         /// </summary>
         private async Task AnimateScrollToPositionAsync(double targetY)
         {
-            // For Phase 3, we'll use a simple immediate scroll
-            // A future phase could implement smooth animation using Storyboard
-            
+            if (TileScrollViewer == null)
+                return;
+
             // Center the target position in the viewport
-            var viewportHeight = DisassemblyCanvas.ActualHeight;
+            var viewportHeight = TileScrollViewer.ViewportHeight;
             var centeredY = targetY - (viewportHeight / 2);
             
             // Clamp to valid scroll range
-            centeredY = Math.Max(0, centeredY);
+            var maxScrollY = Math.Max(0, DisassemblyCanvas.ActualHeight - viewportHeight);
+            centeredY = Math.Max(0, Math.Min(centeredY, maxScrollY));
             
-            // For now, just simulate the scroll with a small delay
+            // Use the ScrollViewer to scroll to the centered position
+            TileScrollViewer.ChangeView(null, centeredY, null, false);
+            
+            // Small delay to allow the scroll to complete
             await Task.Delay(50);
             
-            // In a real implementation, this would adjust the canvas transform or scroll viewer position
-            System.Diagnostics.Debug.WriteLine($"Animated scroll to Y position: {centeredY}");
+            System.Diagnostics.Debug.WriteLine($"Scrolled to centered Y position: {centeredY} for target Y: {targetY}");
         }
 
         /// <summary>
@@ -314,9 +377,20 @@ namespace Cpu32Emulator.Presentation
         /// </summary>
         private bool IsInVisibleRange(DisassemblyTile tile)
         {
-            // For Phase 3, assume tiles are visible if they're in our current cache
-            // A future phase would implement proper viewport calculations
-            return tile != null;
+            if (tile?.TileElement == null || TileScrollViewer == null)
+                return false;
+
+            // Get the tile's position and dimensions
+            var tileTop = Canvas.GetTop(tile.TileElement);
+            var tileHeight = tile.TileElement.ActualHeight;
+            var tileBottom = tileTop + tileHeight;
+
+            // Get the current scroll position and viewport dimensions
+            var viewportTop = TileScrollViewer.VerticalOffset;
+            var viewportBottom = viewportTop + TileScrollViewer.ViewportHeight;
+
+            // Check if the tile overlaps with the viewport
+            return tileBottom > viewportTop && tileTop < viewportBottom;
         }
 
         /// <summary>
@@ -353,9 +427,17 @@ namespace Cpu32Emulator.Presentation
 
         /// <summary>
         /// Clears all visible tiles from the canvas
+        /// Ensures UI operations are performed on the UI thread to prevent dependency property errors
         /// </summary>
         private void ClearVisibleTiles()
         {
+            // Ensure we're on the UI thread when modifying UI elements
+            if (!DispatcherQueue.HasThreadAccess)
+            {
+                DispatcherQueue.TryEnqueue(() => ClearVisibleTiles());
+                return;
+            }
+
             DisassemblyCanvas.Children.Clear();
             _visibleTileImages.Clear();
         }
@@ -378,5 +460,140 @@ namespace Cpu32Emulator.Presentation
         /// Gets the current tile manager for debugging
         /// </summary>
         public DisassemblyTileManager? GetTileManager() => _tileManager;
+
+        /// <summary>
+        /// Attempts to update current instruction highlighting in existing visible tiles
+        /// without regenerating the entire view
+        /// </summary>
+        /// <param name="oldAddress">Previous PC address to unhighlight</param>
+        /// <param name="newAddress">New PC address to highlight</param>
+        /// <returns>True if highlighting was updated, false if tiles need to be regenerated</returns>
+        private bool TryUpdateCurrentInstructionHighlighting(uint oldAddress, uint newAddress)
+        {
+            try
+            {
+                // Check if we have any visible tiles in the canvas
+                if (DisassemblyCanvas.Children.Count == 0)
+                    return false;
+
+                bool foundNewAddress = false;
+                bool foundOldAddress = false;
+
+                // Iterate through all visible tiles (should typically be just one)
+                foreach (var child in DisassemblyCanvas.Children)
+                {
+                    if (child is FrameworkElement tileElement)
+                    {
+                        // Update highlighting in this tile
+                        var result = UpdateHighlightingInTile(tileElement, oldAddress, newAddress);
+                        foundOldAddress |= result.foundOld;
+                        foundNewAddress |= result.foundNew;
+                    }
+                }
+
+                // Return true only if we found the new address (can highlight it)
+                // We don't require finding the old address since it might not be visible
+                return foundNewAddress;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating instruction highlighting: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Updates highlighting within a specific tile element
+        /// </summary>
+        private (bool foundOld, bool foundNew) UpdateHighlightingInTile(FrameworkElement tileElement, uint oldAddress, uint newAddress)
+        {
+            bool foundOld = false;
+            bool foundNew = false;
+
+            // The tile structure is a StackPanel containing Grid elements for each line
+            if (tileElement is StackPanel stackPanel)
+            {
+                foreach (var child in stackPanel.Children)
+                {
+                    if (child is Grid lineGrid && lineGrid.Tag is uint lineAddress)
+                    {
+                        // Check if this line matches either address
+                        if (lineAddress == oldAddress)
+                        {
+                            RemoveCurrentInstructionHighlight(lineGrid);
+                            foundOld = true;
+                        }
+                        else if (lineAddress == newAddress)
+                        {
+                            AddCurrentInstructionHighlight(lineGrid);
+                            foundNew = true;
+                        }
+                    }
+                }
+            }
+
+            return (foundOld, foundNew);
+        }
+
+        /// <summary>
+        /// Adds current instruction highlight to a line grid
+        /// </summary>
+        private void AddCurrentInstructionHighlight(Grid lineGrid)
+        {
+            // Find the indicator panel (first column)
+            if (lineGrid.Children.FirstOrDefault() is StackPanel indicatorPanel)
+            {
+                // Remove any existing arrow first
+                var existingArrow = indicatorPanel.Children.OfType<TextBlock>()
+                    .FirstOrDefault(tb => tb.Text == "►");
+                if (existingArrow != null)
+                    indicatorPanel.Children.Remove(existingArrow);
+
+                // Add the current instruction arrow
+                var arrow = new TextBlock
+                {
+                    Text = "►",
+                    Foreground = new SolidColorBrush(Microsoft.UI.Colors.Yellow),
+                    FontSize = 10,
+                    FontWeight = Microsoft.UI.Text.FontWeights.Bold
+                };
+                indicatorPanel.Children.Add(arrow);
+
+                // Optionally add background highlight
+                lineGrid.Background = new SolidColorBrush(Color.FromArgb(32, 255, 255, 0)); // Semi-transparent yellow
+            }
+        }
+
+        /// <summary>
+        /// Removes current instruction highlight from a line grid
+        /// </summary>
+        private void RemoveCurrentInstructionHighlight(Grid lineGrid)
+        {
+            // Find the indicator panel (first column)
+            if (lineGrid.Children.FirstOrDefault() is StackPanel indicatorPanel)
+            {
+                // Remove the arrow indicator
+                var arrow = indicatorPanel.Children.OfType<TextBlock>()
+                    .FirstOrDefault(tb => tb.Text == "►");
+                if (arrow != null)
+                    indicatorPanel.Children.Remove(arrow);
+
+                // Remove background highlight
+                lineGrid.Background = null;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of resources to prevent memory leaks and race conditions
+        /// </summary>
+        public new void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _disposed = true;
+            _uiUpdateSemaphore?.Dispose();
+            base.Dispose();
+        }
     }
 }

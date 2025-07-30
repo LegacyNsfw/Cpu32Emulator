@@ -150,8 +150,16 @@ This didn't, until I simpified the problem:
 
 > Let's try a different approach to laying out the panes. Make the register and memory-watch panes take up 25% of the window at all times.
 
-TODO:
+Next thing:
 
 > After updating the PC register, the disassembly pane is redrawn, but the chosen address is not vertically centered - it is hidden below the bottom of the view.
 
+And Claude wrote:
 
+Fixed by implementing proper scrolling functionality in the TiledDisassemblyView:
+- Updated AnimateScrollToPositionAsync to use the ScrollViewer's ChangeView method for actual scrolling
+- Improved viewport range checking in IsInVisibleRange method  
+- Added CurrentPCAddress property update in OnProgramCounterChanged to ensure tile view binding works correctly
+- The disassembly view now properly centers the chosen address when the PC register is updated
+
+After several more iterations, it's getting better but still not working consistently.

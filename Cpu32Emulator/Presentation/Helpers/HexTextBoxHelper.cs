@@ -21,21 +21,21 @@ public static class HexTextBoxHelper
         // Set up the auto-selection behavior when the dialog loads
         textBox.Loaded += (sender, e) =>
         {
-            AutoSelectTrailingZeros(textBox);
+            AutoSelectHexDigits(textBox);
         };
         
         // Also handle when the TextBox gets focus
         textBox.GotFocus += (sender, e) =>
         {
-            AutoSelectTrailingZeros(textBox);
+            AutoSelectHexDigits(textBox);
         };
     }
     
     /// <summary>
-    /// Automatically selects trailing zeros in a hex string (after 0x prefix)
+    /// Automatically selects all hex digits after the "0x" prefix
     /// </summary>
     /// <param name="textBox">The TextBox containing the hex value</param>
-    private static void AutoSelectTrailingZeros(TextBox textBox)
+    private static void AutoSelectHexDigits(TextBox textBox)
     {
         try
         {
@@ -43,30 +43,22 @@ public static class HexTextBoxHelper
             if (string.IsNullOrEmpty(text))
                 return;
             
-            // Find the pattern: 0x followed by zeros
-            var match = Regex.Match(text, @"^(0x)?(0+)");
-            if (match.Success)
+            // Check if text starts with "0x" or "0X"
+            if (text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
-                var prefix = match.Groups[1].Success ? match.Groups[1].Value : "";
-                var zeros = match.Groups[2].Value;
+                // Select everything after "0x"
+                var startIndex = 2; // Length of "0x"
+                var length = text.Length - startIndex;
                 
-                if (zeros.Length > 0)
+                if (length > 0)
                 {
-                    var startIndex = prefix.Length;
-                    var length = zeros.Length;
-                    
-                    // Select the trailing zeros
                     textBox.Select(startIndex, length);
                 }
             }
             else
             {
-                // If no 0x prefix but starts with zeros, select all leading zeros
-                var zeroMatch = Regex.Match(text, @"^(0+)");
-                if (zeroMatch.Success && zeroMatch.Groups[1].Value.Length > 0)
-                {
-                    textBox.Select(0, zeroMatch.Groups[1].Value.Length);
-                }
+                // If no "0x" prefix, select all text
+                textBox.SelectAll();
             }
         }
         catch (Exception)

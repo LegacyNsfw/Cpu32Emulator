@@ -77,7 +77,8 @@ public class DisassemblyTileManager
             {
                 Height = lineHeight,
                 Margin = new Thickness(0, 0, 0, 1), // Small gap between lines
-                Background = GetLineBackground(viewModel)
+                Background = GetLineBackground(viewModel),
+                Tag = entry.Address // Store address for highlighting updates
             };
 
             lineGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });  // Indicators

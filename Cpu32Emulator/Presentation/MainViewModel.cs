@@ -618,6 +618,9 @@ public partial class MainViewModel : ObservableObject
         // Update disassembly view to show current instruction
         UpdateCurrentInstruction(newPc);
         
+        // Update the CurrentPCAddress property for tile view binding
+        CurrentPCAddress = newPc;
+        
         _logger.LogInformation("Program counter changed to 0x{PC:X8}", newPc);
     }
 
@@ -1824,21 +1827,45 @@ public partial class MainViewModel : ObservableObject
             // Get entries within the display range from the disassembly service
             var entriesInRange = _disassemblyService.GetEntriesInRange(startAddress, endAddress);
             
-            foreach (var entry in entriesInRange)
+            if (entriesInRange.Any())
             {
-                var viewModel = new DisassemblyLineViewModel(
-                    $"0x{entry.Address:X8}",
-                    entry.SymbolName ?? "",
-                    entry.Instruction
-                );
-                
-                // Mark current instruction
-                if (entry.Address == centerAddress)
+                foreach (var entry in entriesInRange)
                 {
-                    viewModel.IsCurrentInstruction = true;
+                    var viewModel = new DisassemblyLineViewModel(
+                        $"0x{entry.Address:X8}",
+                        entry.SymbolName ?? "",
+                        entry.Instruction
+                    );
+                    
+                    // Mark current instruction
+                    if (entry.Address == centerAddress)
+                    {
+                        viewModel.IsCurrentInstruction = true;
+                    }
+                    
+                    DisassemblyLines.Add(viewModel);
                 }
+            }
+            else
+            {
+                // No entries found in range - add placeholder entries to show the address range
+                var placeholderEntries = new List<DisassemblyLineViewModel>();
                 
-                DisassemblyLines.Add(viewModel);
+                // Add a few placeholder entries around the center address
+                for (int i = -5; i <= 5; i++)
+                {
+                    var addr = centerAddress + (uint)(i * 4); // Assume 4-byte instructions
+                    var isCenter = (i == 0);
+                    
+                    var viewModel = new DisassemblyLineViewModel(
+                        $"0x{addr:X8}",
+                        isCenter ? "PC" : "",
+                        isCenter ? "<-- Program Counter -->" : "<no disassembly data>"
+                    );
+                    
+                    viewModel.IsCurrentInstruction = isCenter;
+                    DisassemblyLines.Add(viewModel);
+                }
             }
 
             // Notify UI to scroll to current instruction after refreshing the window
