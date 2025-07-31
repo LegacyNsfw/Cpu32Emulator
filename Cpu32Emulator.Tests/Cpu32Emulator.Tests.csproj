@@ -11,9 +11,18 @@
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
     <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="UnicornEngine.Unicorn" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Cpu32Emulator\Cpu32Emulator.csproj" />
+    <ProjectReference Include="..\Cpu32Emulator.Shared\Cpu32Emulator.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\dependencies\unicorn.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

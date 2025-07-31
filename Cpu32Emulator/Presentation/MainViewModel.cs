@@ -221,12 +221,18 @@ public partial class MainViewModel : ObservableObject
                     try
                     {
                         var romMemoryRegion = await _fileService.LoadRomFileAsync(project.RomFilePath, project.RomBaseAddress);
+                        
+                        // Clear any existing memory regions when loading a project to avoid conflicts
+                        _emulatorService.UnmapAllMemory();
+                        
                         _emulatorService.MapMemoryRegion(romMemoryRegion);
                         _logger.LogInformation("ROM loaded: {Path} at 0x{Address:X8}", project.RomFilePath, project.RomBaseAddress);
                     }
                     catch (Exception ex)
                     {
                         _logger.LogWarning(ex, "Failed to load ROM from last project: {Path}", project.RomFilePath);
+                        StatusMessage = $"Loading ROM: {ex.Message}";
+                        return; // Stop loading process on ROM failure
                     }
                 }
 
@@ -236,12 +242,23 @@ public partial class MainViewModel : ObservableObject
                     try
                     {
                         var ramMemoryRegion = await _fileService.LoadRamFileAsync(project.RamFilePath, project.RamBaseAddress);
+                        
+                        // Check for overlapping regions and unmap them if necessary
+                        var overlappingRegion = _emulatorService.FindOverlappingRegion(project.RamBaseAddress, ramMemoryRegion.Size);
+                        if (overlappingRegion != null)
+                        {
+                            _logger.LogInformation("Unmapping overlapping region for RAM: {Region}", overlappingRegion);
+                            _emulatorService.UnmapMemoryRegion(overlappingRegion.BaseAddress);
+                        }
+                        
                         _emulatorService.MapMemoryRegion(ramMemoryRegion);
                         _logger.LogInformation("RAM loaded: {Path} at 0x{Address:X8}", project.RamFilePath, project.RamBaseAddress);
                     }
                     catch (Exception ex)
                     {
                         _logger.LogWarning(ex, "Failed to load RAM from last project: {Path}", project.RamFilePath);
+                        StatusMessage = $"Loading RAM: {ex.Message}";
+                        return; // Stop loading process on RAM failure
                     }
                 }
 
@@ -256,6 +273,8 @@ public partial class MainViewModel : ObservableObject
                     catch (Exception ex)
                     {
                         _logger.LogWarning(ex, "Failed to load LST from last project: {Path}", project.LstFilePath);
+                        StatusMessage = $"Loading LST: {ex.Message}";
+                        return; // Stop loading process on LST failure
                     }
                 }
 
@@ -291,6 +310,8 @@ public partial class MainViewModel : ObservableObject
                     catch (Exception ex)
                     {
                         _logger.LogWarning(ex, "Failed to set PC to reset address 0x{Address:X8}", project.ResetAddress);
+                        StatusMessage = $"Setting PC: {ex.Message}";
+                        return; // Stop loading process on PC setting failure
                     }
                 }
 
@@ -301,7 +322,7 @@ public partial class MainViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load last project: {Path}", projectPath);
-            StatusMessage = $"Failed to load last project: {ex.Message}";
+            StatusMessage = $"Loading Project: {ex.Message}";
         }
     }
 
@@ -803,6 +824,30 @@ public partial class MainViewModel : ObservableObject
             _logger.LogInformation("Step Into (F11) executed");
             StatusMessage = "Stepping into next instruction...";
             
+            // Check if emulator is properly initialized
+            if (!_emulatorService.IsInitialized)
+            {
+                StatusMessage = "Emulator not initialized. Please load ROM/RAM files first.";
+                _logger.LogError("Step Into failed: Emulator not initialized");
+                return;
+            }
+            
+            // Get current PC before execution for validation
+            var currentPc = GetCurrentPcValue();
+            _logger.LogDebug("About to execute instruction at PC: 0x{PC:X8}", currentPc);
+            
+            // Check if PC points to mapped memory
+            var memoryRegion = _emulatorService.FindMemoryRegion(currentPc);
+            if (memoryRegion == null)
+            {
+                StatusMessage = $"PC (0x{currentPc:X8}) points to unmapped memory. Please load ROM/RAM files or set PC to valid address.";
+                _logger.LogError("Step Into failed: PC points to unmapped memory at 0x{PC:X8}", currentPc);
+                return;
+            }
+            
+            _logger.LogDebug("PC is in valid memory region: {RegionType} at 0x{BaseAddress:X8}-0x{EndAddress:X8}",
+                memoryRegion.Type, memoryRegion.BaseAddress, memoryRegion.BaseAddress + memoryRegion.Size - 1);
+            
             // Execute a single instruction via Unicorn
             ExecuteSingleInstruction();
             
@@ -967,8 +1012,20 @@ public partial class MainViewModel : ObservableObject
             var currentPc = GetCurrentPcValue();
             _logger.LogDebug("Executing instruction at 0x{PC:X8}", currentPc);
             
+            // Check if the emulator service has any previous exceptions
+            if (!string.IsNullOrEmpty(_emulatorService.LastException))
+            {
+                _logger.LogWarning("Emulator has previous exception: {Exception}", _emulatorService.LastException);
+            }
+            
             // Execute one instruction
             _emulatorService.StepInstruction();
+            
+            // Check for new exceptions
+            if (!string.IsNullOrEmpty(_emulatorService.LastException))
+            {
+                throw new InvalidOperationException($"Emulator execution failed: {_emulatorService.LastException}");
+            }
             
             _logger.LogDebug("Instruction executed successfully");
         }
@@ -1150,8 +1207,14 @@ public partial class MainViewModel : ObservableObject
             LoadedRamPath = null;
             LoadedLstPath = null;
             
+            // Reset emulator state - clear all memory regions and reset CPU
+            _emulatorService.UnmapAllMemory();
+            _emulatorService.Reset();
+            
             // Reset displays
             DisassemblyLines.Clear();
+            RefreshAllRegisters(); // Update register display after reset
+            RefreshAllMemoryWatches(); // Update memory watches after reset
             
             StatusMessage = "New project created successfully";
         }
@@ -1475,6 +1538,9 @@ public partial class MainViewModel : ObservableObject
                         // Load ROM using FileService
                         var memoryRegion = await _fileService.LoadRomFileAsync(file.Path, baseAddress);
                         
+                        // Clear any existing memory regions to avoid mapping conflicts
+                        _emulatorService.UnmapAllMemory();
+                        
                         // Map the ROM in the emulator
                         _emulatorService.MapMemoryRegion(memoryRegion);
                         
@@ -1660,6 +1726,14 @@ public partial class MainViewModel : ObservableObject
                     {
                         // Load RAM using FileService
                         var memoryRegion = await _fileService.LoadRamFileAsync(file.Path, baseAddress);
+                        
+                        // Check for overlapping regions and unmap them if necessary
+                        var overlappingRegion = _emulatorService.FindOverlappingRegion(baseAddress, memoryRegion.Size);
+                        if (overlappingRegion != null)
+                        {
+                            _logger.LogInformation("Unmapping overlapping region: {Region}", overlappingRegion);
+                            _emulatorService.UnmapMemoryRegion(overlappingRegion.BaseAddress);
+                        }
                         
                         // Map the RAM in the emulator
                         _emulatorService.MapMemoryRegion(memoryRegion);

@@ -10,7 +10,7 @@ public class AppInfoTests
     [Test]
     public void AppInfoCreation()
     {
-        var appInfo = new AppConfig { Environment = "Test" };
+        var appInfo = new Cpu32Emulator.Business.Models.AppConfig { Environment = "Test" };
 
         appInfo.Should().NotBeNull();
         appInfo.Environment.Should().Be("Test");

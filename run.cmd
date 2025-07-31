@@ -1,1 +1,1 @@
-dotnet run --project "Cpu32Emulator.Skia.WPF"
+dotnet run --project "Cpu32Emulator.Skia.WPF" --no-restore

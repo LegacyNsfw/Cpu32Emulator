@@ -110,6 +110,42 @@ namespace Cpu32Emulator.Services
         }
 
         /// <summary>
+        /// Unmaps a specific memory region at the given address
+        /// </summary>
+        public bool UnmapMemoryRegion(uint baseAddress)
+        {
+            if (_engine == null)
+                return false;
+
+            var region = _memoryRegions.FirstOrDefault(r => r.BaseAddress == baseAddress);
+            if (region == null)
+                return false;
+
+            try
+            {
+                _engine.MemUnmap(region.BaseAddress, region.Size);
+                _memoryRegions.Remove(region);
+                LastException = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LastException = $"Failed to unmap memory region: {ex.Message}";
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if a memory region would overlap with existing regions
+        /// </summary>
+        public MemoryRegion? FindOverlappingRegion(uint baseAddress, uint size)
+        {
+            uint endAddress = baseAddress + size;
+            return _memoryRegions.FirstOrDefault(r => 
+                (baseAddress < r.BaseAddress + r.Size && endAddress > r.BaseAddress));
+        }
+
+        /// <summary>
         /// Gets the current CPU state from the emulator
         /// </summary>
         public CpuState GetCpuState()
@@ -264,6 +300,27 @@ namespace Cpu32Emulator.Services
             try
             {
                 uint pc = (uint)_engine.RegRead(M68k.UC_M68K_REG_PC);
+                
+                // Check if PC points to mapped memory
+                var region = FindMemoryRegion(pc);
+                if (region == null)
+                {
+                    throw new InvalidOperationException($"PC (0x{pc:X8}) points to unmapped memory. No ROM/RAM loaded at this address.");
+                }
+                
+                // Try to read the instruction bytes for debugging
+                try
+                {
+                    var instructionBytes = ReadMemory(pc, 4); // Read up to 4 bytes
+                    var hexBytes = string.Join(" ", instructionBytes.Select(b => b.ToString("X2")));
+                    System.Diagnostics.Debug.WriteLine($"Attempting to execute instruction at 0x{pc:X8}: {hexBytes}");
+                }
+                catch (Exception readEx)
+                {
+                    throw new InvalidOperationException($"Cannot read instruction at PC (0x{pc:X8}): {readEx.Message}");
+                }
+                
+                // Execute the instruction
                 _engine.EmuStart(pc, 0, 0, 1); // Execute 1 instruction
                 LastException = null;
             }
@@ -306,11 +363,18 @@ namespace Cpu32Emulator.Services
 
             try
             {
-                // If we have a memory manager, use it for validation and statistics
-                if (_memoryManager != null)
+                // Check if address is in our mapped regions first
+                bool isMapped = _memoryRegions.Any(r => r.ContainsAddress(address));
+                
+                // If we have a memory manager and the address isn't in our regions, check with it
+                if (!isMapped && _memoryManager != null)
                 {
                     if (!_memoryManager.IsAddressMapped(address))
                         throw new InvalidOperationException($"Address 0x{address:X8} is not mapped");
+                }
+                else if (!isMapped)
+                {
+                    throw new InvalidOperationException($"Address 0x{address:X8} is not mapped");
                 }
 
                 var data = new byte[size];
