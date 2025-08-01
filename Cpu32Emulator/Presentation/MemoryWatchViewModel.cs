@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Cpu32Emulator.Services;
+using Cpu32Emulator.Models;
 
 namespace Cpu32Emulator.Presentation;
 
@@ -67,31 +68,33 @@ public partial class MemoryWatchViewModel : ObservableObject
         };
     }
 
-    public void RefreshValue(MemoryManagerService memoryManager)
+    public void RefreshValue(UnicornEmulatorService emulatorService)
     {
         try
         {
-            if (!memoryManager.IsAddressMapped(_numericAddress))
+            // Check if address is mapped by looking for a memory region containing it
+            var region = emulatorService.FindMemoryRegion(_numericAddress);
+            if (region == null)
             {
                 Value = "UNMAPPED";
                 CanWrite = false;
                 return;
             }
 
-            CanWrite = memoryManager.CanWrite(_numericAddress);
+            CanWrite = region.Type != MemoryRegionType.ROM;
 
             switch (_watchWidth)
             {
                 case MemoryWatchWidth.Byte:
-                    var byteValue = memoryManager.ReadByte(_numericAddress);
+                    var byteValue = emulatorService.ReadByte(_numericAddress);
                     Value = $"0x{byteValue:X2}";
                     break;
                 case MemoryWatchWidth.Word:
-                    var wordValue = memoryManager.ReadWord(_numericAddress);
+                    var wordValue = emulatorService.ReadWord(_numericAddress);
                     Value = $"0x{wordValue:X4}";
                     break;
                 case MemoryWatchWidth.Long:
-                    var longValue = memoryManager.ReadLong(_numericAddress);
+                    var longValue = emulatorService.ReadLong(_numericAddress);
                     Value = $"0x{longValue:X8}";
                     break;
             }
@@ -103,7 +106,7 @@ public partial class MemoryWatchViewModel : ObservableObject
         }
     }
 
-    public bool TrySetValue(string valueText, MemoryManagerService memoryManager)
+    public bool TrySetValue(string valueText, UnicornEmulatorService emulatorService)
     {
         try
         {
@@ -126,18 +129,18 @@ public partial class MemoryWatchViewModel : ObservableObject
             {
                 case MemoryWatchWidth.Byte:
                     if (numericValue > 0xFF) return false;
-                    memoryManager.WriteByte(_numericAddress, (byte)numericValue);
+                    emulatorService.WriteByte(_numericAddress, (byte)numericValue);
                     break;
                 case MemoryWatchWidth.Word:
                     if (numericValue > 0xFFFF) return false;
-                    memoryManager.WriteWord(_numericAddress, (ushort)numericValue);
+                    emulatorService.WriteWord(_numericAddress, (ushort)numericValue);
                     break;
                 case MemoryWatchWidth.Long:
-                    memoryManager.WriteLong(_numericAddress, numericValue);
+                    emulatorService.WriteLong(_numericAddress, numericValue);
                     break;
             }
 
-            RefreshValue(memoryManager);
+            RefreshValue(emulatorService);
             return true;
         }
         catch (Exception)

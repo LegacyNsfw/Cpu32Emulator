@@ -319,9 +319,10 @@ namespace Cpu32Emulator.Services
                 {
                     throw new InvalidOperationException($"Cannot read instruction at PC (0x{pc:X8}): {readEx.Message}");
                 }
-                
+
                 // Execute the instruction
-                _engine.EmuStart(pc, 0, 0, 1); // Execute 1 instruction
+                uint maxPc = region.BaseAddress + region.Size - 1;
+                _engine.EmuStart(pc, maxPc, 0, 1); // Execute 1 instruction
                 LastException = null;
             }
             catch (Exception ex)
@@ -437,9 +438,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public byte ReadByte(uint address)
         {
-            if (_memoryManager != null)
-                return _memoryManager.ReadByte(address);
-            
             return ReadMemory(address, 1)[0];
         }
 
@@ -448,12 +446,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public void WriteByte(uint address, byte value)
         {
-            if (_memoryManager != null)
-            {
-                _memoryManager.WriteByte(address, value);
-                return;
-            }
-            
             WriteMemory(address, new[] { value });
         }
 
@@ -462,9 +454,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public ushort ReadWord(uint address)
         {
-            if (_memoryManager != null)
-                return _memoryManager.ReadWord(address);
-            
             var data = ReadMemory(address, 2);
             return (ushort)((data[0] << 8) | data[1]);
         }
@@ -474,12 +463,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public void WriteWord(uint address, ushort value)
         {
-            if (_memoryManager != null)
-            {
-                _memoryManager.WriteWord(address, value);
-                return;
-            }
-            
             WriteMemory(address, new[] { (byte)(value >> 8), (byte)(value & 0xFF) });
         }
 
@@ -488,9 +471,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public uint ReadLong(uint address)
         {
-            if (_memoryManager != null)
-                return _memoryManager.ReadLong(address);
-            
             var data = ReadMemory(address, 4);
             return (uint)((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);
         }
@@ -500,12 +480,6 @@ namespace Cpu32Emulator.Services
         /// </summary>
         public void WriteLong(uint address, uint value)
         {
-            if (_memoryManager != null)
-            {
-                _memoryManager.WriteLong(address, value);
-                return;
-            }
-            
             WriteMemory(address, new[] { 
                 (byte)(value >> 24), 
                 (byte)((value >> 16) & 0xFF), 

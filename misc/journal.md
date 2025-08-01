@@ -182,7 +182,11 @@ Copilot/Claude couldn't fix that after 2 attempts, so:
 >
 > Also, see the instruction in the copilot.md file about how to build the application.
 
+## TO DO
 
+MemoryWatchViewModel should not depend on MemoryManagerService. Its RefreshValue member should read from the Unicorn emulator.
+
+# From Claude
 
 Claude added these on its own, but note the stepping still didn't work after each of them:
 

@@ -156,7 +156,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     private void InitializeEmulator()
-    {
+     {
         try
         {
             _emulatorService.Initialize();
@@ -290,7 +290,7 @@ public partial class MainViewModel : ObservableObject
                         watchConfig.Label ?? $"0x{watchConfig.Address:X8}", 
                         watchConfig.Address, 
                         memoryWatchWidth);
-                    watch.RefreshValue(_memoryManagerService);
+                    watch.RefreshValue(_emulatorService);
                     MemoryWatches.Add(watch);
                 }
 
@@ -441,7 +441,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Refreshes all memory watch values from the memory manager
+    /// Refreshes all memory watch values from the emulator
     /// </summary>
     public void RefreshAllMemoryWatches()
     {
@@ -449,7 +449,7 @@ public partial class MainViewModel : ObservableObject
         {
             foreach (var memWatch in MemoryWatches)
             {
-                memWatch.RefreshValue(_memoryManagerService);
+                memWatch.RefreshValue(_emulatorService);
             }
         }
         catch (Exception ex)
@@ -1289,7 +1289,7 @@ public partial class MainViewModel : ObservableObject
                             $"0x{watchConfig.Address:X8}", 
                             watchConfig.Address, 
                             memoryWatchWidth);
-                        watch.RefreshValue(_memoryManagerService);
+                        watch.RefreshValue(_emulatorService);
                         MemoryWatches.Add(watch);
                     }
 
@@ -2034,7 +2034,7 @@ public partial class MainViewModel : ObservableObject
                 if (TryParseRegisterValue(addressText, out uint newAddress))
                 {
                     memoryWatch.SetAddress(newAddress);
-                    memoryWatch.RefreshValue(_memoryManagerService);
+                    memoryWatch.RefreshValue(_emulatorService);
                     StatusMessage = $"Memory watch address updated to 0x{newAddress:X8}";
                 }
                 else
@@ -2081,7 +2081,7 @@ public partial class MainViewModel : ObservableObject
             {
                 var valueText = textBox.Text ?? "";
 
-                if (memoryWatch.TrySetValue(valueText, _memoryManagerService))
+                if (memoryWatch.TrySetValue(valueText, _emulatorService))
                 {
                     StatusMessage = $"Memory value updated at 0x{memoryWatch.GetNumericAddress():X8}";
                 }
@@ -2149,7 +2149,7 @@ public partial class MainViewModel : ObservableObject
                 if (TryParseRegisterValue(addressText, out uint address))
                 {
                     var newWatch = new MemoryWatchViewModel($"0x{address:X8}", address, dataWidth);
-                    newWatch.RefreshValue(_memoryManagerService);
+                    newWatch.RefreshValue(_emulatorService);
                     MemoryWatches.Add(newWatch);
                     StatusMessage = $"Added memory watch at 0x{address:X8}";
                 }
@@ -2207,7 +2207,7 @@ public partial class MainViewModel : ObservableObject
                 if (newWidth != memoryWatch.GetWidth())
                 {
                     memoryWatch.SetWidth(newWidth);
-                    memoryWatch.RefreshValue(_memoryManagerService);
+                    memoryWatch.RefreshValue(_emulatorService);
                     StatusMessage = $"Changed data width to {newWidth}";
                 }
             }
