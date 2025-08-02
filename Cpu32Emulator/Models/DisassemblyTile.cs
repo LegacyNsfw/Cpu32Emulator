@@ -50,7 +50,7 @@ namespace Cpu32Emulator.Models
         /// <summary>
         /// The source entries used to generate this tile
         /// </summary>
-        public List<LstEntry> SourceEntries { get; set; } = new();
+        public List<AssemblyEntry> SourceEntries { get; set; } = new();
 
         /// <summary>
         /// Gets whether this tile contains the specified address

@@ -335,11 +335,11 @@ public partial class MainViewModel : ObservableObject
         {
             var text = await File.ReadAllTextAsync(filePath);
             var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            var entries = new List<LstEntry>();
+            var entries = new List<AssemblyEntry>();
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var entry = LstEntry.ParseLine(lines[i].Trim(), i + 1);
+                var entry = AssemblyEntry.ParseLstLine(lines[i].Trim(), i + 1);
                 if (entry != null)
                 {
                     entries.Add(entry);
@@ -367,6 +367,72 @@ public partial class MainViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load LST file internally: {Path}", filePath);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Internal method to load and parse a dump file without UI dialogs
+    /// </summary>
+    private async Task LoadDumpFileInternal(string filePath)
+    {
+        try
+        {
+            var text = await File.ReadAllTextAsync(filePath);
+            var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var entries = new List<AssemblyEntry>();
+            var inDisassemblySection = false;
+            var currentSection = "";
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                
+                // Look for the start of disassembly sections
+                if (line.StartsWith("Disassembly of section"))
+                {
+                    inDisassemblySection = true;
+                    // Extract section name
+                    var sectionMatch = System.Text.RegularExpressions.Regex.Match(line, @"Disassembly of section ([^:]+):");
+                    if (sectionMatch.Success)
+                    {
+                        currentSection = sectionMatch.Groups[1].Value;
+                    }
+                    continue;
+                }
+
+                // Skip lines until we're in a disassembly section
+                if (!inDisassemblySection)
+                    continue;
+
+                var entry = AssemblyEntry.ParseDumpLine(line, i + 1, currentSection);
+                if (entry != null)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                _disassemblyService.LoadEntries(entries, filePath);
+                
+                // Refresh the disassembly display if we have entries
+                var currentPc = GetCurrentPcValue();
+                if (currentPc != 0)
+                {
+                    RefreshDisassemblyWindow(currentPc);
+                }
+                else
+                {
+                    RefreshDisassemblyDisplay();
+                }
+                
+                _logger.LogInformation("Dump file parsed successfully: {Count} entries loaded", entries.Count);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load dump file internally: {Path}", filePath);
             throw;
         }
     }
@@ -1946,6 +2012,66 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task LoadDump()
+    {
+        _logger.LogInformation("Load Dump command executed");
+        StatusMessage = "Loading dump file...";
+        
+        try
+        {
+            var picker = new FileOpenPicker();
+            var window = Microsoft.UI.Xaml.Window.Current ??
+                        ((App)Microsoft.UI.Xaml.Application.Current).MainWindow;
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, 
+                WinRT.Interop.WindowNative.GetWindowHandle(window));
+
+            picker.FileTypeFilter.Add(".dump");
+            picker.FileTypeFilter.Add(".dump.txt");
+            picker.SuggestedStartLocation = PickerLocationId.Desktop;
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                await LoadDumpFile(file);
+            }
+            else
+            {
+                StatusMessage = "Dump file selection cancelled";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load dump file");
+            StatusMessage = $"Error loading dump file: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task ReloadDump()
+    {
+        _logger.LogInformation("Reload Dump command executed");
+        StatusMessage = "Reloading dump file...";
+        
+        if (!string.IsNullOrEmpty(_disassemblyService.LoadedFilePath))
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(_disassemblyService.LoadedFilePath);
+                await LoadDumpFile(file);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to reload dump file");
+                StatusMessage = $"Error reloading dump file: {ex.Message}";
+            }
+        }
+        else
+        {
+            StatusMessage = "No dump file to reload";
+        }
+    }
+
     /// <summary>
     /// Loads and parses an LST file
     /// </summary>
@@ -1959,12 +2085,12 @@ public partial class MainViewModel : ObservableObject
 
             StatusMessage = "Parsing LST file, step 1...";
             var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            var entries = new List<LstEntry>();
+            var entries = new List<AssemblyEntry>();
 
             StatusMessage = "Parsing LST file, step 2...";
             for (int i = 0; i < lines.Length; i++)
             {
-                var entry = LstEntry.ParseLine(lines[i].Trim(), i + 1);
+                var entry = AssemblyEntry.ParseLstLine(lines[i].Trim(), i + 1);
                 if (entry != null)
                 {
                     entries.Add(entry);
@@ -2000,6 +2126,84 @@ public partial class MainViewModel : ObservableObject
         {
             _logger.LogError(ex, "Failed to parse LST file");
             StatusMessage = $"Error parsing LST file: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Loads and parses a dump file
+    /// </summary>
+    private async Task LoadDumpFile(StorageFile file)
+    {
+        try
+        {
+            StatusMessage = $"Loading dump file: {file.Name}...";
+            
+            var text = await FileIO.ReadTextAsync(file);
+
+            StatusMessage = "Parsing dump file, step 1...";
+            var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            var entries = new List<AssemblyEntry>();
+            var inDisassemblySection = false;
+            var currentSection = "";
+
+            StatusMessage = "Parsing dump file, step 2...";
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                
+                // Look for the start of disassembly sections
+                if (line.StartsWith("Disassembly of section"))
+                {
+                    inDisassemblySection = true;
+                    // Extract section name
+                    var sectionMatch = System.Text.RegularExpressions.Regex.Match(line, @"Disassembly of section ([^:]+):");
+                    if (sectionMatch.Success)
+                    {
+                        currentSection = sectionMatch.Groups[1].Value;
+                    }
+                    continue;
+                }
+
+                // Skip lines until we're in a disassembly section
+                if (!inDisassemblySection)
+                    continue;
+
+                var entry = AssemblyEntry.ParseDumpLine(line, i + 1, currentSection);
+                if (entry != null)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            if (entries.Count > 0)
+            {
+                StatusMessage = "Rebuilding address map...";
+                _disassemblyService.LoadEntries(entries, file.Path);
+                LoadedLstPath = file.Path; // Reusing the same property for now
+                HasUnsavedChanges = true;
+
+                // Update project if one is loaded
+                if (_projectService.CurrentProject != null)
+                {
+                    _projectService.CurrentProject.LstFilePath = file.Path; // Reusing the same property for now
+                    _projectService.CurrentProject.MarkAsModified();
+                }
+                
+                // Only show a window around the current PC instead of all entries
+                RefreshDisassemblyDisplay();
+                
+                StatusMessage = $"Dump file loaded: {entries.Count} entries from {file.Name}";
+                _logger.LogInformation("Dump file loaded with {Count} entries", entries.Count);
+            }
+            else
+            {
+                StatusMessage = "No valid entries found in dump file";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to parse dump file");
+            StatusMessage = $"Error parsing dump file: {ex.Message}";
         }
     }
 

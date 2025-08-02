@@ -10,8 +10,8 @@ namespace Cpu32Emulator.Services
     /// </summary>
     public class DisassemblyService
     {
-        private List<LstEntry> _entries = new();
-        private Dictionary<uint, LstEntry> _addressMap = new();
+        private List<AssemblyEntry> _entries = new();
+        private Dictionary<uint, AssemblyEntry> _addressMap = new();
         private string? _loadedFilePath;
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets all disassembly entries
         /// </summary>
-        public IReadOnlyList<LstEntry> Entries => _entries.AsReadOnly();
+        public IReadOnlyList<AssemblyEntry> Entries => _entries.AsReadOnly();
 
         /// <summary>
         /// Gets the total number of entries
@@ -37,7 +37,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Loads disassembly entries from an LST file
         /// </summary>
-        public void LoadEntries(List<LstEntry> entries, string filePath)
+        public void LoadEntries(List<AssemblyEntry> entries, string filePath)
         {
             _entries = entries ?? throw new ArgumentNullException(nameof(entries));
             _loadedFilePath = filePath;
@@ -57,7 +57,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Finds an entry by address
         /// </summary>
-        public LstEntry? FindEntryByAddress(uint address)
+        public AssemblyEntry? FindEntryByAddress(uint address)
         {
             return _addressMap.TryGetValue(address, out var entry) ? entry : null;
         }
@@ -65,7 +65,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets entries within a specific address range
         /// </summary>
-        public List<LstEntry> GetEntriesInRange(uint startAddress, uint endAddress)
+        public List<AssemblyEntry> GetEntriesInRange(uint startAddress, uint endAddress)
         {
             return _entries
                 .Where(e => e.Address >= startAddress && e.Address <= endAddress)
@@ -76,7 +76,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets entries around a specific address for display purposes
         /// </summary>
-        public List<LstEntry> GetEntriesAroundAddress(uint address, int contextLines = 10)
+        public List<AssemblyEntry> GetEntriesAroundAddress(uint address, int contextLines = 10)
         {
             var targetEntry = FindEntryByAddress(address);
             if (targetEntry == null)
@@ -89,7 +89,7 @@ namespace Cpu32Emulator.Services
             }
 
             if (targetEntry == null)
-                return new List<LstEntry>();
+                return new List<AssemblyEntry>();
 
             var targetIndex = _entries.IndexOf(targetEntry);
             var startIndex = Math.Max(0, targetIndex - contextLines);
@@ -102,7 +102,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets the next instruction entry after the given address
         /// </summary>
-        public LstEntry? GetNextInstruction(uint address)
+        public AssemblyEntry? GetNextInstruction(uint address)
         {
             return _entries
                 .Where(e => e.Address > address && e.IsInstruction)
@@ -113,7 +113,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets the previous instruction entry before the given address
         /// </summary>
-        public LstEntry? GetPreviousInstruction(uint address)
+        public AssemblyEntry? GetPreviousInstruction(uint address)
         {
             return _entries
                 .Where(e => e.Address < address && e.IsInstruction)
@@ -124,7 +124,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Finds all symbols (labels) in the disassembly
         /// </summary>
-        public List<LstEntry> GetAllSymbols()
+        public List<AssemblyEntry> GetAllSymbols()
         {
             return _entries
                 .Where(e => e.HasSymbol)
@@ -135,7 +135,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Finds a symbol by name
         /// </summary>
-        public LstEntry? FindSymbol(string symbolName)
+        public AssemblyEntry? FindSymbol(string symbolName)
         {
             if (string.IsNullOrWhiteSpace(symbolName))
                 return null;
@@ -147,10 +147,10 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets entries for a specific segment
         /// </summary>
-        public List<LstEntry> GetEntriesForSegment(string segmentName)
+        public List<AssemblyEntry> GetEntriesForSegment(string segmentName)
         {
             if (string.IsNullOrWhiteSpace(segmentName))
-                return new List<LstEntry>();
+                return new List<AssemblyEntry>();
 
             return _entries
                 .Where(e => string.Equals(e.SegmentName, segmentName, StringComparison.OrdinalIgnoreCase))
@@ -242,14 +242,14 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Gets a page of entries for display purposes
         /// </summary>
-        public List<LstEntry> GetPage(int pageIndex, int pageSize)
+        public List<AssemblyEntry> GetPage(int pageIndex, int pageSize)
         {
             if (pageIndex < 0 || pageSize <= 0)
-                return new List<LstEntry>();
+                return new List<AssemblyEntry>();
 
             var startIndex = pageIndex * pageSize;
             if (startIndex >= _entries.Count)
-                return new List<LstEntry>();
+                return new List<AssemblyEntry>();
 
             var count = Math.Min(pageSize, _entries.Count - startIndex);
             return _entries.GetRange(startIndex, count);

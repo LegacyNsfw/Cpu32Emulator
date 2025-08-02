@@ -52,7 +52,7 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Loads an LST file and parses it into entries
         /// </summary>
-        public async Task<List<LstEntry>> LoadLstFileAsync(string filePath)
+        public async Task<List<AssemblyEntry>> LoadLstFileAsync(string filePath)
         {
             return await Task.Run(() => LoadLstFile(filePath));
         }
@@ -60,17 +60,70 @@ namespace Cpu32Emulator.Services
         /// <summary>
         /// Loads an LST file and parses it into entries (synchronous)
         /// </summary>
-        public List<LstEntry> LoadLstFile(string filePath)
+        public List<AssemblyEntry> LoadLstFile(string filePath)
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"LST file not found: {filePath}");
 
-            var entries = new List<LstEntry>();
+            var entries = new List<AssemblyEntry>();
             var lines = File.ReadAllLines(filePath);
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var entry = LstEntry.ParseLine(lines[i], i + 1);
+                var entry = AssemblyEntry.ParseLstLine(lines[i], i + 1);
+                if (entry != null)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            return entries;
+        }
+
+        /// <summary>
+        /// Loads a dump file and parses it into entries
+        /// </summary>
+        public async Task<List<AssemblyEntry>> LoadDumpFileAsync(string filePath)
+        {
+            return await Task.Run(() => LoadDumpFile(filePath));
+        }
+
+        /// <summary>
+        /// Loads a dump file and parses it into entries (synchronous)
+        /// </summary>
+        public List<AssemblyEntry> LoadDumpFile(string filePath)
+        {
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"Dump file not found: {filePath}");
+
+            var entries = new List<AssemblyEntry>();
+            var lines = File.ReadAllLines(filePath);
+            var inDisassemblySection = false;
+            var currentSection = "";
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                
+                // Look for the start of disassembly sections
+                if (line.StartsWith("Disassembly of section"))
+                {
+                    inDisassemblySection = true;
+                    // Extract section name (e.g., "Disassembly of section .kernel_code:" -> ".kernel_code")
+                    var sectionMatch = System.Text.RegularExpressions.Regex.Match(line, @"Disassembly of section ([^:]+):");
+                    if (sectionMatch.Success)
+                    {
+                        currentSection = sectionMatch.Groups[1].Value;
+                    }
+                    continue;
+                }
+
+                // Skip lines until we're in a disassembly section
+                if (!inDisassemblySection)
+                    continue;
+
+                // Try to parse the line as a dump entry
+                var entry = AssemblyEntry.ParseDumpLine(line, i + 1, currentSection);
                 if (entry != null)
                 {
                     entries.Add(entry);

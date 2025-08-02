@@ -3,15 +3,20 @@ using System;
 namespace Cpu32Emulator.Models
 {
     /// <summary>
-    /// Represents a single entry from an LST file
+    /// Represents a single entry from an LST or dump file
     /// </summary>
-    public class LstEntry
+    public class AssemblyEntry
     {
         public string SegmentName { get; set; } = string.Empty;
         public uint Address { get; set; }
         public string? SymbolName { get; set; }
         public string Instruction { get; set; } = string.Empty;
         public int LineNumber { get; set; }
+        
+        /// <summary>
+        /// Raw hex bytes from dump file (e.g., "4fef ffe8")
+        /// </summary>
+        public string? HexBytes { get; set; }
 
         /// <summary>
         /// Gets whether this entry has a symbol
@@ -43,7 +48,7 @@ namespace Cpu32Emulator.Models
         /// Parses an LST file line into an LstEntry
         /// Format: segment:address\tsymbol\tinstruction
         /// </summary>
-        public static LstEntry? ParseLine(string line, int lineNumber)
+        public static AssemblyEntry? ParseLstLine(string line, int lineNumber)
         {
             if (string.IsNullOrWhiteSpace(line))
                 return null;
@@ -68,7 +73,7 @@ namespace Cpu32Emulator.Models
                 if (!uint.TryParse(addressText, System.Globalization.NumberStyles.HexNumber, null, out uint address))
                     return null;
 
-                var entry = new LstEntry
+                var entry = new AssemblyEntry
                 {
                     SegmentName = segmentName,
                     Address = address,
@@ -85,6 +90,71 @@ namespace Cpu32Emulator.Models
                 if (parts.Length > 2 && !string.IsNullOrWhiteSpace(parts[2]))
                 {
                     entry.Instruction = parts[2].Trim();
+                }
+
+                return entry;
+            }
+            catch
+            {
+                // If parsing fails, return null
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Parses a dump file line into an AssemblyEntry
+        /// Format: "  address:\thex_bytes\tinstruction"
+        /// Example: "  ff8000:\t4fef ffe8      \tlea %sp@(-24),%sp"
+        /// </summary>
+        public static AssemblyEntry? ParseDumpLine(string line, int lineNumber, string currentSection = "")
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                return null;
+
+            try
+            {
+                // Skip lines that don't start with spaces and hex address
+                if (!line.StartsWith("  "))
+                    return null;
+
+                // Find the colon that separates address from the rest
+                var colonIndex = line.IndexOf(':');
+                if (colonIndex == -1)
+                    return null;
+
+                // Extract address (remove leading spaces)
+                var addressText = line.Substring(0, colonIndex).Trim();
+                if (!uint.TryParse(addressText, System.Globalization.NumberStyles.HexNumber, null, out uint address))
+                    return null;
+
+                // Get the rest after the colon
+                var remainder = line.Substring(colonIndex + 1);
+                
+                // Split by tab to separate hex bytes from instruction
+                var tabIndex = remainder.IndexOf('\t', 1); // Start from 1 to skip the first tab
+                if (tabIndex == -1)
+                    return null;
+
+                // Extract hex bytes (between first tab and second tab)
+                var hexBytes = remainder.Substring(0, tabIndex).Trim();
+                
+                // Extract instruction (after the hex bytes and variable spaces)
+                var instruction = remainder.Substring(tabIndex + 1).Trim();
+
+                var entry = new AssemblyEntry
+                {
+                    SegmentName = currentSection,
+                    Address = address,
+                    LineNumber = lineNumber,
+                    HexBytes = hexBytes,
+                    Instruction = instruction
+                };
+
+                // Check if the instruction contains a symbol reference (e.g., "jsr ff8bdc <ScratchWatchdog>")
+                var symbolMatch = System.Text.RegularExpressions.Regex.Match(instruction, @"<([^>]+)>");
+                if (symbolMatch.Success)
+                {
+                    entry.SymbolName = symbolMatch.Groups[1].Value;
                 }
 
                 return entry;
@@ -130,7 +200,7 @@ namespace Cpu32Emulator.Models
 
         public override bool Equals(object? obj)
         {
-            return obj is LstEntry other && 
+            return obj is AssemblyEntry other && 
                    SegmentName == other.SegmentName && 
                    Address == other.Address;
         }

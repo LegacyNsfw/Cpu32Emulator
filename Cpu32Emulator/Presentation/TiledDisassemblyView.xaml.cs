@@ -22,7 +22,6 @@ namespace Cpu32Emulator.Presentation
     {
         private DisassemblyTileManager? _tileManager;
         private readonly List<Image> _visibleTileImages = new();
-        private uint _currentAddress;
         private bool _isInitialized;
         private readonly SemaphoreSlim _uiUpdateSemaphore = new(1, 1); // Prevent concurrent UI updates
         private bool _disposed;
@@ -65,7 +64,7 @@ namespace Cpu32Emulator.Presentation
             set => SetValue(CurrentAddressProperty, value);
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged; // required by INotifyPropertyChanged
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -188,7 +187,7 @@ namespace Cpu32Emulator.Presentation
                 var sampleEntries = ItemsSource.Take(20).ToList();
                 
                 // Convert DisassemblyLineViewModel to LstEntry for the tile manager
-                var lstEntries = sampleEntries.Select(line => new LstEntry
+                var lstEntries = sampleEntries.Select(line => new AssemblyEntry
                 {
                     Address = ParseAddress(line.Address),
                     SymbolName = string.IsNullOrEmpty(line.Symbol) ? null : line.Symbol,

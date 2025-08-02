@@ -1,0 +1,2580 @@
+
+Kernel-P01.elf:     file format elf32-m68k
+Kernel-P01.elf
+architecture: m68k:cpu32, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x12340000
+
+Program Header:
+    LOAD off    0x00002000 vaddr 0x00ff8000 paddr 0x00ff8000 align 2**13
+         filesz 0x00003362 memsz 0x00003362 flags rwx
+    LOAD off    0x00006000 vaddr 0x12340000 paddr 0x12340000 align 2**13
+         filesz 0x00000015 memsz 0x00000015 flags r-x
+private flags = 810000: [cpu32]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .kernel_code  00001ed2  00ff8000  00ff8000  00002000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .text         00000015  12340000  12340000  00006000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .kernel_data  00001490  00ff9ed2  00ff9ed2  00003ed2  2**1
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .comment      00000011  00000000  00000000  00006015  2**0
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+00ff8000 l    d  .kernel_code	00000000 .kernel_code
+12340000 l    d  .text	00000000 .text
+00ff9ed2 l    d  .kernel_data	00000000 .kernel_data
+00000000 l    d  .comment	00000000 .comment
+00000000 l    df *ABS*	00000000 Kernel-P01.c
+00000000 l    df *ABS*	00000000 crc.c
+00000000 l    df *ABS*	00000000 common.c
+00000000 l    df *ABS*	00000000 common-readwrite.c
+00000000 l    df *ABS*	00000000 flash-intel.c
+00000000 l    df *ABS*	00000000 flash-amd.c
+00000000 l    df *ABS*	00000000 main.c
+00000000 l    df *ABS*	00000000 
+00ff9a6c g     F .kernel_code	00000158 Intel_WriteToFlash
+00ff8d8c g     F .kernel_code	000001b0 WriteMessage
+00ff8c18 g     F .kernel_code	0000003c PrivateSleep
+00ff8f3c g     F .kernel_code	00000140 ReadMessage
+00ff8aa4 g     F .kernel_code	00000024 crcIsStarted
+00ff8b18 g     F .kernel_code	000000c4 crcProcessSlice
+00ff8ac8 g     F .kernel_code	0000002a crcIsDone
+00ffb35e g     O .kernel_data	00000004 breadcrumbs
+00ff9370 g     F .kernel_code	0000010a HandleReadMode35
+00ff921c g     F .kernel_code	0000003a StartChecksum
+00ff8218 g     F .kernel_code	000000cc HandleFlashChipQuery
+00ff8b10 g     F .kernel_code	00000008 crcGetResult
+00ff996e g     F .kernel_code	0000004e Intel_GetFlashId
+00ff9bc4 g     F .kernel_code	00000094 Amd_GetFlashId
+00ff8bdc g     F .kernel_code	00000032 ScratchWatchdog
+00ff872e g     F .kernel_code	00000074 WriteToFlash
+00ff99bc g     F .kernel_code	000000b0 Intel_EraseBlock
+00ffa2e2 g     O .kernel_data	00000004 crcRemainder
+00ff8c74 g     F .kernel_code	00000012 VariableSleep
+00ff9568 g     F .kernel_code	0000004e SendWriteSuccess
+00ff8a12 g     F .kernel_code	0000001a crcReset
+00ff90ba g     F .kernel_code	00000086 Reboot
+00ff8c64 g     F .kernel_code	00000010 ElmSleep
+00ffb2fa g     O .kernel_data	00000064 BreadcrumbBuffer
+00ff9618 g     F .kernel_code	000002c6 HandleWriteMode36
+00ff98e0 g     F .kernel_code	0000008e FlashUnlock
+00ffa2e6 g     O .kernel_data	00001014 MessageBuffer
+00ff86b2 g     F .kernel_code	0000007c HandleDebugQuery
+12340000 g     F .text	00000002 _start
+00ff8c0e g     F .kernel_code	0000000a WasteTime
+00ff9ed2 g     O .kernel_data	00000004 flashIdentifier
+00ff9140 g     F .kernel_code	00000078 SendToolPresent
+00ff947a g     F .kernel_code	000000ee HandleWriteRequestMode34
+00ff930e g     F .kernel_code	00000062 HandleVersionQuery
+00ffa2d6 g     O .kernel_data	00000004 crcStartAddress
+00ff8984 g     F .kernel_code	0000008e crcInit
+00ffa2de g     O .kernel_data	00000004 crcIndex
+00ff8d0a g     F .kernel_code	00000082 WriteByte
+00ff8cec g     F .kernel_code	0000001e ClearBreadcrumbBuffer
+00ff92d6 g     F .kernel_code	00000038 SetBlockChecksum
+00ff9d96 g     F .kernel_code	0000013c Amd_WriteToFlash
+00ff84f0 g     F .kernel_code	00000088 HandleOperatingSystemQuery
+00ff8af2 g     F .kernel_code	0000001e crcStart
+00ff95b6 g     F .kernel_code	00000062 SendWriteFail
+00ff87a2 g     F .kernel_code	000001e0 ProcessMessage
+00ff9c58 g     F .kernel_code	0000013e Amd_EraseBlock
+00ffa2da g     O .kernel_data	00000004 crcLength
+00ff8a2c g     F .kernel_code	00000078 crcFast
+00ff907c g     F .kernel_code	0000003e CopyToMessageBuffer
+00ff9ed6 g     O .kernel_data	00000400 crcTable
+00ff91b8 g     F .kernel_code	00000064 SendToolPresent2
+00ff9256 g     F .kernel_code	00000080 AddReadPayloadChecksum
+00ff8000 g     F .kernel_code	0000015e KernelStart
+00ff82e4 g     F .kernel_code	0000020c HandleCrcQuery
+00ff8662 g     F .kernel_code	00000050 HandleEraseEverythingRequest
+00ff8c54 g     F .kernel_code	00000010 LongSleepWithWatchdog
+00ff8c86 g     F .kernel_code	00000066 ClearMessageBuffer
+00ff8578 g     F .kernel_code	000000ea HandleEraseBlock
+00ff8160 g     F .kernel_code	000000b8 SendReply
+
+
+
+Disassembly of section .kernel_code:
+
+00ff8000 <KernelStart>:
+  ff8000:	4fef ffe8      	lea %sp@(-24),%sp
+  ff8004:	007c 0700      	oriw #1792,%sr
+  ff8008:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff800e:	203c 00ff f606 	movel #16774662,%d0
+  ff8014:	2040           	moveal %d0,%a0
+  ff8016:	4210           	clrb %a0@
+  ff8018:	4eb9 00ff 8984 	jsr ff8984 <crcInit>
+  ff801e:	203c 00ff f60c 	movel #16774668,%d0
+  ff8024:	2040           	moveal %d0,%a0
+  ff8026:	10bc 0003      	moveb #3,%a0@
+  ff802a:	203c 00ff f60d 	movel #16774669,%d0
+  ff8030:	2040           	moveal %d0,%a0
+  ff8032:	4210           	clrb %a0@
+  ff8034:	4eb9 00ff 8c86 	jsr ff8c86 <ClearMessageBuffer>
+  ff803a:	4eb9 00ff 8c0e 	jsr ff8c0e <WasteTime>
+  ff8040:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff8046:	42a7           	clrl %sp@-
+  ff8048:	4eb9 00ff 9568 	jsr ff9568 <SendWriteSuccess>
+  ff804e:	588f           	addql #4,%sp
+  ff8050:	4878 0004      	pea 4 <KernelStart-0xff7ffc>
+  ff8054:	4878 0003      	pea 3 <KernelStart-0xff7ffd>
+  ff8058:	4878 0002      	pea 2 <KernelStart-0xff7ffe>
+  ff805c:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff8060:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff8066:	508f           	addql #8,%sp
+  ff8068:	508f           	addql #8,%sp
+  ff806a:	4eb9 00ff 8c54 	jsr ff8c54 <LongSleepWithWatchdog>
+  ff8070:	42af 0014      	clrl %sp@(20)
+  ff8074:	2f7c 0000 09c4 	movel #2500,%sp@(12)
+  ff807a:	000c 
+  ff807c:	202f 0014      	movel %sp@(20),%d0
+  ff8080:	90af 000c      	subl %sp@(12),%d0
+  ff8084:	2200           	movel %d0,%d1
+  ff8086:	5281           	addql #1,%d1
+  ff8088:	2f41 0008      	movel %d1,%sp@(8)
+  ff808c:	202f 0014      	movel %sp@(20),%d0
+  ff8090:	90af 000c      	subl %sp@(12),%d0
+  ff8094:	2f40 0010      	movel %d0,%sp@(16)
+  ff8098:	52af 0014      	addql #1,%sp@(20)
+  ff809c:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff80a2:	50ef 0003      	st %sp@(3)
+  ff80a6:	50ef 0002      	st %sp@(2)
+  ff80aa:	200f           	movel %sp,%d0
+  ff80ac:	5480           	addql #2,%d0
+  ff80ae:	2f00           	movel %d0,%sp@-
+  ff80b0:	200f           	movel %sp,%d0
+  ff80b2:	5e80           	addql #7,%d0
+  ff80b4:	2f00           	movel %d0,%sp@-
+  ff80b6:	4eb9 00ff 8f3c 	jsr ff8f3c <ReadMessage>
+  ff80bc:	508f           	addql #8,%sp
+  ff80be:	2f40 0004      	movel %d0,%sp@(4)
+  ff80c2:	4aaf 0004      	tstl %sp@(4)
+  ff80c6:	6632           	bnes ff80fa <KernelStart+0xfa>
+  ff80c8:	202f 0010      	movel %sp@(16),%d0
+  ff80cc:	d0af 000c      	addl %sp@(12),%d0
+  ff80d0:	b0af 0014      	cmpl %sp@(20),%d0
+  ff80d4:	6422           	bccs ff80f8 <KernelStart+0xf8>
+  ff80d6:	4878 0077      	pea 77 <KernelStart-0xff7f89>
+  ff80da:	4878 0066      	pea 66 <KernelStart-0xff7f9a>
+  ff80de:	4878 0073      	pea 73 <KernelStart-0xff7f8d>
+  ff80e2:	4878 006e      	pea 6e <KernelStart-0xff7f92>
+  ff80e6:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff80ec:	508f           	addql #8,%sp
+  ff80ee:	508f           	addql #8,%sp
+  ff80f0:	2f6f 0014 0010 	movel %sp@(20),%sp@(16)
+  ff80f6:	6062           	bras ff815a <KernelStart+0x15a>
+  ff80f8:	6060           	bras ff815a <KernelStart+0x15a>
+  ff80fa:	102f 0003      	moveb %sp@(3),%d0
+  ff80fe:	49c0           	extbl %d0
+  ff8100:	7230           	moveq #48,%d1
+  ff8102:	c081           	andl %d1,%d0
+  ff8104:	4a80           	tstl %d0
+  ff8106:	6702           	beqs ff810a <KernelStart+0x10a>
+  ff8108:	6050           	bras ff815a <KernelStart+0x15a>
+  ff810a:	102f 0002      	moveb %sp@(2),%d0
+  ff810e:	0c00 0001      	cmpib #1,%d0
+  ff8112:	672c           	beqs ff8140 <KernelStart+0x140>
+  ff8114:	102f 0002      	moveb %sp@(2),%d0
+  ff8118:	4281           	clrl %d1
+  ff811a:	1200           	moveb %d0,%d1
+  ff811c:	102f 0002      	moveb %sp@(2),%d0
+  ff8120:	1000           	moveb %d0,%d0
+  ff8122:	0280 0000 00ff 	andil #255,%d0
+  ff8128:	2f01           	movel %d1,%sp@-
+  ff812a:	2f00           	movel %d0,%sp@-
+  ff812c:	4878 00bb      	pea bb <KernelStart-0xff7f45>
+  ff8130:	4878 00bb      	pea bb <KernelStart-0xff7f45>
+  ff8134:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff813a:	508f           	addql #8,%sp
+  ff813c:	508f           	addql #8,%sp
+  ff813e:	601a           	bras ff815a <KernelStart+0x15a>
+  ff8140:	2f6f 0014 0008 	movel %sp@(20),%sp@(8)
+  ff8146:	2f6f 0014 0010 	movel %sp@(20),%sp@(16)
+  ff814c:	202f 0014      	movel %sp@(20),%d0
+  ff8150:	2f00           	movel %d0,%sp@-
+  ff8152:	4eb9 00ff 87a2 	jsr ff87a2 <ProcessMessage>
+  ff8158:	588f           	addql #4,%sp
+  ff815a:	6000 ff3c      	braw ff8098 <KernelStart+0x98>
+	...
+
+00ff8160 <SendReply>:
+  ff8160:	518f           	subql #8,%sp
+  ff8162:	2f02           	movel %d2,%sp@-
+  ff8164:	226f 0010      	moveal %sp@(16),%a1
+  ff8168:	206f 0014      	moveal %sp@(20),%a0
+  ff816c:	222f 0018      	movel %sp@(24),%d1
+  ff8170:	202f 001c      	movel %sp@(28),%d0
+  ff8174:	3409           	movew %a1,%d2
+  ff8176:	1f42 000a      	moveb %d2,%sp@(10)
+  ff817a:	3408           	movew %a0,%d2
+  ff817c:	1f42 0008      	moveb %d2,%sp@(8)
+  ff8180:	1f41 0006      	moveb %d1,%sp@(6)
+  ff8184:	1f40 0004      	moveb %d0,%sp@(4)
+  ff8188:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff818e:	a2e6 
+  ff8190:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff8196:	a2e7 
+  ff8198:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff819e:	a2e8 
+  ff81a0:	4a2f 000a      	tstb %sp@(10)
+  ff81a4:	6722           	beqs ff81c8 <SendReply+0x68>
+  ff81a6:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff81ac:	a2e9 
+  ff81ae:	13ef 0008 00ff 	moveb %sp@(8),ffa2ea <MessageBuffer+0x4>
+  ff81b4:	a2ea 
+  ff81b6:	13ef 0006 00ff 	moveb %sp@(6),ffa2eb <MessageBuffer+0x5>
+  ff81bc:	a2eb 
+  ff81be:	13ef 0004 00ff 	moveb %sp@(4),ffa2ec <MessageBuffer+0x6>
+  ff81c4:	a2ec 
+  ff81c6:	6028           	bras ff81f0 <SendReply+0x90>
+  ff81c8:	13fc 007f 00ff 	moveb #127,ffa2e9 <MessageBuffer+0x3>
+  ff81ce:	a2e9 
+  ff81d0:	13fc 003d 00ff 	moveb #61,ffa2ea <MessageBuffer+0x4>
+  ff81d6:	a2ea 
+  ff81d8:	13ef 0008 00ff 	moveb %sp@(8),ffa2eb <MessageBuffer+0x5>
+  ff81de:	a2eb 
+  ff81e0:	13ef 0006 00ff 	moveb %sp@(6),ffa2ec <MessageBuffer+0x6>
+  ff81e6:	a2ec 
+  ff81e8:	13ef 0004 00ff 	moveb %sp@(4),ffa2ed <MessageBuffer+0x7>
+  ff81ee:	a2ed 
+  ff81f0:	4a2f 000a      	tstb %sp@(10)
+  ff81f4:	6704           	beqs ff81fa <SendReply+0x9a>
+  ff81f6:	7007           	moveq #7,%d0
+  ff81f8:	6002           	bras ff81fc <SendReply+0x9c>
+  ff81fa:	7008           	moveq #8,%d0
+  ff81fc:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff8200:	2f00           	movel %d0,%sp@-
+  ff8202:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff8208:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff820e:	508f           	addql #8,%sp
+  ff8210:	588f           	addql #4,%sp
+  ff8212:	241f           	movel %sp@+,%d2
+  ff8214:	508f           	addql #8,%sp
+  ff8216:	4e75           	rts
+
+00ff8218 <HandleFlashChipQuery>:
+  ff8218:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff821e:	4eb9 00ff 996e 	jsr ff996e <Intel_GetFlashId>
+  ff8224:	23c0 00ff 9ed2 	movel %d0,ff9ed2 <flashIdentifier>
+  ff822a:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff8230:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff8236:	4240           	clrw %d0
+  ff8238:	4840           	swap %d0
+  ff823a:	0c80 0000 0089 	cmpil #137,%d0
+  ff8240:	670c           	beqs ff824e <HandleFlashChipQuery+0x36>
+  ff8242:	4eb9 00ff 9bc4 	jsr ff9bc4 <Amd_GetFlashId>
+  ff8248:	23c0 00ff 9ed2 	movel %d0,ff9ed2 <flashIdentifier>
+  ff824e:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff8254:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff8258:	4eb9 00ff 8c74 	jsr ff8c74 <VariableSleep>
+  ff825e:	588f           	addql #4,%sp
+  ff8260:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff8266:	a2e6 
+  ff8268:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff826e:	a2e7 
+  ff8270:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff8276:	a2e8 
+  ff8278:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff827e:	a2e9 
+  ff8280:	13fc 0001 00ff 	moveb #1,ffa2ea <MessageBuffer+0x4>
+  ff8286:	a2ea 
+  ff8288:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff828e:	7218           	moveq #24,%d1
+  ff8290:	e2a8           	lsrl %d1,%d0
+  ff8292:	1000           	moveb %d0,%d0
+  ff8294:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff829a:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff82a0:	4240           	clrw %d0
+  ff82a2:	4840           	swap %d0
+  ff82a4:	1000           	moveb %d0,%d0
+  ff82a6:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff82ac:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff82b2:	e088           	lsrl #8,%d0
+  ff82b4:	1000           	moveb %d0,%d0
+  ff82b6:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff82bc:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff82c2:	1000           	moveb %d0,%d0
+  ff82c4:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff82ca:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff82ce:	4878 0009      	pea 9 <KernelStart-0xff7ff7>
+  ff82d2:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff82d8:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff82de:	508f           	addql #8,%sp
+  ff82e0:	588f           	addql #4,%sp
+  ff82e2:	4e75           	rts
+
+00ff82e4 <HandleCrcQuery>:
+  ff82e4:	4fef ffe8      	lea %sp@(-24),%sp
+  ff82e8:	1039 00ff a2eb 	moveb ffa2eb <MessageBuffer+0x5>,%d0
+  ff82ee:	1000           	moveb %d0,%d0
+  ff82f0:	0280 0000 00ff 	andil #255,%d0
+  ff82f6:	2200           	movel %d0,%d1
+  ff82f8:	4841           	swap %d1
+  ff82fa:	4241           	clrw %d1
+  ff82fc:	1039 00ff a2ec 	moveb ffa2ec <MessageBuffer+0x6>,%d0
+  ff8302:	1000           	moveb %d0,%d0
+  ff8304:	0280 0000 00ff 	andil #255,%d0
+  ff830a:	e188           	lsll #8,%d0
+  ff830c:	d280           	addl %d0,%d1
+  ff830e:	1039 00ff a2ed 	moveb ffa2ed <MessageBuffer+0x7>,%d0
+  ff8314:	1000           	moveb %d0,%d0
+  ff8316:	0280 0000 00ff 	andil #255,%d0
+  ff831c:	d081           	addl %d1,%d0
+  ff831e:	2f40 0012      	movel %d0,%sp@(18)
+  ff8322:	1039 00ff a2ee 	moveb ffa2ee <MessageBuffer+0x8>,%d0
+  ff8328:	1000           	moveb %d0,%d0
+  ff832a:	0280 0000 00ff 	andil #255,%d0
+  ff8330:	2200           	movel %d0,%d1
+  ff8332:	4841           	swap %d1
+  ff8334:	4241           	clrw %d1
+  ff8336:	1039 00ff a2ef 	moveb ffa2ef <MessageBuffer+0x9>,%d0
+  ff833c:	1000           	moveb %d0,%d0
+  ff833e:	0280 0000 00ff 	andil #255,%d0
+  ff8344:	e188           	lsll #8,%d0
+  ff8346:	d280           	addl %d0,%d1
+  ff8348:	1039 00ff a2f0 	moveb ffa2f0 <MessageBuffer+0xa>,%d0
+  ff834e:	1000           	moveb %d0,%d0
+  ff8350:	0280 0000 00ff 	andil #255,%d0
+  ff8356:	d081           	addl %d1,%d0
+  ff8358:	2f40 000e      	movel %d0,%sp@(14)
+  ff835c:	2f6f 000e 000a 	movel %sp@(14),%sp@(10)
+  ff8362:	2f6f 0012 0006 	movel %sp@(18),%sp@(6)
+  ff8368:	2f2f 0006      	movel %sp@(6),%sp@-
+  ff836c:	2f2f 000e      	movel %sp@(14),%sp@-
+  ff8370:	4eb9 00ff 8aa4 	jsr ff8aa4 <crcIsStarted>
+  ff8376:	508f           	addql #8,%sp
+  ff8378:	4a80           	tstl %d0
+  ff837a:	6618           	bnes ff8394 <HandleCrcQuery+0xb0>
+  ff837c:	1f7c 0001 0017 	moveb #1,%sp@(23)
+  ff8382:	2f2f 0006      	movel %sp@(6),%sp@-
+  ff8386:	2f2f 000e      	movel %sp@(14),%sp@-
+  ff838a:	4eb9 00ff 8af2 	jsr ff8af2 <crcStart>
+  ff8390:	508f           	addql #8,%sp
+  ff8392:	600c           	bras ff83a0 <HandleCrcQuery+0xbc>
+  ff8394:	1f7c 0002 0017 	moveb #2,%sp@(23)
+  ff839a:	4eb9 00ff 8b18 	jsr ff8b18 <crcProcessSlice>
+  ff83a0:	4eb9 00ff 8c64 	jsr ff8c64 <ElmSleep>
+  ff83a6:	2f2f 0006      	movel %sp@(6),%sp@-
+  ff83aa:	2f2f 000e      	movel %sp@(14),%sp@-
+  ff83ae:	4eb9 00ff 8ac8 	jsr ff8ac8 <crcIsDone>
+  ff83b4:	508f           	addql #8,%sp
+  ff83b6:	4a80           	tstl %d0
+  ff83b8:	6700 00e8      	beqw ff84a2 <HandleCrcQuery+0x1be>
+  ff83bc:	4eb9 00ff 8b10 	jsr ff8b10 <crcGetResult>
+  ff83c2:	2f40 0002      	movel %d0,%sp@(2)
+  ff83c6:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff83cc:	a2e6 
+  ff83ce:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff83d4:	a2e7 
+  ff83d6:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff83dc:	a2e8 
+  ff83de:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff83e4:	a2e9 
+  ff83e6:	13fc 0002 00ff 	moveb #2,ffa2ea <MessageBuffer+0x4>
+  ff83ec:	a2ea 
+  ff83ee:	2039 00ff a2da 	movel ffa2da <crcLength>,%d0
+  ff83f4:	4840           	swap %d0
+  ff83f6:	48c0           	extl %d0
+  ff83f8:	1000           	moveb %d0,%d0
+  ff83fa:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff8400:	2039 00ff a2da 	movel ffa2da <crcLength>,%d0
+  ff8406:	e080           	asrl #8,%d0
+  ff8408:	1000           	moveb %d0,%d0
+  ff840a:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff8410:	2039 00ff a2da 	movel ffa2da <crcLength>,%d0
+  ff8416:	1000           	moveb %d0,%d0
+  ff8418:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff841e:	2039 00ff a2d6 	movel ffa2d6 <crcStartAddress>,%d0
+  ff8424:	4240           	clrw %d0
+  ff8426:	4840           	swap %d0
+  ff8428:	1000           	moveb %d0,%d0
+  ff842a:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff8430:	2039 00ff a2d6 	movel ffa2d6 <crcStartAddress>,%d0
+  ff8436:	e088           	lsrl #8,%d0
+  ff8438:	1000           	moveb %d0,%d0
+  ff843a:	13c0 00ff a2ef 	moveb %d0,ffa2ef <MessageBuffer+0x9>
+  ff8440:	2039 00ff a2d6 	movel ffa2d6 <crcStartAddress>,%d0
+  ff8446:	1000           	moveb %d0,%d0
+  ff8448:	13c0 00ff a2f0 	moveb %d0,ffa2f0 <MessageBuffer+0xa>
+  ff844e:	202f 0002      	movel %sp@(2),%d0
+  ff8452:	7218           	moveq #24,%d1
+  ff8454:	e2a8           	lsrl %d1,%d0
+  ff8456:	1000           	moveb %d0,%d0
+  ff8458:	13c0 00ff a2f1 	moveb %d0,ffa2f1 <MessageBuffer+0xb>
+  ff845e:	202f 0002      	movel %sp@(2),%d0
+  ff8462:	4240           	clrw %d0
+  ff8464:	4840           	swap %d0
+  ff8466:	1000           	moveb %d0,%d0
+  ff8468:	13c0 00ff a2f2 	moveb %d0,ffa2f2 <MessageBuffer+0xc>
+  ff846e:	202f 0002      	movel %sp@(2),%d0
+  ff8472:	e088           	lsrl #8,%d0
+  ff8474:	1000           	moveb %d0,%d0
+  ff8476:	13c0 00ff a2f3 	moveb %d0,ffa2f3 <MessageBuffer+0xd>
+  ff847c:	202f 0002      	movel %sp@(2),%d0
+  ff8480:	1000           	moveb %d0,%d0
+  ff8482:	13c0 00ff a2f4 	moveb %d0,ffa2f4 <MessageBuffer+0xe>
+  ff8488:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff848c:	4878 000f      	pea f <KernelStart-0xff7ff1>
+  ff8490:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff8496:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff849c:	508f           	addql #8,%sp
+  ff849e:	588f           	addql #4,%sp
+  ff84a0:	6048           	bras ff84ea <HandleCrcQuery+0x206>
+  ff84a2:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff84a8:	a2e6 
+  ff84aa:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff84b0:	a2e7 
+  ff84b2:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff84b8:	a2e8 
+  ff84ba:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff84c0:	a2e9 
+  ff84c2:	50f9 00ff a2ea 	st ffa2ea <MessageBuffer+0x4>
+  ff84c8:	102f 0017      	moveb %sp@(23),%d0
+  ff84cc:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff84d2:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff84d6:	4878 0006      	pea 6 <KernelStart-0xff7ffa>
+  ff84da:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff84e0:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff84e6:	508f           	addql #8,%sp
+  ff84e8:	588f           	addql #4,%sp
+  ff84ea:	4fef 0018      	lea %sp@(24),%sp
+  ff84ee:	4e75           	rts
+
+00ff84f0 <HandleOperatingSystemQuery>:
+  ff84f0:	598f           	subql #4,%sp
+  ff84f2:	4eb9 00ff 8c64 	jsr ff8c64 <ElmSleep>
+  ff84f8:	2ebc 0000 0504 	movel #1284,%sp@
+  ff84fe:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff8504:	a2e6 
+  ff8506:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff850c:	a2e7 
+  ff850e:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff8514:	a2e8 
+  ff8516:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff851c:	a2e9 
+  ff851e:	13fc 0003 00ff 	moveb #3,ffa2ea <MessageBuffer+0x4>
+  ff8524:	a2ea 
+  ff8526:	2017           	movel %sp@,%d0
+  ff8528:	2040           	moveal %d0,%a0
+  ff852a:	1010           	moveb %a0@,%d0
+  ff852c:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff8532:	2017           	movel %sp@,%d0
+  ff8534:	2040           	moveal %d0,%a0
+  ff8536:	1028 0001      	moveb %a0@(1),%d0
+  ff853a:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff8540:	2017           	movel %sp@,%d0
+  ff8542:	2040           	moveal %d0,%a0
+  ff8544:	1028 0002      	moveb %a0@(2),%d0
+  ff8548:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff854e:	2017           	movel %sp@,%d0
+  ff8550:	2040           	moveal %d0,%a0
+  ff8552:	1028 0003      	moveb %a0@(3),%d0
+  ff8556:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff855c:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff8560:	4878 0009      	pea 9 <KernelStart-0xff7ff7>
+  ff8564:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff856a:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff8570:	508f           	addql #8,%sp
+  ff8572:	588f           	addql #4,%sp
+  ff8574:	588f           	addql #4,%sp
+  ff8576:	4e75           	rts
+
+00ff8578 <HandleEraseBlock>:
+  ff8578:	518f           	subql #8,%sp
+  ff857a:	1039 00ff a2eb 	moveb ffa2eb <MessageBuffer+0x5>,%d0
+  ff8580:	1000           	moveb %d0,%d0
+  ff8582:	0280 0000 00ff 	andil #255,%d0
+  ff8588:	2200           	movel %d0,%d1
+  ff858a:	4841           	swap %d1
+  ff858c:	4241           	clrw %d1
+  ff858e:	1039 00ff a2ec 	moveb ffa2ec <MessageBuffer+0x6>,%d0
+  ff8594:	1000           	moveb %d0,%d0
+  ff8596:	0280 0000 00ff 	andil #255,%d0
+  ff859c:	e188           	lsll #8,%d0
+  ff859e:	d280           	addl %d0,%d1
+  ff85a0:	1039 00ff a2ed 	moveb ffa2ed <MessageBuffer+0x7>,%d0
+  ff85a6:	1000           	moveb %d0,%d0
+  ff85a8:	0280 0000 00ff 	andil #255,%d0
+  ff85ae:	d081           	addl %d1,%d0
+  ff85b0:	2f40 0002      	movel %d0,%sp@(2)
+  ff85b4:	422f 0007      	clrb %sp@(7)
+  ff85b8:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff85be:	0c80 0001 2281 	cmpil #74369,%d0
+  ff85c4:	673c           	beqs ff8602 <HandleEraseBlock+0x8a>
+  ff85c6:	0c80 0001 2281 	cmpil #74369,%d0
+  ff85cc:	6212           	bhis ff85e0 <HandleEraseBlock+0x68>
+  ff85ce:	0c80 0001 2203 	cmpil #74243,%d0
+  ff85d4:	672c           	beqs ff8602 <HandleEraseBlock+0x8a>
+  ff85d6:	0c80 0001 2258 	cmpil #74328,%d0
+  ff85dc:	6724           	beqs ff8602 <HandleEraseBlock+0x8a>
+  ff85de:	6034           	bras ff8614 <HandleEraseBlock+0x9c>
+  ff85e0:	0c80 0089 4471 	cmpil #8995953,%d0
+  ff85e6:	6708           	beqs ff85f0 <HandleEraseBlock+0x78>
+  ff85e8:	0c80 0089 889d 	cmpil #9013405,%d0
+  ff85ee:	6624           	bnes ff8614 <HandleEraseBlock+0x9c>
+  ff85f0:	2f2f 0002      	movel %sp@(2),%sp@-
+  ff85f4:	4eb9 00ff 99bc 	jsr ff99bc <Intel_EraseBlock>
+  ff85fa:	588f           	addql #4,%sp
+  ff85fc:	1f40 0007      	moveb %d0,%sp@(7)
+  ff8600:	6036           	bras ff8638 <HandleEraseBlock+0xc0>
+  ff8602:	2f2f 0002      	movel %sp@(2),%sp@-
+  ff8606:	4eb9 00ff 9c58 	jsr ff9c58 <Amd_EraseBlock>
+  ff860c:	588f           	addql #4,%sp
+  ff860e:	1f40 0007      	moveb %d0,%sp@(7)
+  ff8612:	6024           	bras ff8638 <HandleEraseBlock+0xc0>
+  ff8614:	4878 0002      	pea 2 <KernelStart-0xff7ffe>
+  ff8618:	4eb9 00ff 8c74 	jsr ff8c74 <VariableSleep>
+  ff861e:	588f           	addql #4,%sp
+  ff8620:	4878 00ff      	pea ff <KernelStart-0xff7f01>
+  ff8624:	4878 00ff      	pea ff <KernelStart-0xff7f01>
+  ff8628:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff862c:	42a7           	clrl %sp@-
+  ff862e:	4eba fb30      	jsr %pc@(ff8160 <SendReply>)
+  ff8632:	508f           	addql #8,%sp
+  ff8634:	508f           	addql #8,%sp
+  ff8636:	6026           	bras ff865e <HandleEraseBlock+0xe6>
+  ff8638:	4878 0002      	pea 2 <KernelStart-0xff7ffe>
+  ff863c:	4eb9 00ff 8c74 	jsr ff8c74 <VariableSleep>
+  ff8642:	588f           	addql #4,%sp
+  ff8644:	4280           	clrl %d0
+  ff8646:	102f 0007      	moveb %sp@(7),%d0
+  ff864a:	42a7           	clrl %sp@-
+  ff864c:	2f00           	movel %d0,%sp@-
+  ff864e:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff8652:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff8656:	4eba fb08      	jsr %pc@(ff8160 <SendReply>)
+  ff865a:	508f           	addql #8,%sp
+  ff865c:	508f           	addql #8,%sp
+  ff865e:	508f           	addql #8,%sp
+  ff8660:	4e75           	rts
+
+00ff8662 <HandleEraseEverythingRequest>:
+  ff8662:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff8668:	a2e6 
+  ff866a:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff8670:	a2e7 
+  ff8672:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff8678:	a2e8 
+  ff867a:	13fc 007f 00ff 	moveb #127,ffa2e9 <MessageBuffer+0x3>
+  ff8680:	a2e9 
+  ff8682:	13fc 003d 00ff 	moveb #61,ffa2ea <MessageBuffer+0x4>
+  ff8688:	a2ea 
+  ff868a:	13fc 0006 00ff 	moveb #6,ffa2eb <MessageBuffer+0x5>
+  ff8690:	a2eb 
+  ff8692:	4239 00ff a2ec 	clrb ffa2ec <MessageBuffer+0x6>
+  ff8698:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff869c:	4878 0007      	pea 7 <KernelStart-0xff7ff9>
+  ff86a0:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff86a6:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff86ac:	508f           	addql #8,%sp
+  ff86ae:	588f           	addql #4,%sp
+  ff86b0:	4e75           	rts
+
+00ff86b2 <HandleDebugQuery>:
+  ff86b2:	598f           	subql #4,%sp
+  ff86b4:	2ebc 1234 5678 	movel #305419896,%sp@
+  ff86ba:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff86c0:	a2e6 
+  ff86c2:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff86c8:	a2e7 
+  ff86ca:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff86d0:	a2e8 
+  ff86d2:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff86d8:	a2e9 
+  ff86da:	50f9 00ff a2ea 	st ffa2ea <MessageBuffer+0x4>
+  ff86e0:	2017           	movel %sp@,%d0
+  ff86e2:	7218           	moveq #24,%d1
+  ff86e4:	e2a8           	lsrl %d1,%d0
+  ff86e6:	1000           	moveb %d0,%d0
+  ff86e8:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff86ee:	2017           	movel %sp@,%d0
+  ff86f0:	4240           	clrw %d0
+  ff86f2:	4840           	swap %d0
+  ff86f4:	1000           	moveb %d0,%d0
+  ff86f6:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff86fc:	2017           	movel %sp@,%d0
+  ff86fe:	e088           	lsrl #8,%d0
+  ff8700:	1000           	moveb %d0,%d0
+  ff8702:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff8708:	2017           	movel %sp@,%d0
+  ff870a:	1000           	moveb %d0,%d0
+  ff870c:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff8712:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff8716:	4878 0009      	pea 9 <KernelStart-0xff7ff7>
+  ff871a:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff8720:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff8726:	508f           	addql #8,%sp
+  ff8728:	588f           	addql #4,%sp
+  ff872a:	588f           	addql #4,%sp
+  ff872c:	4e75           	rts
+
+00ff872e <WriteToFlash>:
+  ff872e:	2039 00ff 9ed2 	movel ff9ed2 <flashIdentifier>,%d0
+  ff8734:	0c80 0001 2281 	cmpil #74369,%d0
+  ff873a:	6746           	beqs ff8782 <WriteToFlash+0x54>
+  ff873c:	0c80 0001 2281 	cmpil #74369,%d0
+  ff8742:	6212           	bhis ff8756 <WriteToFlash+0x28>
+  ff8744:	0c80 0001 2203 	cmpil #74243,%d0
+  ff874a:	6736           	beqs ff8782 <WriteToFlash+0x54>
+  ff874c:	0c80 0001 2258 	cmpil #74328,%d0
+  ff8752:	672e           	beqs ff8782 <WriteToFlash+0x54>
+  ff8754:	6048           	bras ff879e <WriteToFlash+0x70>
+  ff8756:	0c80 0089 4471 	cmpil #8995953,%d0
+  ff875c:	6708           	beqs ff8766 <WriteToFlash+0x38>
+  ff875e:	0c80 0089 889d 	cmpil #9013405,%d0
+  ff8764:	6638           	bnes ff879e <WriteToFlash+0x70>
+  ff8766:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff876a:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff876e:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff8772:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff8776:	4eb9 00ff 9a6c 	jsr ff9a6c <Intel_WriteToFlash>
+  ff877c:	508f           	addql #8,%sp
+  ff877e:	508f           	addql #8,%sp
+  ff8780:	601e           	bras ff87a0 <WriteToFlash+0x72>
+  ff8782:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff8786:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff878a:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff878e:	2f2f 0010      	movel %sp@(16),%sp@-
+  ff8792:	4eb9 00ff 9d96 	jsr ff9d96 <Amd_WriteToFlash>
+  ff8798:	508f           	addql #8,%sp
+  ff879a:	508f           	addql #8,%sp
+  ff879c:	6002           	bras ff87a0 <WriteToFlash+0x72>
+  ff879e:	70ee           	moveq #-18,%d0
+  ff87a0:	4e75           	rts
+
+00ff87a2 <ProcessMessage>:
+  ff87a2:	1039 00ff a2e7 	moveb ffa2e7 <MessageBuffer+0x1>,%d0
+  ff87a8:	0c00 0010      	cmpib #16,%d0
+  ff87ac:	6710           	beqs ff87be <ProcessMessage+0x1c>
+  ff87ae:	1039 00ff a2e7 	moveb ffa2e7 <MessageBuffer+0x1>,%d0
+  ff87b4:	0c00 fffe      	cmpib #-2,%d0
+  ff87b8:	6704           	beqs ff87be <ProcessMessage+0x1c>
+  ff87ba:	6000 01c4      	braw ff8980 <ProcessMessage+0x1de>
+  ff87be:	1039 00ff a2e8 	moveb ffa2e8 <MessageBuffer+0x2>,%d0
+  ff87c4:	0c00 fff0      	cmpib #-16,%d0
+  ff87c8:	6704           	beqs ff87ce <ProcessMessage+0x2c>
+  ff87ca:	6000 01b4      	braw ff8980 <ProcessMessage+0x1de>
+  ff87ce:	1039 00ff a2e9 	moveb ffa2e9 <MessageBuffer+0x3>,%d0
+  ff87d4:	1000           	moveb %d0,%d0
+  ff87d6:	0280 0000 00ff 	andil #255,%d0
+  ff87dc:	72e0           	moveq #-32,%d1
+  ff87de:	d081           	addl %d1,%d0
+  ff87e0:	721f           	moveq #31,%d1
+  ff87e2:	b280           	cmpl %d0,%d1
+  ff87e4:	6500 0158      	bcsw ff893e <ProcessMessage+0x19c>
+  ff87e8:	303b 0a06      	movew %pc@(ff87f0 <ProcessMessage+0x4e>,%d0:l:2),%d0
+  ff87ec:	4efb 0002      	jmp %pc@(ff87f0 <ProcessMessage+0x4e>,%d0:w)
+  ff87f0:	0040 014e      	oriw #334,%d0
+  ff87f4:	014e 014e      	movepl %fp@(334),%d0
+  ff87f8:	014e 014e      	movepl %fp@(334),%d0
+  ff87fc:	014e 014e      	movepl %fp@(334),%d0
+  ff8800:	014e 014e      	movepl %fp@(334),%d0
+  ff8804:	014e 014e      	movepl %fp@(334),%d0
+  ff8808:	014e 014e      	movepl %fp@(334),%d0
+  ff880c:	014e 014e      	movepl %fp@(334),%d0
+  ff8810:	014e 014e      	movepl %fp@(334),%d0
+  ff8814:	014e 014e      	movepl %fp@(334),%d0
+  ff8818:	005e 006e      	oriw #110,%fp@+
+  ff881c:	0078 0092 014e 	oriw #146,14e <KernelStart-0xff7eb2>
+  ff8822:	014e 014e      	movepl %fp@(334),%d0
+  ff8826:	014e 014e      	movepl %fp@(334),%d0
+  ff882a:	00b8 014e 018e 	oril #21889422,4eb9 <KernelStart-0xff3147>
+  ff8830:	4eb9 
+  ff8832:	00ff           	.short 0x00ff
+  ff8834:	8c54           	orw %a4@,%d6
+  ff8836:	202f 0004      	movel %sp@(4),%d0
+  ff883a:	0080 cc00 0000 	oril #-872415232,%d0
+  ff8840:	2f00           	movel %d0,%sp@-
+  ff8842:	4eb9 00ff 90ba 	jsr ff90ba <Reboot>
+  ff8848:	588f           	addql #4,%sp
+  ff884a:	6000 0134      	braw ff8980 <ProcessMessage+0x1de>
+  ff884e:	4eb9 00ff 947a 	jsr ff947a <HandleWriteRequestMode34>
+  ff8854:	4eb9 00ff 8cec 	jsr ff8cec <ClearBreadcrumbBuffer>
+  ff885a:	6000 0124      	braw ff8980 <ProcessMessage+0x1de>
+  ff885e:	4eb9 00ff 9370 	jsr ff9370 <HandleReadMode35>
+  ff8864:	6000 011a      	braw ff8980 <ProcessMessage+0x1de>
+  ff8868:	1039 00ff a2e6 	moveb ffa2e6 <MessageBuffer>,%d0
+  ff886e:	0c00 006d      	cmpib #109,%d0
+  ff8872:	660a           	bnes ff887e <ProcessMessage+0xdc>
+  ff8874:	4eb9 00ff 9618 	jsr ff9618 <HandleWriteMode36>
+  ff887a:	6000 0104      	braw ff8980 <ProcessMessage+0x1de>
+  ff887e:	6000 0100      	braw ff8980 <ProcessMessage+0x1de>
+  ff8882:	1039 00ff a2e9 	moveb ffa2e9 <MessageBuffer+0x3>,%d0
+  ff8888:	1000           	moveb %d0,%d0
+  ff888a:	0280 0000 00ff 	andil #255,%d0
+  ff8890:	42a7           	clrl %sp@-
+  ff8892:	42a7           	clrl %sp@-
+  ff8894:	2f00           	movel %d0,%sp@-
+  ff8896:	4878 00b2      	pea b2 <KernelStart-0xff7f4e>
+  ff889a:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff88a0:	508f           	addql #8,%sp
+  ff88a2:	508f           	addql #8,%sp
+  ff88a4:	6000 00da      	braw ff8980 <ProcessMessage+0x1de>
+  ff88a8:	1039 00ff a2ea 	moveb ffa2ea <MessageBuffer+0x4>,%d0
+  ff88ae:	1000           	moveb %d0,%d0
+  ff88b0:	0280 0000 00ff 	andil #255,%d0
+  ff88b6:	7203           	moveq #3,%d1
+  ff88b8:	b280           	cmpl %d0,%d1
+  ff88ba:	6742           	beqs ff88fe <ProcessMessage+0x15c>
+  ff88bc:	7203           	moveq #3,%d1
+  ff88be:	b280           	cmpl %d0,%d1
+  ff88c0:	6d12           	blts ff88d4 <ProcessMessage+0x132>
+  ff88c2:	7201           	moveq #1,%d1
+  ff88c4:	b280           	cmpl %d0,%d1
+  ff88c6:	672a           	beqs ff88f2 <ProcessMessage+0x150>
+  ff88c8:	7201           	moveq #1,%d1
+  ff88ca:	b280           	cmpl %d0,%d1
+  ff88cc:	6d2a           	blts ff88f8 <ProcessMessage+0x156>
+  ff88ce:	4a80           	tstl %d0
+  ff88d0:	6718           	beqs ff88ea <ProcessMessage+0x148>
+  ff88d2:	6042           	bras ff8916 <ProcessMessage+0x174>
+  ff88d4:	7205           	moveq #5,%d1
+  ff88d6:	b280           	cmpl %d0,%d1
+  ff88d8:	672a           	beqs ff8904 <ProcessMessage+0x162>
+  ff88da:	7205           	moveq #5,%d1
+  ff88dc:	b280           	cmpl %d0,%d1
+  ff88de:	6e5a           	bgts ff893a <ProcessMessage+0x198>
+  ff88e0:	0c80 0000 00ff 	cmpil #255,%d0
+  ff88e6:	6728           	beqs ff8910 <ProcessMessage+0x16e>
+  ff88e8:	602c           	bras ff8916 <ProcessMessage+0x174>
+  ff88ea:	4eb9 00ff 930e 	jsr ff930e <HandleVersionQuery>
+  ff88f0:	604a           	bras ff893c <ProcessMessage+0x19a>
+  ff88f2:	4eba f924      	jsr %pc@(ff8218 <HandleFlashChipQuery>)
+  ff88f6:	6044           	bras ff893c <ProcessMessage+0x19a>
+  ff88f8:	4eba f9ea      	jsr %pc@(ff82e4 <HandleCrcQuery>)
+  ff88fc:	603e           	bras ff893c <ProcessMessage+0x19a>
+  ff88fe:	4eba fbf0      	jsr %pc@(ff84f0 <HandleOperatingSystemQuery>)
+  ff8902:	6038           	bras ff893c <ProcessMessage+0x19a>
+  ff8904:	4eba fc72      	jsr %pc@(ff8578 <HandleEraseBlock>)
+  ff8908:	4eb9 00ff 8a12 	jsr ff8a12 <crcReset>
+  ff890e:	602c           	bras ff893c <ProcessMessage+0x19a>
+  ff8910:	4eba fda0      	jsr %pc@(ff86b2 <HandleDebugQuery>)
+  ff8914:	6026           	bras ff893c <ProcessMessage+0x19a>
+  ff8916:	1039 00ff a2ea 	moveb ffa2ea <MessageBuffer+0x4>,%d0
+  ff891c:	1000           	moveb %d0,%d0
+  ff891e:	0280 0000 00ff 	andil #255,%d0
+  ff8924:	42a7           	clrl %sp@-
+  ff8926:	42a7           	clrl %sp@-
+  ff8928:	2f00           	movel %d0,%sp@-
+  ff892a:	4878 003d      	pea 3d <KernelStart-0xff7fc3>
+  ff892e:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff8934:	508f           	addql #8,%sp
+  ff8936:	508f           	addql #8,%sp
+  ff8938:	6002           	bras ff893c <ProcessMessage+0x19a>
+  ff893a:	4e71           	nop
+  ff893c:	6042           	bras ff8980 <ProcessMessage+0x1de>
+  ff893e:	1039 00ff a2ea 	moveb ffa2ea <MessageBuffer+0x4>,%d0
+  ff8944:	1000           	moveb %d0,%d0
+  ff8946:	0280 0000 00ff 	andil #255,%d0
+  ff894c:	2040           	moveal %d0,%a0
+  ff894e:	1039 00ff a2e9 	moveb ffa2e9 <MessageBuffer+0x3>,%d0
+  ff8954:	4281           	clrl %d1
+  ff8956:	1200           	moveb %d0,%d1
+  ff8958:	1039 00ff a2e8 	moveb ffa2e8 <MessageBuffer+0x2>,%d0
+  ff895e:	1000           	moveb %d0,%d0
+  ff8960:	0280 0000 00ff 	andil #255,%d0
+  ff8966:	2f08           	movel %a0,%sp@-
+  ff8968:	2f01           	movel %d1,%sp@-
+  ff896a:	2f00           	movel %d0,%sp@-
+  ff896c:	4878 00aa      	pea aa <KernelStart-0xff7f56>
+  ff8970:	4eb9 00ff 9140 	jsr ff9140 <SendToolPresent>
+  ff8976:	508f           	addql #8,%sp
+  ff8978:	508f           	addql #8,%sp
+  ff897a:	4e71           	nop
+  ff897c:	6002           	bras ff8980 <ProcessMessage+0x1de>
+  ff897e:	4e71           	nop
+  ff8980:	4e75           	rts
+	...
+
+00ff8984 <crcInit>:
+  ff8984:	518f           	subql #8,%sp
+  ff8986:	598f           	subql #4,%sp
+  ff8988:	42b9 00ff a2d6 	clrl ffa2d6 <crcStartAddress>
+  ff898e:	42b9 00ff a2da 	clrl ffa2da <crcLength>
+  ff8994:	42b9 00ff a2de 	clrl ffa2de <crcIndex>
+  ff899a:	42b9 00ff a2e2 	clrl ffa2e2 <crcRemainder>
+  ff89a0:	42af 0004      	clrl %sp@(4)
+  ff89a4:	605c           	bras ff8a02 <crcInit+0x7e>
+  ff89a6:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff89ac:	202f 0004      	movel %sp@(4),%d0
+  ff89b0:	7218           	moveq #24,%d1
+  ff89b2:	e3a8           	lsll %d1,%d0
+  ff89b4:	2f40 0008      	movel %d0,%sp@(8)
+  ff89b8:	1f7c 0008 0003 	moveb #8,%sp@(3)
+  ff89be:	602a           	bras ff89ea <crcInit+0x66>
+  ff89c0:	202f 0008      	movel %sp@(8),%d0
+  ff89c4:	4a80           	tstl %d0
+  ff89c6:	6c14           	bges ff89dc <crcInit+0x58>
+  ff89c8:	202f 0008      	movel %sp@(8),%d0
+  ff89cc:	d080           	addl %d0,%d0
+  ff89ce:	2200           	movel %d0,%d1
+  ff89d0:	0a81 04c1 1db7 	eoril #79764919,%d1
+  ff89d6:	2f41 0008      	movel %d1,%sp@(8)
+  ff89da:	600a           	bras ff89e6 <crcInit+0x62>
+  ff89dc:	202f 0008      	movel %sp@(8),%d0
+  ff89e0:	d080           	addl %d0,%d0
+  ff89e2:	2f40 0008      	movel %d0,%sp@(8)
+  ff89e6:	532f 0003      	subqb #1,%sp@(3)
+  ff89ea:	4a2f 0003      	tstb %sp@(3)
+  ff89ee:	66d0           	bnes ff89c0 <crcInit+0x3c>
+  ff89f0:	202f 0004      	movel %sp@(4),%d0
+  ff89f4:	21af 0008 0db0 	movel %sp@(8),@(00ff9ed6,%d0:l:4)
+  ff89fa:	00ff 9ed6 
+  ff89fe:	52af 0004      	addql #1,%sp@(4)
+  ff8a02:	0caf 0000 00ff 	cmpil #255,%sp@(4)
+  ff8a08:	0004 
+  ff8a0a:	6f9a           	bles ff89a6 <crcInit+0x22>
+  ff8a0c:	508f           	addql #8,%sp
+  ff8a0e:	588f           	addql #4,%sp
+  ff8a10:	4e75           	rts
+
+00ff8a12 <crcReset>:
+  ff8a12:	42b9 00ff a2d6 	clrl ffa2d6 <crcStartAddress>
+  ff8a18:	42b9 00ff a2da 	clrl ffa2da <crcLength>
+  ff8a1e:	42b9 00ff a2de 	clrl ffa2de <crcIndex>
+  ff8a24:	42b9 00ff a2e2 	clrl ffa2e2 <crcRemainder>
+  ff8a2a:	4e75           	rts
+
+00ff8a2c <crcFast>:
+  ff8a2c:	518f           	subql #8,%sp
+  ff8a2e:	598f           	subql #4,%sp
+  ff8a30:	2f02           	movel %d2,%sp@-
+  ff8a32:	42af 000c      	clrl %sp@(12)
+  ff8a36:	42af 0008      	clrl %sp@(8)
+  ff8a3a:	6052           	bras ff8a8e <crcFast+0x62>
+  ff8a3c:	202f 0018      	movel %sp@(24),%d0
+  ff8a40:	7200           	moveq #0,%d1
+  ff8a42:	4601           	notb %d1
+  ff8a44:	c081           	andl %d1,%d0
+  ff8a46:	4a80           	tstl %d0
+  ff8a48:	6606           	bnes ff8a50 <crcFast+0x24>
+  ff8a4a:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff8a50:	202f 0008      	movel %sp@(8),%d0
+  ff8a54:	d0af 0014      	addl %sp@(20),%d0
+  ff8a58:	2040           	moveal %d0,%a0
+  ff8a5a:	1210           	moveb %a0@,%d1
+  ff8a5c:	202f 000c      	movel %sp@(12),%d0
+  ff8a60:	7418           	moveq #24,%d2
+  ff8a62:	e4a8           	lsrl %d2,%d0
+  ff8a64:	1000           	moveb %d0,%d0
+  ff8a66:	1401           	moveb %d1,%d2
+  ff8a68:	b102           	eorb %d0,%d2
+  ff8a6a:	1f42 0007      	moveb %d2,%sp@(7)
+  ff8a6e:	4280           	clrl %d0
+  ff8a70:	102f 0007      	moveb %sp@(7),%d0
+  ff8a74:	2230 0db0 00ff 	movel @(00ff9ed6,%d0:l:4),%d1
+  ff8a7a:	9ed6 
+  ff8a7c:	202f 000c      	movel %sp@(12),%d0
+  ff8a80:	e188           	lsll #8,%d0
+  ff8a82:	2401           	movel %d1,%d2
+  ff8a84:	b182           	eorl %d0,%d2
+  ff8a86:	2f42 000c      	movel %d2,%sp@(12)
+  ff8a8a:	52af 0008      	addql #1,%sp@(8)
+  ff8a8e:	206f 0008      	moveal %sp@(8),%a0
+  ff8a92:	b1ef 0018      	cmpal %sp@(24),%a0
+  ff8a96:	6da4           	blts ff8a3c <crcFast+0x10>
+  ff8a98:	202f 000c      	movel %sp@(12),%d0
+  ff8a9c:	241f           	movel %sp@+,%d2
+  ff8a9e:	508f           	addql #8,%sp
+  ff8aa0:	588f           	addql #4,%sp
+  ff8aa2:	4e75           	rts
+
+00ff8aa4 <crcIsStarted>:
+  ff8aa4:	2039 00ff a2d6 	movel ffa2d6 <crcStartAddress>,%d0
+  ff8aaa:	b0af 0004      	cmpl %sp@(4),%d0
+  ff8aae:	6704           	beqs ff8ab4 <crcIsStarted+0x10>
+  ff8ab0:	4280           	clrl %d0
+  ff8ab2:	6012           	bras ff8ac6 <crcIsStarted+0x22>
+  ff8ab4:	2039 00ff a2da 	movel ffa2da <crcLength>,%d0
+  ff8aba:	b0af 0008      	cmpl %sp@(8),%d0
+  ff8abe:	6704           	beqs ff8ac4 <crcIsStarted+0x20>
+  ff8ac0:	4280           	clrl %d0
+  ff8ac2:	6002           	bras ff8ac6 <crcIsStarted+0x22>
+  ff8ac4:	7001           	moveq #1,%d0
+  ff8ac6:	4e75           	rts
+
+00ff8ac8 <crcIsDone>:
+  ff8ac8:	2f2f 0008      	movel %sp@(8),%sp@-
+  ff8acc:	2f2f 0008      	movel %sp@(8),%sp@-
+  ff8ad0:	4eba ffd2      	jsr %pc@(ff8aa4 <crcIsStarted>)
+  ff8ad4:	508f           	addql #8,%sp
+  ff8ad6:	4a80           	tstl %d0
+  ff8ad8:	6604           	bnes ff8ade <crcIsDone+0x16>
+  ff8ada:	4280           	clrl %d0
+  ff8adc:	6012           	bras ff8af0 <crcIsDone+0x28>
+  ff8ade:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8ae4:	b0af 0008      	cmpl %sp@(8),%d0
+  ff8ae8:	6604           	bnes ff8aee <crcIsDone+0x26>
+  ff8aea:	7001           	moveq #1,%d0
+  ff8aec:	6002           	bras ff8af0 <crcIsDone+0x28>
+  ff8aee:	4280           	clrl %d0
+  ff8af0:	4e75           	rts
+
+00ff8af2 <crcStart>:
+  ff8af2:	23ef 0004 00ff 	movel %sp@(4),ffa2d6 <crcStartAddress>
+  ff8af8:	a2d6 
+  ff8afa:	23ef 0008 00ff 	movel %sp@(8),ffa2da <crcLength>
+  ff8b00:	a2da 
+  ff8b02:	42b9 00ff a2de 	clrl ffa2de <crcIndex>
+  ff8b08:	42b9 00ff a2e2 	clrl ffa2e2 <crcRemainder>
+  ff8b0e:	4e75           	rts
+
+00ff8b10 <crcGetResult>:
+  ff8b10:	2039 00ff a2e2 	movel ffa2e2 <crcRemainder>,%d0
+  ff8b16:	4e75           	rts
+
+00ff8b18 <crcProcessSlice>:
+  ff8b18:	518f           	subql #8,%sp
+  ff8b1a:	598f           	subql #4,%sp
+  ff8b1c:	2f02           	movel %d2,%sp@-
+  ff8b1e:	2039 00ff a2da 	movel ffa2da <crcLength>,%d0
+  ff8b24:	4a80           	tstl %d0
+  ff8b26:	6604           	bnes ff8b2c <crcProcessSlice+0x14>
+  ff8b28:	6000 00aa      	braw ff8bd4 <crcProcessSlice+0xbc>
+  ff8b2c:	2f79 00ff a2da 	movel ffa2da <crcLength>,%sp@(12)
+  ff8b32:	000c 
+  ff8b34:	2f7c 0000 2000 	movel #8192,%sp@(8)
+  ff8b3a:	0008 
+  ff8b3c:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8b42:	d0af 0008      	addl %sp@(8),%d0
+  ff8b46:	b0af 000c      	cmpl %sp@(12),%d0
+  ff8b4a:	6c12           	bges ff8b5e <crcProcessSlice+0x46>
+  ff8b4c:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8b52:	2200           	movel %d0,%d1
+  ff8b54:	d2af 0008      	addl %sp@(8),%d1
+  ff8b58:	2f41 000c      	movel %d1,%sp@(12)
+  ff8b5c:	606a           	bras ff8bc8 <crcProcessSlice+0xb0>
+  ff8b5e:	6068           	bras ff8bc8 <crcProcessSlice+0xb0>
+  ff8b60:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8b66:	7400           	moveq #0,%d2
+  ff8b68:	4602           	notb %d2
+  ff8b6a:	c082           	andl %d2,%d0
+  ff8b6c:	4a80           	tstl %d0
+  ff8b6e:	6606           	bnes ff8b76 <crcProcessSlice+0x5e>
+  ff8b70:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff8b76:	2239 00ff a2d6 	movel ffa2d6 <crcStartAddress>,%d1
+  ff8b7c:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8b82:	d081           	addl %d1,%d0
+  ff8b84:	2040           	moveal %d0,%a0
+  ff8b86:	1210           	moveb %a0@,%d1
+  ff8b88:	2039 00ff a2e2 	movel ffa2e2 <crcRemainder>,%d0
+  ff8b8e:	7418           	moveq #24,%d2
+  ff8b90:	e4a8           	lsrl %d2,%d0
+  ff8b92:	1000           	moveb %d0,%d0
+  ff8b94:	1401           	moveb %d1,%d2
+  ff8b96:	b102           	eorb %d0,%d2
+  ff8b98:	1f42 0007      	moveb %d2,%sp@(7)
+  ff8b9c:	4280           	clrl %d0
+  ff8b9e:	102f 0007      	moveb %sp@(7),%d0
+  ff8ba2:	2230 0db0 00ff 	movel @(00ff9ed6,%d0:l:4),%d1
+  ff8ba8:	9ed6 
+  ff8baa:	2039 00ff a2e2 	movel ffa2e2 <crcRemainder>,%d0
+  ff8bb0:	e188           	lsll #8,%d0
+  ff8bb2:	b380           	eorl %d1,%d0
+  ff8bb4:	23c0 00ff a2e2 	movel %d0,ffa2e2 <crcRemainder>
+  ff8bba:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8bc0:	5280           	addql #1,%d0
+  ff8bc2:	23c0 00ff a2de 	movel %d0,ffa2de <crcIndex>
+  ff8bc8:	2039 00ff a2de 	movel ffa2de <crcIndex>,%d0
+  ff8bce:	b0af 000c      	cmpl %sp@(12),%d0
+  ff8bd2:	6d8c           	blts ff8b60 <crcProcessSlice+0x48>
+  ff8bd4:	241f           	movel %sp@+,%d2
+  ff8bd6:	508f           	addql #8,%sp
+  ff8bd8:	588f           	addql #4,%sp
+  ff8bda:	4e75           	rts
+
+00ff8bdc <ScratchWatchdog>:
+  ff8bdc:	203c 00ff fa27 	movel #16775719,%d0
+  ff8be2:	2040           	moveal %d0,%a0
+  ff8be4:	10bc 0055      	moveb #85,%a0@
+  ff8be8:	203c 00ff fa27 	movel #16775719,%d0
+  ff8bee:	2040           	moveal %d0,%a0
+  ff8bf0:	10bc ffaa      	moveb #-86,%a0@
+  ff8bf4:	203c 00ff d006 	movel #16764934,%d0
+  ff8bfa:	223c 00ff d006 	movel #16764934,%d1
+  ff8c00:	2041           	moveal %d1,%a0
+  ff8c02:	1210           	moveb %a0@,%d1
+  ff8c04:	0a01 ff80      	eorib #-128,%d1
+  ff8c08:	2040           	moveal %d0,%a0
+  ff8c0a:	1081           	moveb %d1,%a0@
+  ff8c0c:	4e75           	rts
+
+00ff8c0e <WasteTime>:
+  ff8c0e:	4e71           	nop
+  ff8c10:	4e71           	nop
+  ff8c12:	4e71           	nop
+  ff8c14:	4e71           	nop
+  ff8c16:	4e75           	rts
+
+00ff8c18 <PrivateSleep>:
+  ff8c18:	518f           	subql #8,%sp
+  ff8c1a:	42af 0004      	clrl %sp@(4)
+  ff8c1e:	6026           	bras ff8c46 <PrivateSleep+0x2e>
+  ff8c20:	4297           	clrl %sp@
+  ff8c22:	6012           	bras ff8c36 <PrivateSleep+0x1e>
+  ff8c24:	4e71           	nop
+  ff8c26:	4e71           	nop
+  ff8c28:	4e71           	nop
+  ff8c2a:	4e71           	nop
+  ff8c2c:	4e71           	nop
+  ff8c2e:	4e71           	nop
+  ff8c30:	4e71           	nop
+  ff8c32:	4e71           	nop
+  ff8c34:	5297           	addql #1,%sp@
+  ff8c36:	2017           	movel %sp@,%d0
+  ff8c38:	b0af 0010      	cmpl %sp@(16),%d0
+  ff8c3c:	6de6           	blts ff8c24 <PrivateSleep+0xc>
+  ff8c3e:	4eba ff9c      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8c42:	52af 0004      	addql #1,%sp@(4)
+  ff8c46:	202f 0004      	movel %sp@(4),%d0
+  ff8c4a:	b0af 000c      	cmpl %sp@(12),%d0
+  ff8c4e:	6dd0           	blts ff8c20 <PrivateSleep+0x8>
+  ff8c50:	508f           	addql #8,%sp
+  ff8c52:	4e75           	rts
+
+00ff8c54 <LongSleepWithWatchdog>:
+  ff8c54:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff8c58:	4878 2710      	pea 2710 <KernelStart-0xff58f0>
+  ff8c5c:	4eba ffba      	jsr %pc@(ff8c18 <PrivateSleep>)
+  ff8c60:	508f           	addql #8,%sp
+  ff8c62:	4e75           	rts
+
+00ff8c64 <ElmSleep>:
+  ff8c64:	4878 0032      	pea 32 <KernelStart-0xff7fce>
+  ff8c68:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff8c6c:	4eba ffaa      	jsr %pc@(ff8c18 <PrivateSleep>)
+  ff8c70:	508f           	addql #8,%sp
+  ff8c72:	4e75           	rts
+
+00ff8c74 <VariableSleep>:
+  ff8c74:	202f 0004      	movel %sp@(4),%d0
+  ff8c78:	4878 00fa      	pea fa <KernelStart-0xff7f06>
+  ff8c7c:	2f00           	movel %d0,%sp@-
+  ff8c7e:	4eba ff98      	jsr %pc@(ff8c18 <PrivateSleep>)
+  ff8c82:	508f           	addql #8,%sp
+  ff8c84:	4e75           	rts
+
+00ff8c86 <ClearMessageBuffer>:
+  ff8c86:	598f           	subql #4,%sp
+  ff8c88:	2f02           	movel %d2,%sp@-
+  ff8c8a:	42af 0004      	clrl %sp@(4)
+  ff8c8e:	604c           	bras ff8cdc <ClearMessageBuffer+0x56>
+  ff8c90:	226f 0004      	moveal %sp@(4),%a1
+  ff8c94:	2209           	movel %a1,%d1
+  ff8c96:	4c3c 1c00 1062 	mulsl #274877907,%d0,%d1
+  ff8c9c:	4dd3 
+  ff8c9e:	ea80           	asrl #5,%d0
+  ff8ca0:	2209           	movel %a1,%d1
+  ff8ca2:	d281           	addl %d1,%d1
+  ff8ca4:	9381           	subxl %d1,%d1
+  ff8ca6:	2400           	movel %d0,%d2
+  ff8ca8:	9481           	subl %d1,%d2
+  ff8caa:	2202           	movel %d2,%d1
+  ff8cac:	2041           	moveal %d1,%a0
+  ff8cae:	2008           	movel %a0,%d0
+  ff8cb0:	e588           	lsll #2,%d0
+  ff8cb2:	2040           	moveal %d0,%a0
+  ff8cb4:	2008           	movel %a0,%d0
+  ff8cb6:	eb88           	lsll #5,%d0
+  ff8cb8:	9088           	subl %a0,%d0
+  ff8cba:	d081           	addl %d1,%d0
+  ff8cbc:	e588           	lsll #2,%d0
+  ff8cbe:	2209           	movel %a1,%d1
+  ff8cc0:	9280           	subl %d0,%d1
+  ff8cc2:	4a81           	tstl %d1
+  ff8cc4:	6604           	bnes ff8cca <ClearMessageBuffer+0x44>
+  ff8cc6:	4eba ff14      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8cca:	202f 0004      	movel %sp@(4),%d0
+  ff8cce:	0680 00ff a2e6 	addil #16753382,%d0
+  ff8cd4:	2040           	moveal %d0,%a0
+  ff8cd6:	4210           	clrb %a0@
+  ff8cd8:	52af 0004      	addql #1,%sp@(4)
+  ff8cdc:	0caf 0000 1013 	cmpil #4115,%sp@(4)
+  ff8ce2:	0004 
+  ff8ce4:	6faa           	bles ff8c90 <ClearMessageBuffer+0xa>
+  ff8ce6:	241f           	movel %sp@+,%d2
+  ff8ce8:	588f           	addql #4,%sp
+  ff8cea:	4e75           	rts
+
+00ff8cec <ClearBreadcrumbBuffer>:
+  ff8cec:	598f           	subql #4,%sp
+  ff8cee:	4297           	clrl %sp@
+  ff8cf0:	600e           	bras ff8d00 <ClearBreadcrumbBuffer+0x14>
+  ff8cf2:	2017           	movel %sp@,%d0
+  ff8cf4:	0680 00ff b2fa 	addil #16757498,%d0
+  ff8cfa:	2040           	moveal %d0,%a0
+  ff8cfc:	4210           	clrb %a0@
+  ff8cfe:	5297           	addql #1,%sp@
+  ff8d00:	7063           	moveq #99,%d0
+  ff8d02:	b097           	cmpl %sp@,%d0
+  ff8d04:	6cec           	bges ff8cf2 <ClearBreadcrumbBuffer+0x6>
+  ff8d06:	588f           	addql #4,%sp
+  ff8d08:	4e75           	rts
+
+00ff8d0a <WriteByte>:
+  ff8d0a:	518f           	subql #8,%sp
+  ff8d0c:	202f 000c      	movel %sp@(12),%d0
+  ff8d10:	1e80           	moveb %d0,%sp@
+  ff8d12:	203c 00ff f60e 	movel #16774670,%d0
+  ff8d18:	2040           	moveal %d0,%a0
+  ff8d1a:	1010           	moveb %a0@,%d0
+  ff8d1c:	1200           	moveb %d0,%d1
+  ff8d1e:	0201 0003      	andib #3,%d1
+  ff8d22:	1f41 0007      	moveb %d1,%sp@(7)
+  ff8d26:	422f 0006      	clrb %sp@(6)
+  ff8d2a:	603a           	bras ff8d66 <WriteByte+0x5c>
+  ff8d2c:	102f 0006      	moveb %sp@(6),%d0
+  ff8d30:	1200           	moveb %d0,%d1
+  ff8d32:	5201           	addqb #1,%d1
+  ff8d34:	1f41 0006      	moveb %d1,%sp@(6)
+  ff8d38:	42af 0002      	clrl %sp@(2)
+  ff8d3c:	6008           	bras ff8d46 <WriteByte+0x3c>
+  ff8d3e:	4eba fece      	jsr %pc@(ff8c0e <WasteTime>)
+  ff8d42:	52af 0002      	addql #1,%sp@(2)
+  ff8d46:	7031           	moveq #49,%d0
+  ff8d48:	b0af 0002      	cmpl %sp@(2),%d0
+  ff8d4c:	6cf0           	bges ff8d3e <WriteByte+0x34>
+  ff8d4e:	4eba fe8c      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8d52:	203c 00ff f60e 	movel #16774670,%d0
+  ff8d58:	2040           	moveal %d0,%a0
+  ff8d5a:	1010           	moveb %a0@,%d0
+  ff8d5c:	1200           	moveb %d0,%d1
+  ff8d5e:	0201 0003      	andib #3,%d1
+  ff8d62:	1f41 0007      	moveb %d1,%sp@(7)
+  ff8d66:	0c2f 0002 0007 	cmpib #2,%sp@(7)
+  ff8d6c:	6708           	beqs ff8d76 <WriteByte+0x6c>
+  ff8d6e:	0c2f 0003 0007 	cmpib #3,%sp@(7)
+  ff8d74:	6608           	bnes ff8d7e <WriteByte+0x74>
+  ff8d76:	0c2f fff9 0006 	cmpib #-7,%sp@(6)
+  ff8d7c:	63ae           	blss ff8d2c <WriteByte+0x22>
+  ff8d7e:	203c 00ff f60d 	movel #16774669,%d0
+  ff8d84:	2040           	moveal %d0,%a0
+  ff8d86:	1097           	moveb %sp@,%a0@
+  ff8d88:	508f           	addql #8,%sp
+  ff8d8a:	4e75           	rts
+
+00ff8d8c <WriteMessage>:
+  ff8d8c:	4fef ffec      	lea %sp@(-20),%sp
+  ff8d90:	202f 001c      	movel %sp@(28),%d0
+  ff8d94:	3f40 0002      	movew %d0,%sp@(2)
+  ff8d98:	4eba fe42      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8d9c:	7001           	moveq #1,%d0
+  ff8d9e:	c0af 0020      	andl %sp@(32),%d0
+  ff8da2:	4a80           	tstl %d0
+  ff8da4:	670c           	beqs ff8db2 <WriteMessage+0x26>
+  ff8da6:	203c 00ff f60c 	movel #16774668,%d0
+  ff8dac:	2040           	moveal %d0,%a0
+  ff8dae:	10bc 0014      	moveb #20,%a0@
+  ff8db2:	7004           	moveq #4,%d0
+  ff8db4:	c0af 0020      	andl %sp@(32),%d0
+  ff8db8:	4a80           	tstl %d0
+  ff8dba:	6708           	beqs ff8dc4 <WriteMessage+0x38>
+  ff8dbc:	302f 0002      	movew %sp@(2),%d0
+  ff8dc0:	5340           	subqw #1,%d0
+  ff8dc2:	6004           	bras ff8dc8 <WriteMessage+0x3c>
+  ff8dc4:	302f 0002      	movew %sp@(2),%d0
+  ff8dc8:	3f40 0004      	movew %d0,%sp@(4)
+  ff8dcc:	4eba 044e      	jsr %pc@(ff921c <StartChecksum>)
+  ff8dd0:	3f40 0010      	movew %d0,%sp@(16)
+  ff8dd4:	426f 000e      	clrw %sp@(14)
+  ff8dd8:	6042           	bras ff8e1c <WriteMessage+0x90>
+  ff8dda:	4280           	clrl %d0
+  ff8ddc:	302f 000e      	movew %sp@(14),%d0
+  ff8de0:	d0af 0018      	addl %sp@(24),%d0
+  ff8de4:	2040           	moveal %d0,%a0
+  ff8de6:	1010           	moveb %a0@,%d0
+  ff8de8:	1000           	moveb %d0,%d0
+  ff8dea:	0240 00ff      	andiw #255,%d0
+  ff8dee:	d16f 0010      	addw %d0,%sp@(16)
+  ff8df2:	4280           	clrl %d0
+  ff8df4:	302f 000e      	movew %sp@(14),%d0
+  ff8df8:	d0af 0018      	addl %sp@(24),%d0
+  ff8dfc:	2040           	moveal %d0,%a0
+  ff8dfe:	1010           	moveb %a0@,%d0
+  ff8e00:	1000           	moveb %d0,%d0
+  ff8e02:	0280 0000 00ff 	andil #255,%d0
+  ff8e08:	2f00           	movel %d0,%sp@-
+  ff8e0a:	4eba fefe      	jsr %pc@(ff8d0a <WriteByte>)
+  ff8e0e:	588f           	addql #4,%sp
+  ff8e10:	302f 000e      	movew %sp@(14),%d0
+  ff8e14:	3200           	movew %d0,%d1
+  ff8e16:	5241           	addqw #1,%d1
+  ff8e18:	3f41 000e      	movew %d1,%sp@(14)
+  ff8e1c:	302f 0004      	movew %sp@(4),%d0
+  ff8e20:	b06f 000e      	cmpw %sp@(14),%d0
+  ff8e24:	62b4           	bhis ff8dda <WriteMessage+0x4e>
+  ff8e26:	7008           	moveq #8,%d0
+  ff8e28:	c0af 0020      	andl %sp@(32),%d0
+  ff8e2c:	4a80           	tstl %d0
+  ff8e2e:	6758           	beqs ff8e88 <WriteMessage+0xfc>
+  ff8e30:	4280           	clrl %d0
+  ff8e32:	302f 000e      	movew %sp@(14),%d0
+  ff8e36:	d0af 0018      	addl %sp@(24),%d0
+  ff8e3a:	2040           	moveal %d0,%a0
+  ff8e3c:	1010           	moveb %a0@,%d0
+  ff8e3e:	1000           	moveb %d0,%d0
+  ff8e40:	0240 00ff      	andiw #255,%d0
+  ff8e44:	d16f 0010      	addw %d0,%sp@(16)
+  ff8e48:	4280           	clrl %d0
+  ff8e4a:	302f 000e      	movew %sp@(14),%d0
+  ff8e4e:	d0af 0018      	addl %sp@(24),%d0
+  ff8e52:	2040           	moveal %d0,%a0
+  ff8e54:	1010           	moveb %a0@,%d0
+  ff8e56:	1000           	moveb %d0,%d0
+  ff8e58:	0280 0000 00ff 	andil #255,%d0
+  ff8e5e:	2f00           	movel %d0,%sp@-
+  ff8e60:	4eba fea8      	jsr %pc@(ff8d0a <WriteByte>)
+  ff8e64:	588f           	addql #4,%sp
+  ff8e66:	302f 0010      	movew %sp@(16),%d0
+  ff8e6a:	e048           	lsrw #8,%d0
+  ff8e6c:	1000           	moveb %d0,%d0
+  ff8e6e:	1000           	moveb %d0,%d0
+  ff8e70:	0280 0000 00ff 	andil #255,%d0
+  ff8e76:	2f00           	movel %d0,%sp@-
+  ff8e78:	4eba fe90      	jsr %pc@(ff8d0a <WriteByte>)
+  ff8e7c:	588f           	addql #4,%sp
+  ff8e7e:	302f 0010      	movew %sp@(16),%d0
+  ff8e82:	1f40 0012      	moveb %d0,%sp@(18)
+  ff8e86:	6010           	bras ff8e98 <WriteMessage+0x10c>
+  ff8e88:	4280           	clrl %d0
+  ff8e8a:	302f 000e      	movew %sp@(14),%d0
+  ff8e8e:	d0af 0018      	addl %sp@(24),%d0
+  ff8e92:	2040           	moveal %d0,%a0
+  ff8e94:	1f50 0012      	moveb %a0@,%sp@(18)
+  ff8e98:	7004           	moveq #4,%d0
+  ff8e9a:	c0af 0020      	andl %sp@(32),%d0
+  ff8e9e:	4a80           	tstl %d0
+  ff8ea0:	6700 0094      	beqw ff8f36 <WriteMessage+0x1aa>
+  ff8ea4:	203c 00ff f60c 	movel #16774668,%d0
+  ff8eaa:	2040           	moveal %d0,%a0
+  ff8eac:	10bc 000c      	moveb #12,%a0@
+  ff8eb0:	203c 00ff f60d 	movel #16774669,%d0
+  ff8eb6:	2040           	moveal %d0,%a0
+  ff8eb8:	10af 0012      	moveb %sp@(18),%a0@
+  ff8ebc:	4eba fd50      	jsr %pc@(ff8c0e <WasteTime>)
+  ff8ec0:	203c 00ff f60c 	movel #16774668,%d0
+  ff8ec6:	2040           	moveal %d0,%a0
+  ff8ec8:	10bc 0003      	moveb #3,%a0@
+  ff8ecc:	203c 00ff f60d 	movel #16774669,%d0
+  ff8ed2:	2040           	moveal %d0,%a0
+  ff8ed4:	4210           	clrb %a0@
+  ff8ed6:	203c 00ff f60e 	movel #16774670,%d0
+  ff8edc:	2040           	moveal %d0,%a0
+  ff8ede:	1010           	moveb %a0@,%d0
+  ff8ee0:	1200           	moveb %d0,%d1
+  ff8ee2:	0201 0003      	andib #3,%d1
+  ff8ee6:	1f41 0013      	moveb %d1,%sp@(19)
+  ff8eea:	42af 000a      	clrl %sp@(10)
+  ff8eee:	6036           	bras ff8f26 <WriteMessage+0x19a>
+  ff8ef0:	52af 000a      	addql #1,%sp@(10)
+  ff8ef4:	42af 0006      	clrl %sp@(6)
+  ff8ef8:	600c           	bras ff8f06 <WriteMessage+0x17a>
+  ff8efa:	4eba fce0      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8efe:	4eba fd0e      	jsr %pc@(ff8c0e <WasteTime>)
+  ff8f02:	52af 0006      	addql #1,%sp@(6)
+  ff8f06:	7063           	moveq #99,%d0
+  ff8f08:	b0af 0006      	cmpl %sp@(6),%d0
+  ff8f0c:	6cec           	bges ff8efa <WriteMessage+0x16e>
+  ff8f0e:	4eba fccc      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8f12:	203c 00ff f60e 	movel #16774670,%d0
+  ff8f18:	2040           	moveal %d0,%a0
+  ff8f1a:	1010           	moveb %a0@,%d0
+  ff8f1c:	1200           	moveb %d0,%d1
+  ff8f1e:	0201 0003      	andib #3,%d1
+  ff8f22:	1f41 0013      	moveb %d1,%sp@(19)
+  ff8f26:	4a2f 0013      	tstb %sp@(19)
+  ff8f2a:	670a           	beqs ff8f36 <WriteMessage+0x1aa>
+  ff8f2c:	0caf 0000 01f3 	cmpil #499,%sp@(10)
+  ff8f32:	000a 
+  ff8f34:	6fba           	bles ff8ef0 <WriteMessage+0x164>
+  ff8f36:	4fef 0014      	lea %sp@(20),%sp
+  ff8f3a:	4e75           	rts
+
+00ff8f3c <ReadMessage>:
+  ff8f3c:	518f           	subql #8,%sp
+  ff8f3e:	598f           	subql #4,%sp
+  ff8f40:	4eba fc9a      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8f44:	42af 0008      	clrl %sp@(8)
+  ff8f48:	42af 0004      	clrl %sp@(4)
+  ff8f4c:	6002           	bras ff8f50 <ReadMessage+0x14>
+  ff8f4e:	4e71           	nop
+  ff8f50:	4eba fc8a      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff8f54:	52af 0008      	addql #1,%sp@(8)
+  ff8f58:	0caf 0003 0000 	cmpil #196608,%sp@(8)
+  ff8f5e:	0008 
+  ff8f60:	6306           	blss ff8f68 <ReadMessage+0x2c>
+  ff8f62:	4280           	clrl %d0
+  ff8f64:	6000 0110      	braw ff9076 <ReadMessage+0x13a>
+  ff8f68:	0caf 0000 1014 	cmpil #4116,%sp@(4)
+  ff8f6e:	0004 
+  ff8f70:	6f12           	bles ff8f84 <ReadMessage+0x48>
+  ff8f72:	202f 0014      	movel %sp@(20),%d0
+  ff8f76:	2040           	moveal %d0,%a0
+  ff8f78:	10bc ffee      	moveb #-18,%a0@
+  ff8f7c:	202f 0004      	movel %sp@(4),%d0
+  ff8f80:	6000 00f4      	braw ff9076 <ReadMessage+0x13a>
+  ff8f84:	203c 00ff f60e 	movel #16774670,%d0
+  ff8f8a:	2040           	moveal %d0,%a0
+  ff8f8c:	1010           	moveb %a0@,%d0
+  ff8f8e:	ea08           	lsrb #5,%d0
+  ff8f90:	1f40 0003      	moveb %d0,%sp@(3)
+  ff8f94:	4280           	clrl %d0
+  ff8f96:	102f 0003      	moveb %sp@(3),%d0
+  ff8f9a:	7207           	moveq #7,%d1
+  ff8f9c:	b280           	cmpl %d0,%d1
+  ff8f9e:	65ae           	bcss ff8f4e <ReadMessage+0x12>
+  ff8fa0:	303b 0a06      	movew %pc@(ff8fa8 <ReadMessage+0x6c>,%d0:l:2),%d0
+  ff8fa4:	4efb 0002      	jmp %pc@(ff8fa8 <ReadMessage+0x6c>,%d0:w)
+  ff8fa8:	00c8           	.short 0x00c8
+  ff8faa:	0010 0010      	orib #16,%a0@
+  ff8fae:	00b8 0010 005c 	oril #1048668,5c <KernelStart-0xff7fa4>
+  ff8fb4:	005c 
+  ff8fb6:	005c 202f      	oriw #8239,%a4@+
+  ff8fba:	0004 2200      	orib #0,%d4
+  ff8fbe:	5281           	addql #1,%d1
+  ff8fc0:	2f41 0004      	movel %d1,%sp@(4)
+  ff8fc4:	223c 00ff f60f 	movel #16774671,%d1
+  ff8fca:	2041           	moveal %d1,%a0
+  ff8fcc:	1210           	moveb %a0@,%d1
+  ff8fce:	1181 09b0 00ff 	moveb %d1,@(00ffa2e6,%d0:l)
+  ff8fd4:	a2e6 
+  ff8fd6:	203c 00ff f60e 	movel #16774670,%d0
+  ff8fdc:	2040           	moveal %d0,%a0
+  ff8fde:	1010           	moveb %a0@,%d0
+  ff8fe0:	ea08           	lsrb #5,%d0
+  ff8fe2:	1f40 0003      	moveb %d0,%sp@(3)
+  ff8fe6:	0c2f 0001 0003 	cmpib #1,%sp@(3)
+  ff8fec:	67ca           	beqs ff8fb8 <ReadMessage+0x7c>
+  ff8fee:	0c2f 0002 0003 	cmpib #2,%sp@(3)
+  ff8ff4:	67c2           	beqs ff8fb8 <ReadMessage+0x7c>
+  ff8ff6:	0c2f 0004 0003 	cmpib #4,%sp@(3)
+  ff8ffc:	67ba           	beqs ff8fb8 <ReadMessage+0x7c>
+  ff8ffe:	42af 0008      	clrl %sp@(8)
+  ff9002:	606e           	bras ff9072 <ReadMessage+0x136>
+  ff9004:	203c 00ff f60f 	movel #16774671,%d0
+  ff900a:	2040           	moveal %d0,%a0
+  ff900c:	1210           	moveb %a0@,%d1
+  ff900e:	202f 0010      	movel %sp@(16),%d0
+  ff9012:	2040           	moveal %d0,%a0
+  ff9014:	1081           	moveb %d1,%a0@
+  ff9016:	203c 00ff f60c 	movel #16774668,%d0
+  ff901c:	2040           	moveal %d0,%a0
+  ff901e:	10bc 0002      	moveb #2,%a0@
+  ff9022:	4aaf 0004      	tstl %sp@(4)
+  ff9026:	6602           	bnes ff902a <ReadMessage+0xee>
+  ff9028:	6048           	bras ff9072 <ReadMessage+0x136>
+  ff902a:	202f 0010      	movel %sp@(16),%d0
+  ff902e:	2040           	moveal %d0,%a0
+  ff9030:	1010           	moveb %a0@,%d0
+  ff9032:	1000           	moveb %d0,%d0
+  ff9034:	0280 0000 00ff 	andil #255,%d0
+  ff903a:	7230           	moveq #48,%d1
+  ff903c:	c081           	andl %d1,%d0
+  ff903e:	4a80           	tstl %d0
+  ff9040:	670e           	beqs ff9050 <ReadMessage+0x114>
+  ff9042:	202f 0014      	movel %sp@(20),%d0
+  ff9046:	2040           	moveal %d0,%a0
+  ff9048:	10bc 0002      	moveb #2,%a0@
+  ff904c:	4280           	clrl %d0
+  ff904e:	6026           	bras ff9076 <ReadMessage+0x13a>
+  ff9050:	202f 0014      	movel %sp@(20),%d0
+  ff9054:	2040           	moveal %d0,%a0
+  ff9056:	10bc 0001      	moveb #1,%a0@
+  ff905a:	202f 0004      	movel %sp@(4),%d0
+  ff905e:	6016           	bras ff9076 <ReadMessage+0x13a>
+  ff9060:	4e71           	nop
+  ff9062:	202f 0014      	movel %sp@(20),%d0
+  ff9066:	2040           	moveal %d0,%a0
+  ff9068:	10bc 000b      	moveb #11,%a0@
+  ff906c:	4280           	clrl %d0
+  ff906e:	6006           	bras ff9076 <ReadMessage+0x13a>
+  ff9070:	4e71           	nop
+  ff9072:	6000 feda      	braw ff8f4e <ReadMessage+0x12>
+  ff9076:	508f           	addql #8,%sp
+  ff9078:	588f           	addql #4,%sp
+  ff907a:	4e75           	rts
+
+00ff907c <CopyToMessageBuffer>:
+  ff907c:	598f           	subql #4,%sp
+  ff907e:	202f 000c      	movel %sp@(12),%d0
+  ff9082:	5380           	subql #1,%d0
+  ff9084:	2e80           	movel %d0,%sp@
+  ff9086:	602a           	bras ff90b2 <CopyToMessageBuffer+0x36>
+  ff9088:	2017           	movel %sp@,%d0
+  ff908a:	d0af 0010      	addl %sp@(16),%d0
+  ff908e:	2217           	movel %sp@,%d1
+  ff9090:	d2af 0008      	addl %sp@(8),%d1
+  ff9094:	2041           	moveal %d1,%a0
+  ff9096:	1210           	moveb %a0@,%d1
+  ff9098:	1181 09b0 00ff 	moveb %d1,@(00ffa2e6,%d0:l)
+  ff909e:	a2e6 
+  ff90a0:	2017           	movel %sp@,%d0
+  ff90a2:	0280 0000 01ff 	andil #511,%d0
+  ff90a8:	4a80           	tstl %d0
+  ff90aa:	6604           	bnes ff90b0 <CopyToMessageBuffer+0x34>
+  ff90ac:	4eba fb2e      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff90b0:	5397           	subql #1,%sp@
+  ff90b2:	4a97           	tstl %sp@
+  ff90b4:	6cd2           	bges ff9088 <CopyToMessageBuffer+0xc>
+  ff90b6:	588f           	addql #4,%sp
+  ff90b8:	4e75           	rts
+
+00ff90ba <Reboot>:
+  ff90ba:	4eba fb98      	jsr %pc@(ff8c54 <LongSleepWithWatchdog>)
+  ff90be:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff90c4:	a2e6 
+  ff90c6:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff90cc:	a2e7 
+  ff90ce:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff90d4:	a2e8 
+  ff90d6:	13fc 0060 00ff 	moveb #96,ffa2e9 <MessageBuffer+0x3>
+  ff90dc:	a2e9 
+  ff90de:	202f 0004      	movel %sp@(4),%d0
+  ff90e2:	7218           	moveq #24,%d1
+  ff90e4:	e2a8           	lsrl %d1,%d0
+  ff90e6:	1000           	moveb %d0,%d0
+  ff90e8:	13c0 00ff a2ea 	moveb %d0,ffa2ea <MessageBuffer+0x4>
+  ff90ee:	202f 0004      	movel %sp@(4),%d0
+  ff90f2:	0280 00ff 0000 	andil #16711680,%d0
+  ff90f8:	4240           	clrw %d0
+  ff90fa:	4840           	swap %d0
+  ff90fc:	1000           	moveb %d0,%d0
+  ff90fe:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff9104:	202f 0004      	movel %sp@(4),%d0
+  ff9108:	0280 0000 ff00 	andil #65280,%d0
+  ff910e:	e088           	lsrl #8,%d0
+  ff9110:	1000           	moveb %d0,%d0
+  ff9112:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff9118:	202f 0004      	movel %sp@(4),%d0
+  ff911c:	1000           	moveb %d0,%d0
+  ff911e:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff9124:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9128:	4878 0008      	pea 8 <KernelStart-0xff7ff8>
+  ff912c:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff9132:	4eba fc58      	jsr %pc@(ff8d8c <WriteMessage>)
+  ff9136:	508f           	addql #8,%sp
+  ff9138:	588f           	addql #4,%sp
+  ff913a:	4eba fb18      	jsr %pc@(ff8c54 <LongSleepWithWatchdog>)
+  ff913e:	60fe           	bras ff913e <Reboot+0x84>
+
+00ff9140 <SendToolPresent>:
+  ff9140:	518f           	subql #8,%sp
+  ff9142:	518f           	subql #8,%sp
+  ff9144:	2f02           	movel %d2,%sp@-
+  ff9146:	226f 0018      	moveal %sp@(24),%a1
+  ff914a:	206f 001c      	moveal %sp@(28),%a0
+  ff914e:	222f 0020      	movel %sp@(32),%d1
+  ff9152:	202f 0024      	movel %sp@(36),%d0
+  ff9156:	3409           	movew %a1,%d2
+  ff9158:	1f42 000a      	moveb %d2,%sp@(10)
+  ff915c:	3408           	movew %a0,%d2
+  ff915e:	1f42 0008      	moveb %d2,%sp@(8)
+  ff9162:	1f41 0006      	moveb %d1,%sp@(6)
+  ff9166:	1f40 0004      	moveb %d0,%sp@(4)
+  ff916a:	1f7c ff8c 000c 	moveb #-116,%sp@(12)
+  ff9170:	1f7c fffe 000d 	moveb #-2,%sp@(13)
+  ff9176:	1f7c fff0 000e 	moveb #-16,%sp@(14)
+  ff917c:	1f7c 003f 000f 	moveb #63,%sp@(15)
+  ff9182:	1f6f 000a 0010 	moveb %sp@(10),%sp@(16)
+  ff9188:	1f6f 0008 0011 	moveb %sp@(8),%sp@(17)
+  ff918e:	1f6f 0006 0012 	moveb %sp@(6),%sp@(18)
+  ff9194:	1f6f 0004 0013 	moveb %sp@(4),%sp@(19)
+  ff919a:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff919e:	4878 0008      	pea 8 <KernelStart-0xff7ff8>
+  ff91a2:	7014           	moveq #20,%d0
+  ff91a4:	d08f           	addl %sp,%d0
+  ff91a6:	2f00           	movel %d0,%sp@-
+  ff91a8:	4eba fbe2      	jsr %pc@(ff8d8c <WriteMessage>)
+  ff91ac:	508f           	addql #8,%sp
+  ff91ae:	588f           	addql #4,%sp
+  ff91b0:	241f           	movel %sp@+,%d2
+  ff91b2:	508f           	addql #8,%sp
+  ff91b4:	508f           	addql #8,%sp
+  ff91b6:	4e75           	rts
+
+00ff91b8 <SendToolPresent2>:
+  ff91b8:	2f02           	movel %d2,%sp@-
+  ff91ba:	202f 0008      	movel %sp@(8),%d0
+  ff91be:	1000           	moveb %d0,%d0
+  ff91c0:	1000           	moveb %d0,%d0
+  ff91c2:	0280 0000 00ff 	andil #255,%d0
+  ff91c8:	2240           	moveal %d0,%a1
+  ff91ca:	202f 0008      	movel %sp@(8),%d0
+  ff91ce:	0280 0000 ff00 	andil #65280,%d0
+  ff91d4:	e088           	lsrl #8,%d0
+  ff91d6:	1000           	moveb %d0,%d0
+  ff91d8:	1000           	moveb %d0,%d0
+  ff91da:	0280 0000 00ff 	andil #255,%d0
+  ff91e0:	2040           	moveal %d0,%a0
+  ff91e2:	202f 0008      	movel %sp@(8),%d0
+  ff91e6:	0280 00ff 0000 	andil #16711680,%d0
+  ff91ec:	4240           	clrw %d0
+  ff91ee:	4840           	swap %d0
+  ff91f0:	1000           	moveb %d0,%d0
+  ff91f2:	4281           	clrl %d1
+  ff91f4:	1200           	moveb %d0,%d1
+  ff91f6:	202f 0008      	movel %sp@(8),%d0
+  ff91fa:	7418           	moveq #24,%d2
+  ff91fc:	e4a8           	lsrl %d2,%d0
+  ff91fe:	1000           	moveb %d0,%d0
+  ff9200:	1000           	moveb %d0,%d0
+  ff9202:	0280 0000 00ff 	andil #255,%d0
+  ff9208:	2f09           	movel %a1,%sp@-
+  ff920a:	2f08           	movel %a0,%sp@-
+  ff920c:	2f01           	movel %d1,%sp@-
+  ff920e:	2f00           	movel %d0,%sp@-
+  ff9210:	4eba ff2e      	jsr %pc@(ff9140 <SendToolPresent>)
+  ff9214:	508f           	addql #8,%sp
+  ff9216:	508f           	addql #8,%sp
+  ff9218:	241f           	movel %sp@+,%d2
+  ff921a:	4e75           	rts
+
+00ff921c <StartChecksum>:
+  ff921c:	518f           	subql #8,%sp
+  ff921e:	426f 0006      	clrw %sp@(6)
+  ff9222:	7004           	moveq #4,%d0
+  ff9224:	2f40 0002      	movel %d0,%sp@(2)
+  ff9228:	601c           	bras ff9246 <StartChecksum+0x2a>
+  ff922a:	202f 0002      	movel %sp@(2),%d0
+  ff922e:	0680 00ff a2e6 	addil #16753382,%d0
+  ff9234:	2040           	moveal %d0,%a0
+  ff9236:	1010           	moveb %a0@,%d0
+  ff9238:	1000           	moveb %d0,%d0
+  ff923a:	0240 00ff      	andiw #255,%d0
+  ff923e:	d16f 0006      	addw %d0,%sp@(6)
+  ff9242:	52af 0002      	addql #1,%sp@(2)
+  ff9246:	7009           	moveq #9,%d0
+  ff9248:	b0af 0002      	cmpl %sp@(2),%d0
+  ff924c:	6cdc           	bges ff922a <StartChecksum+0xe>
+  ff924e:	302f 0006      	movew %sp@(6),%d0
+  ff9252:	508f           	addql #8,%sp
+  ff9254:	4e75           	rts
+
+00ff9256 <AddReadPayloadChecksum>:
+  ff9256:	518f           	subql #8,%sp
+  ff9258:	2f02           	movel %d2,%sp@-
+  ff925a:	4eba f980      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff925e:	426f 000a      	clrw %sp@(10)
+  ff9262:	42af 0006      	clrl %sp@(6)
+  ff9266:	6056           	bras ff92be <AddReadPayloadChecksum+0x68>
+  ff9268:	202f 0006      	movel %sp@(6),%d0
+  ff926c:	d0af 0010      	addl %sp@(16),%d0
+  ff9270:	2040           	moveal %d0,%a0
+  ff9272:	1f50 0005      	moveb %a0@,%sp@(5)
+  ff9276:	4240           	clrw %d0
+  ff9278:	102f 0005      	moveb %sp@(5),%d0
+  ff927c:	d16f 000a      	addw %d0,%sp@(10)
+  ff9280:	222f 0006      	movel %sp@(6),%d1
+  ff9284:	2401           	movel %d1,%d2
+  ff9286:	4c3c 2c00 51eb 	mulsl #1374389535,%d0,%d2
+  ff928c:	851f 
+  ff928e:	ea80           	asrl #5,%d0
+  ff9290:	2401           	movel %d1,%d2
+  ff9292:	d482           	addl %d2,%d2
+  ff9294:	9582           	subxl %d2,%d2
+  ff9296:	2042           	moveal %d2,%a0
+  ff9298:	9088           	subl %a0,%d0
+  ff929a:	e588           	lsll #2,%d0
+  ff929c:	2400           	movel %d0,%d2
+  ff929e:	e58a           	lsll #2,%d2
+  ff92a0:	2042           	moveal %d2,%a0
+  ff92a2:	d088           	addl %a0,%d0
+  ff92a4:	2400           	movel %d0,%d2
+  ff92a6:	e58a           	lsll #2,%d2
+  ff92a8:	2042           	moveal %d2,%a0
+  ff92aa:	d088           	addl %a0,%d0
+  ff92ac:	2401           	movel %d1,%d2
+  ff92ae:	9480           	subl %d0,%d2
+  ff92b0:	2002           	movel %d2,%d0
+  ff92b2:	4a80           	tstl %d0
+  ff92b4:	6604           	bnes ff92ba <AddReadPayloadChecksum+0x64>
+  ff92b6:	4eba f924      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff92ba:	52af 0006      	addql #1,%sp@(6)
+  ff92be:	202f 0006      	movel %sp@(6),%d0
+  ff92c2:	b0af 0014      	cmpl %sp@(20),%d0
+  ff92c6:	65a0           	bcss ff9268 <AddReadPayloadChecksum+0x12>
+  ff92c8:	4eba f912      	jsr %pc@(ff8bdc <ScratchWatchdog>)
+  ff92cc:	302f 000a      	movew %sp@(10),%d0
+  ff92d0:	241f           	movel %sp@+,%d2
+  ff92d2:	508f           	addql #8,%sp
+  ff92d4:	4e75           	rts
+
+00ff92d6 <SetBlockChecksum>:
+  ff92d6:	598f           	subql #4,%sp
+  ff92d8:	202f 000c      	movel %sp@(12),%d0
+  ff92dc:	3f40 0002      	movew %d0,%sp@(2)
+  ff92e0:	700a           	moveq #10,%d0
+  ff92e2:	d0af 0008      	addl %sp@(8),%d0
+  ff92e6:	322f 0002      	movew %sp@(2),%d1
+  ff92ea:	e049           	lsrw #8,%d1
+  ff92ec:	1201           	moveb %d1,%d1
+  ff92ee:	1181 09b0 00ff 	moveb %d1,@(00ffa2e6,%d0:l)
+  ff92f4:	a2e6 
+  ff92f6:	700b           	moveq #11,%d0
+  ff92f8:	d0af 0008      	addl %sp@(8),%d0
+  ff92fc:	322f 0002      	movew %sp@(2),%d1
+  ff9300:	1201           	moveb %d1,%d1
+  ff9302:	1181 09b0 00ff 	moveb %d1,@(00ffa2e6,%d0:l)
+  ff9308:	a2e6 
+  ff930a:	588f           	addql #4,%sp
+  ff930c:	4e75           	rts
+
+00ff930e <HandleVersionQuery>:
+  ff930e:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff9314:	a2e6 
+  ff9316:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff931c:	a2e7 
+  ff931e:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff9324:	a2e8 
+  ff9326:	13fc 007d 00ff 	moveb #125,ffa2e9 <MessageBuffer+0x3>
+  ff932c:	a2e9 
+  ff932e:	4239 00ff a2ea 	clrb ffa2ea <MessageBuffer+0x4>
+  ff9334:	13fc 0001 00ff 	moveb #1,ffa2eb <MessageBuffer+0x5>
+  ff933a:	a2eb 
+  ff933c:	13fc 0003 00ff 	moveb #3,ffa2ec <MessageBuffer+0x6>
+  ff9342:	a2ec 
+  ff9344:	13fc 0005 00ff 	moveb #5,ffa2ed <MessageBuffer+0x7>
+  ff934a:	a2ed 
+  ff934c:	13fc 0001 00ff 	moveb #1,ffa2ee <MessageBuffer+0x8>
+  ff9352:	a2ee 
+  ff9354:	4eba f90e      	jsr %pc@(ff8c64 <ElmSleep>)
+  ff9358:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff935c:	4878 0009      	pea 9 <KernelStart-0xff7ff7>
+  ff9360:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff9366:	4eba fa24      	jsr %pc@(ff8d8c <WriteMessage>)
+  ff936a:	508f           	addql #8,%sp
+  ff936c:	588f           	addql #4,%sp
+  ff936e:	4e75           	rts
+
+00ff9370 <HandleReadMode35>:
+  ff9370:	518f           	subql #8,%sp
+  ff9372:	1039 00ff a2eb 	moveb ffa2eb <MessageBuffer+0x5>,%d0
+  ff9378:	1000           	moveb %d0,%d0
+  ff937a:	0280 0000 00ff 	andil #255,%d0
+  ff9380:	2200           	movel %d0,%d1
+  ff9382:	e189           	lsll #8,%d1
+  ff9384:	1039 00ff a2ec 	moveb ffa2ec <MessageBuffer+0x6>,%d0
+  ff938a:	1000           	moveb %d0,%d0
+  ff938c:	0280 0000 00ff 	andil #255,%d0
+  ff9392:	d081           	addl %d1,%d0
+  ff9394:	2f40 0004      	movel %d0,%sp@(4)
+  ff9398:	1039 00ff a2ed 	moveb ffa2ed <MessageBuffer+0x7>,%d0
+  ff939e:	1000           	moveb %d0,%d0
+  ff93a0:	0280 0000 00ff 	andil #255,%d0
+  ff93a6:	2200           	movel %d0,%d1
+  ff93a8:	4841           	swap %d1
+  ff93aa:	4241           	clrw %d1
+  ff93ac:	1039 00ff a2ee 	moveb ffa2ee <MessageBuffer+0x8>,%d0
+  ff93b2:	1000           	moveb %d0,%d0
+  ff93b4:	0280 0000 00ff 	andil #255,%d0
+  ff93ba:	e188           	lsll #8,%d0
+  ff93bc:	d280           	addl %d0,%d1
+  ff93be:	1039 00ff a2ef 	moveb ffa2ef <MessageBuffer+0x9>,%d0
+  ff93c4:	1000           	moveb %d0,%d0
+  ff93c6:	0280 0000 00ff 	andil #255,%d0
+  ff93cc:	d081           	addl %d1,%d0
+  ff93ce:	2e80           	movel %d0,%sp@
+  ff93d0:	13fc 006d 00ff 	moveb #109,ffa2e6 <MessageBuffer>
+  ff93d6:	a2e6 
+  ff93d8:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff93de:	a2e7 
+  ff93e0:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff93e6:	a2e8 
+  ff93e8:	13fc 0036 00ff 	moveb #54,ffa2e9 <MessageBuffer+0x3>
+  ff93ee:	a2e9 
+  ff93f0:	13fc 0001 00ff 	moveb #1,ffa2ea <MessageBuffer+0x4>
+  ff93f6:	a2ea 
+  ff93f8:	202f 0004      	movel %sp@(4),%d0
+  ff93fc:	e088           	lsrl #8,%d0
+  ff93fe:	1000           	moveb %d0,%d0
+  ff9400:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff9406:	202f 0004      	movel %sp@(4),%d0
+  ff940a:	1000           	moveb %d0,%d0
+  ff940c:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff9412:	2017           	movel %sp@,%d0
+  ff9414:	4240           	clrw %d0
+  ff9416:	4840           	swap %d0
+  ff9418:	1000           	moveb %d0,%d0
+  ff941a:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff9420:	2017           	movel %sp@,%d0
+  ff9422:	e088           	lsrl #8,%d0
+  ff9424:	1000           	moveb %d0,%d0
+  ff9426:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff942c:	2017           	movel %sp@,%d0
+  ff942e:	1000           	moveb %d0,%d0
+  ff9430:	13c0 00ff a2ef 	moveb %d0,ffa2ef <MessageBuffer+0x9>
+  ff9436:	4eb9 00ff 8c64 	jsr ff8c64 <ElmSleep>
+  ff943c:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff9440:	4878 000a      	pea a <KernelStart-0xff7ff6>
+  ff9444:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff944a:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9450:	508f           	addql #8,%sp
+  ff9452:	588f           	addql #4,%sp
+  ff9454:	202f 0004      	movel %sp@(4),%d0
+  ff9458:	3000           	movew %d0,%d0
+  ff945a:	3000           	movew %d0,%d0
+  ff945c:	0280 0000 ffff 	andil #65535,%d0
+  ff9462:	2217           	movel %sp@,%d1
+  ff9464:	4878 000c      	pea c <KernelStart-0xff7ff4>
+  ff9468:	2f00           	movel %d0,%sp@-
+  ff946a:	2f01           	movel %d1,%sp@-
+  ff946c:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9472:	508f           	addql #8,%sp
+  ff9474:	588f           	addql #4,%sp
+  ff9476:	508f           	addql #8,%sp
+  ff9478:	4e75           	rts
+
+00ff947a <HandleWriteRequestMode34>:
+  ff947a:	518f           	subql #8,%sp
+  ff947c:	1039 00ff a2eb 	moveb ffa2eb <MessageBuffer+0x5>,%d0
+  ff9482:	1000           	moveb %d0,%d0
+  ff9484:	0280 0000 00ff 	andil #255,%d0
+  ff948a:	2200           	movel %d0,%d1
+  ff948c:	e189           	lsll #8,%d1
+  ff948e:	1039 00ff a2ec 	moveb ffa2ec <MessageBuffer+0x6>,%d0
+  ff9494:	1000           	moveb %d0,%d0
+  ff9496:	0280 0000 00ff 	andil #255,%d0
+  ff949c:	d081           	addl %d1,%d0
+  ff949e:	2f40 0004      	movel %d0,%sp@(4)
+  ff94a2:	1039 00ff a2ed 	moveb ffa2ed <MessageBuffer+0x7>,%d0
+  ff94a8:	1000           	moveb %d0,%d0
+  ff94aa:	0280 0000 00ff 	andil #255,%d0
+  ff94b0:	2200           	movel %d0,%d1
+  ff94b2:	4841           	swap %d1
+  ff94b4:	4241           	clrw %d1
+  ff94b6:	1039 00ff a2ee 	moveb ffa2ee <MessageBuffer+0x8>,%d0
+  ff94bc:	1000           	moveb %d0,%d0
+  ff94be:	0280 0000 00ff 	andil #255,%d0
+  ff94c4:	e188           	lsll #8,%d0
+  ff94c6:	d280           	addl %d0,%d1
+  ff94c8:	1039 00ff a2ef 	moveb ffa2ef <MessageBuffer+0x9>,%d0
+  ff94ce:	1000           	moveb %d0,%d0
+  ff94d0:	0280 0000 00ff 	andil #255,%d0
+  ff94d6:	d081           	addl %d1,%d0
+  ff94d8:	2e80           	movel %d0,%sp@
+  ff94da:	0caf 0000 1000 	cmpil #4096,%sp@(4)
+  ff94e0:	0004 
+  ff94e2:	6342           	blss ff9526 <HandleWriteRequestMode34+0xac>
+  ff94e4:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff94ea:	a2e6 
+  ff94ec:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff94f2:	a2e7 
+  ff94f4:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff94fa:	a2e8 
+  ff94fc:	13fc 007f 00ff 	moveb #127,ffa2e9 <MessageBuffer+0x3>
+  ff9502:	a2e9 
+  ff9504:	13fc 0034 00ff 	moveb #52,ffa2ea <MessageBuffer+0x4>
+  ff950a:	a2ea 
+  ff950c:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9510:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9514:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff951a:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9520:	508f           	addql #8,%sp
+  ff9522:	588f           	addql #4,%sp
+  ff9524:	603e           	bras ff9564 <HandleWriteRequestMode34+0xea>
+  ff9526:	13fc 006c 00ff 	moveb #108,ffa2e6 <MessageBuffer>
+  ff952c:	a2e6 
+  ff952e:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff9534:	a2e7 
+  ff9536:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff953c:	a2e8 
+  ff953e:	13fc 0074 00ff 	moveb #116,ffa2e9 <MessageBuffer+0x3>
+  ff9544:	a2e9 
+  ff9546:	4239 00ff a2ea 	clrb ffa2ea <MessageBuffer+0x4>
+  ff954c:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9550:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9554:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff955a:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9560:	508f           	addql #8,%sp
+  ff9562:	588f           	addql #4,%sp
+  ff9564:	508f           	addql #8,%sp
+  ff9566:	4e75           	rts
+
+00ff9568 <SendWriteSuccess>:
+  ff9568:	598f           	subql #4,%sp
+  ff956a:	202f 0008      	movel %sp@(8),%d0
+  ff956e:	1f40 0002      	moveb %d0,%sp@(2)
+  ff9572:	13fc 006d 00ff 	moveb #109,ffa2e6 <MessageBuffer>
+  ff9578:	a2e6 
+  ff957a:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff9580:	a2e7 
+  ff9582:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff9588:	a2e8 
+  ff958a:	13fc 0076 00ff 	moveb #118,ffa2e9 <MessageBuffer+0x3>
+  ff9590:	a2e9 
+  ff9592:	13ef 0002 00ff 	moveb %sp@(2),ffa2ea <MessageBuffer+0x4>
+  ff9598:	a2ea 
+  ff959a:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff959e:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff95a2:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff95a8:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff95ae:	508f           	addql #8,%sp
+  ff95b0:	588f           	addql #4,%sp
+  ff95b2:	588f           	addql #4,%sp
+  ff95b4:	4e75           	rts
+
+00ff95b6 <SendWriteFail>:
+  ff95b6:	598f           	subql #4,%sp
+  ff95b8:	222f 0008      	movel %sp@(8),%d1
+  ff95bc:	202f 000c      	movel %sp@(12),%d0
+  ff95c0:	1f41 0002      	moveb %d1,%sp@(2)
+  ff95c4:	1e80           	moveb %d0,%sp@
+  ff95c6:	13fc 006d 00ff 	moveb #109,ffa2e6 <MessageBuffer>
+  ff95cc:	a2e6 
+  ff95ce:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff95d4:	a2e7 
+  ff95d6:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff95dc:	a2e8 
+  ff95de:	13fc 007f 00ff 	moveb #127,ffa2e9 <MessageBuffer+0x3>
+  ff95e4:	a2e9 
+  ff95e6:	13fc 0036 00ff 	moveb #54,ffa2ea <MessageBuffer+0x4>
+  ff95ec:	a2ea 
+  ff95ee:	13ef 0002 00ff 	moveb %sp@(2),ffa2eb <MessageBuffer+0x5>
+  ff95f4:	a2eb 
+  ff95f6:	13d7 00ff a2ec 	moveb %sp@,ffa2ec <MessageBuffer+0x6>
+  ff95fc:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9600:	4878 0007      	pea 7 <KernelStart-0xff7ff9>
+  ff9604:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff960a:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9610:	508f           	addql #8,%sp
+  ff9612:	588f           	addql #4,%sp
+  ff9614:	588f           	addql #4,%sp
+  ff9616:	4e75           	rts
+
+00ff9618 <HandleWriteMode36>:
+  ff9618:	4fef ffe0      	lea %sp@(-32),%sp
+  ff961c:	2f02           	movel %d2,%sp@-
+  ff961e:	1f79 00ff a2ea 	moveb ffa2ea <MessageBuffer+0x4>,%sp@(25)
+  ff9624:	0019 
+  ff9626:	1039 00ff a2eb 	moveb ffa2eb <MessageBuffer+0x5>,%d0
+  ff962c:	1000           	moveb %d0,%d0
+  ff962e:	0280 0000 00ff 	andil #255,%d0
+  ff9634:	2200           	movel %d0,%d1
+  ff9636:	e189           	lsll #8,%d1
+  ff9638:	1039 00ff a2ec 	moveb ffa2ec <MessageBuffer+0x6>,%d0
+  ff963e:	1000           	moveb %d0,%d0
+  ff9640:	0280 0000 00ff 	andil #255,%d0
+  ff9646:	d081           	addl %d1,%d0
+  ff9648:	2f40 0014      	movel %d0,%sp@(20)
+  ff964c:	1039 00ff a2ed 	moveb ffa2ed <MessageBuffer+0x7>,%d0
+  ff9652:	1000           	moveb %d0,%d0
+  ff9654:	0280 0000 00ff 	andil #255,%d0
+  ff965a:	2200           	movel %d0,%d1
+  ff965c:	4841           	swap %d1
+  ff965e:	4241           	clrw %d1
+  ff9660:	1039 00ff a2ee 	moveb ffa2ee <MessageBuffer+0x8>,%d0
+  ff9666:	1000           	moveb %d0,%d0
+  ff9668:	0280 0000 00ff 	andil #255,%d0
+  ff966e:	e188           	lsll #8,%d0
+  ff9670:	d280           	addl %d0,%d1
+  ff9672:	1039 00ff a2ef 	moveb ffa2ef <MessageBuffer+0x9>,%d0
+  ff9678:	1000           	moveb %d0,%d0
+  ff967a:	0280 0000 00ff 	andil #255,%d0
+  ff9680:	d081           	addl %d1,%d0
+  ff9682:	2f40 0010      	movel %d0,%sp@(16)
+  ff9686:	426f 0022      	clrw %sp@(34)
+  ff968a:	7004           	moveq #4,%d0
+  ff968c:	2f40 001e      	movel %d0,%sp@(30)
+  ff9690:	6030           	bras ff96c2 <HandleWriteMode36+0xaa>
+  ff9692:	202f 001e      	movel %sp@(30),%d0
+  ff9696:	0280 0000 03ff 	andil #1023,%d0
+  ff969c:	4a80           	tstl %d0
+  ff969e:	6606           	bnes ff96a6 <HandleWriteMode36+0x8e>
+  ff96a0:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff96a6:	202f 001e      	movel %sp@(30),%d0
+  ff96aa:	0680 00ff a2e6 	addil #16753382,%d0
+  ff96b0:	2040           	moveal %d0,%a0
+  ff96b2:	1010           	moveb %a0@,%d0
+  ff96b4:	1000           	moveb %d0,%d0
+  ff96b6:	0240 00ff      	andiw #255,%d0
+  ff96ba:	d16f 0022      	addw %d0,%sp@(34)
+  ff96be:	52af 001e      	addql #1,%sp@(30)
+  ff96c2:	700a           	moveq #10,%d0
+  ff96c4:	d0af 0014      	addl %sp@(20),%d0
+  ff96c8:	b0af 001e      	cmpl %sp@(30),%d0
+  ff96cc:	62c4           	bhis ff9692 <HandleWriteMode36+0x7a>
+  ff96ce:	700a           	moveq #10,%d0
+  ff96d0:	d0af 0014      	addl %sp@(20),%d0
+  ff96d4:	1030 09b0 00ff 	moveb @(00ffa2e6,%d0:l),%d0
+  ff96da:	a2e6 
+  ff96dc:	1000           	moveb %d0,%d0
+  ff96de:	0280 0000 00ff 	andil #255,%d0
+  ff96e4:	e188           	lsll #8,%d0
+  ff96e6:	3200           	movew %d0,%d1
+  ff96e8:	700b           	moveq #11,%d0
+  ff96ea:	d0af 0014      	addl %sp@(20),%d0
+  ff96ee:	1030 09b0 00ff 	moveb @(00ffa2e6,%d0:l),%d0
+  ff96f4:	a2e6 
+  ff96f6:	1000           	moveb %d0,%d0
+  ff96f8:	0240 00ff      	andiw #255,%d0
+  ff96fc:	8041           	orw %d1,%d0
+  ff96fe:	3f40 000e      	movew %d0,%sp@(14)
+  ff9702:	302f 000e      	movew %sp@(14),%d0
+  ff9706:	b06f 0022      	cmpw %sp@(34),%d0
+  ff970a:	6700 0094      	beqw ff97a0 <HandleWriteMode36+0x188>
+  ff970e:	13fc 006d 00ff 	moveb #109,ffa2e6 <MessageBuffer>
+  ff9714:	a2e6 
+  ff9716:	13fc fff0 00ff 	moveb #-16,ffa2e7 <MessageBuffer+0x1>
+  ff971c:	a2e7 
+  ff971e:	13fc 0010 00ff 	moveb #16,ffa2e8 <MessageBuffer+0x2>
+  ff9724:	a2e8 
+  ff9726:	13fc 007f 00ff 	moveb #127,ffa2e9 <MessageBuffer+0x3>
+  ff972c:	a2e9 
+  ff972e:	13fc 0036 00ff 	moveb #54,ffa2ea <MessageBuffer+0x4>
+  ff9734:	a2ea 
+  ff9736:	302f 0022      	movew %sp@(34),%d0
+  ff973a:	e048           	lsrw #8,%d0
+  ff973c:	1000           	moveb %d0,%d0
+  ff973e:	13c0 00ff a2eb 	moveb %d0,ffa2eb <MessageBuffer+0x5>
+  ff9744:	302f 0022      	movew %sp@(34),%d0
+  ff9748:	1000           	moveb %d0,%d0
+  ff974a:	13c0 00ff a2ec 	moveb %d0,ffa2ec <MessageBuffer+0x6>
+  ff9750:	302f 000e      	movew %sp@(14),%d0
+  ff9754:	e048           	lsrw #8,%d0
+  ff9756:	1000           	moveb %d0,%d0
+  ff9758:	13c0 00ff a2ed 	moveb %d0,ffa2ed <MessageBuffer+0x7>
+  ff975e:	302f 000e      	movew %sp@(14),%d0
+  ff9762:	1000           	moveb %d0,%d0
+  ff9764:	13c0 00ff a2ee 	moveb %d0,ffa2ee <MessageBuffer+0x8>
+  ff976a:	202f 0014      	movel %sp@(20),%d0
+  ff976e:	e088           	lsrl #8,%d0
+  ff9770:	1000           	moveb %d0,%d0
+  ff9772:	13c0 00ff a2ef 	moveb %d0,ffa2ef <MessageBuffer+0x9>
+  ff9778:	202f 0014      	movel %sp@(20),%d0
+  ff977c:	1000           	moveb %d0,%d0
+  ff977e:	13c0 00ff a2f0 	moveb %d0,ffa2f0 <MessageBuffer+0xa>
+  ff9784:	4878 0005      	pea 5 <KernelStart-0xff7ffb>
+  ff9788:	4878 000b      	pea b <KernelStart-0xff7ff5>
+  ff978c:	4879 00ff a2e6 	pea ffa2e6 <MessageBuffer>
+  ff9792:	4eb9 00ff 8d8c 	jsr ff8d8c <WriteMessage>
+  ff9798:	508f           	addql #8,%sp
+  ff979a:	588f           	addql #4,%sp
+  ff979c:	6000 0138      	braw ff98d6 <HandleWriteMode36+0x2be>
+  ff97a0:	7001           	moveq #1,%d0
+  ff97a2:	c0af 0010      	andl %sp@(16),%d0
+  ff97a6:	4a80           	tstl %d0
+  ff97a8:	6710           	beqs ff97ba <HandleWriteMode36+0x1a2>
+  ff97aa:	42a7           	clrl %sp@-
+  ff97ac:	4878 00bb      	pea bb <KernelStart-0xff7f45>
+  ff97b0:	4eba fe04      	jsr %pc@(ff95b6 <SendWriteFail>)
+  ff97b4:	508f           	addql #8,%sp
+  ff97b6:	6000 011e      	braw ff98d6 <HandleWriteMode36+0x2be>
+  ff97ba:	0caf 00ff 7fff 	cmpil #16744447,%sp@(16)
+  ff97c0:	0010 
+  ff97c2:	6300 00b6      	blsw ff987a <HandleWriteMode36+0x262>
+  ff97c6:	202f 0010      	movel %sp@(16),%d0
+  ff97ca:	d0af 0014      	addl %sp@(20),%d0
+  ff97ce:	0c80 00ff cdff 	cmpil #16764415,%d0
+  ff97d4:	6200 00a4      	bhiw ff987a <HandleWriteMode36+0x262>
+  ff97d8:	42af 000a      	clrl %sp@(10)
+  ff97dc:	42af 001a      	clrl %sp@(26)
+  ff97e0:	6066           	bras ff9848 <HandleWriteMode36+0x230>
+  ff97e2:	222f 001a      	movel %sp@(26),%d1
+  ff97e6:	2401           	movel %d1,%d2
+  ff97e8:	4c3c 2c00 51eb 	mulsl #1374389535,%d0,%d2
+  ff97ee:	851f 
+  ff97f0:	e880           	asrl #4,%d0
+  ff97f2:	2401           	movel %d1,%d2
+  ff97f4:	d482           	addl %d2,%d2
+  ff97f6:	9582           	subxl %d2,%d2
+  ff97f8:	2042           	moveal %d2,%a0
+  ff97fa:	9088           	subl %a0,%d0
+  ff97fc:	d080           	addl %d0,%d0
+  ff97fe:	2400           	movel %d0,%d2
+  ff9800:	e58a           	lsll #2,%d2
+  ff9802:	2042           	moveal %d2,%a0
+  ff9804:	d088           	addl %a0,%d0
+  ff9806:	2400           	movel %d0,%d2
+  ff9808:	e58a           	lsll #2,%d2
+  ff980a:	2042           	moveal %d2,%a0
+  ff980c:	d088           	addl %a0,%d0
+  ff980e:	2401           	movel %d1,%d2
+  ff9810:	9480           	subl %d0,%d2
+  ff9812:	2002           	movel %d2,%d0
+  ff9814:	7201           	moveq #1,%d1
+  ff9816:	b280           	cmpl %d0,%d1
+  ff9818:	6606           	bnes ff9820 <HandleWriteMode36+0x208>
+  ff981a:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff9820:	202f 001a      	movel %sp@(26),%d0
+  ff9824:	242f 0010      	movel %sp@(16),%d2
+  ff9828:	d480           	addl %d0,%d2
+  ff982a:	2f42 000a      	movel %d2,%sp@(10)
+  ff982e:	222f 000a      	movel %sp@(10),%d1
+  ff9832:	700a           	moveq #10,%d0
+  ff9834:	d0af 001a      	addl %sp@(26),%d0
+  ff9838:	1030 09b0 00ff 	moveb @(00ffa2e6,%d0:l),%d0
+  ff983e:	a2e6 
+  ff9840:	2041           	moveal %d1,%a0
+  ff9842:	1080           	moveb %d0,%a0@
+  ff9844:	52af 001a      	addql #1,%sp@(26)
+  ff9848:	202f 001a      	movel %sp@(26),%d0
+  ff984c:	b0af 0014      	cmpl %sp@(20),%d0
+  ff9850:	6590           	bcss ff97e2 <HandleWriteMode36+0x1ca>
+  ff9852:	4280           	clrl %d0
+  ff9854:	102f 0019      	moveb %sp@(25),%d0
+  ff9858:	2f00           	movel %d0,%sp@-
+  ff985a:	4eba fd0c      	jsr %pc@(ff9568 <SendWriteSuccess>)
+  ff985e:	588f           	addql #4,%sp
+  ff9860:	0c2f ff80 0019 	cmpib #-128,%sp@(25)
+  ff9866:	6610           	bnes ff9878 <HandleWriteMode36+0x260>
+  ff9868:	2f6f 0010 0006 	movel %sp@(16),%sp@(6)
+  ff986e:	202f 0006      	movel %sp@(6),%d0
+  ff9872:	2040           	moveal %d0,%a0
+  ff9874:	4e90           	jsr %a0@
+  ff9876:	605e           	bras ff98d6 <HandleWriteMode36+0x2be>
+  ff9878:	605c           	bras ff98d6 <HandleWriteMode36+0x2be>
+  ff987a:	0c2f 0044 0019 	cmpib #68,%sp@(25)
+  ff9880:	57c0           	seq %d0
+  ff9882:	4400           	negb %d0
+  ff9884:	1000           	moveb %d0,%d0
+  ff9886:	0280 0000 00ff 	andil #255,%d0
+  ff988c:	2f00           	movel %d0,%sp@-
+  ff988e:	4879 00ff a2f0 	pea ffa2f0 <MessageBuffer+0xa>
+  ff9894:	2f2f 0018      	movel %sp@(24),%sp@-
+  ff9898:	2f2f 0020      	movel %sp@(32),%sp@-
+  ff989c:	4eb9 00ff 872e 	jsr ff872e <WriteToFlash>
+  ff98a2:	508f           	addql #8,%sp
+  ff98a4:	508f           	addql #8,%sp
+  ff98a6:	1f40 0005      	moveb %d0,%sp@(5)
+  ff98aa:	4a2f 0005      	tstb %sp@(5)
+  ff98ae:	6610           	bnes ff98c0 <HandleWriteMode36+0x2a8>
+  ff98b0:	4280           	clrl %d0
+  ff98b2:	102f 0019      	moveb %sp@(25),%d0
+  ff98b6:	2f00           	movel %d0,%sp@-
+  ff98b8:	4eba fcae      	jsr %pc@(ff9568 <SendWriteSuccess>)
+  ff98bc:	588f           	addql #4,%sp
+  ff98be:	6016           	bras ff98d6 <HandleWriteMode36+0x2be>
+  ff98c0:	102f 0005      	moveb %sp@(5),%d0
+  ff98c4:	1000           	moveb %d0,%d0
+  ff98c6:	0280 0000 00ff 	andil #255,%d0
+  ff98cc:	2f00           	movel %d0,%sp@-
+  ff98ce:	42a7           	clrl %sp@-
+  ff98d0:	4eba fce4      	jsr %pc@(ff95b6 <SendWriteFail>)
+  ff98d4:	508f           	addql #8,%sp
+  ff98d6:	241f           	movel %sp@+,%d2
+  ff98d8:	4fef 0020      	lea %sp@(32),%sp
+  ff98dc:	4e75           	rts
+	...
+
+00ff98e0 <FlashUnlock>:
+  ff98e0:	598f           	subql #4,%sp
+  ff98e2:	202f 0008      	movel %sp@(8),%d0
+  ff98e6:	1f40 0002      	moveb %d0,%sp@(2)
+  ff98ea:	203c 00ff fa48 	movel #16775752,%d0
+  ff98f0:	2040           	moveal %d0,%a0
+  ff98f2:	30bc 0007      	movew #7,%a0@
+  ff98f6:	203c 00ff fa4a 	movel #16775754,%d0
+  ff98fc:	2040           	moveal %d0,%a0
+  ff98fe:	30bc 6820      	movew #26656,%a0@
+  ff9902:	203c 00ff fa4c 	movel #16775756,%d0
+  ff9908:	2040           	moveal %d0,%a0
+  ff990a:	30bc 0007      	movew #7,%a0@
+  ff990e:	4a2f 0002      	tstb %sp@(2)
+  ff9912:	6726           	beqs ff993a <FlashUnlock+0x5a>
+  ff9914:	203c 00ff fa4e 	movel #16775758,%d0
+  ff991a:	2040           	moveal %d0,%a0
+  ff991c:	30bc 7060      	movew #28768,%a0@
+  ff9920:	203c ffff e2fa 	movel #-7430,%d0
+  ff9926:	223c ffff e2fa 	movel #-7430,%d1
+  ff992c:	2041           	moveal %d1,%a0
+  ff992e:	3210           	movew %a0@,%d1
+  ff9930:	0041 0001      	oriw #1,%d1
+  ff9934:	2040           	moveal %d0,%a0
+  ff9936:	3081           	movew %d1,%a0@
+  ff9938:	6024           	bras ff995e <FlashUnlock+0x7e>
+  ff993a:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9940:	2040           	moveal %d0,%a0
+  ff9942:	30bc 1060      	movew #4192,%a0@
+  ff9946:	203c ffff e2fa 	movel #-7430,%d0
+  ff994c:	223c ffff e2fa 	movel #-7430,%d1
+  ff9952:	2041           	moveal %d1,%a0
+  ff9954:	3210           	movew %a0@,%d1
+  ff9956:	0241 fffe      	andiw #-2,%d1
+  ff995a:	2040           	moveal %d0,%a0
+  ff995c:	3081           	movew %d1,%a0@
+  ff995e:	4878 0050      	pea 50 <KernelStart-0xff7fb0>
+  ff9962:	4eb9 00ff 8c74 	jsr ff8c74 <VariableSleep>
+  ff9968:	588f           	addql #4,%sp
+  ff996a:	588f           	addql #4,%sp
+  ff996c:	4e75           	rts
+
+00ff996e <Intel_GetFlashId>:
+  ff996e:	598f           	subql #4,%sp
+  ff9970:	203c 00ff fa4c 	movel #16775756,%d0
+  ff9976:	2040           	moveal %d0,%a0
+  ff9978:	30bc 0007      	movew #7,%a0@
+  ff997c:	203c 00ff fa4a 	movel #16775754,%d0
+  ff9982:	2040           	moveal %d0,%a0
+  ff9984:	30bc 6820      	movew #26656,%a0@
+  ff9988:	203c 00ff fa4e 	movel #16775758,%d0
+  ff998e:	2040           	moveal %d0,%a0
+  ff9990:	30bc 7060      	movew #28768,%a0@
+  ff9994:	4280           	clrl %d0
+  ff9996:	2040           	moveal %d0,%a0
+  ff9998:	30bc 9090      	movew #-28528,%a0@
+  ff999c:	4280           	clrl %d0
+  ff999e:	2040           	moveal %d0,%a0
+  ff99a0:	2e90           	movel %a0@,%sp@
+  ff99a2:	4280           	clrl %d0
+  ff99a4:	2040           	moveal %d0,%a0
+  ff99a6:	30bc ffff      	movew #-1,%a0@
+  ff99aa:	203c 00ff fa4e 	movel #16775758,%d0
+  ff99b0:	2040           	moveal %d0,%a0
+  ff99b2:	30bc 1060      	movew #4192,%a0@
+  ff99b6:	2017           	movel %sp@,%d0
+  ff99b8:	588f           	addql #4,%sp
+  ff99ba:	4e75           	rts
+
+00ff99bc <Intel_EraseBlock>:
+  ff99bc:	518f           	subql #8,%sp
+  ff99be:	598f           	subql #4,%sp
+  ff99c0:	426f 000a      	clrw %sp@(10)
+  ff99c4:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff99c8:	4eba ff16      	jsr %pc@(ff98e0 <FlashUnlock>)
+  ff99cc:	588f           	addql #4,%sp
+  ff99ce:	2f6f 0010 0002 	movel %sp@(16),%sp@(2)
+  ff99d4:	202f 0002      	movel %sp@(2),%d0
+  ff99d8:	2040           	moveal %d0,%a0
+  ff99da:	30bc 5050      	movew #20560,%a0@
+  ff99de:	202f 0002      	movel %sp@(2),%d0
+  ff99e2:	2040           	moveal %d0,%a0
+  ff99e4:	30bc 2020      	movew #8224,%a0@
+  ff99e8:	202f 0002      	movel %sp@(2),%d0
+  ff99ec:	2040           	moveal %d0,%a0
+  ff99ee:	30bc d0d0      	movew #-12080,%a0@
+  ff99f2:	202f 0002      	movel %sp@(2),%d0
+  ff99f6:	2040           	moveal %d0,%a0
+  ff99f8:	30bc 7070      	movew #28784,%a0@
+  ff99fc:	42af 0006      	clrl %sp@(6)
+  ff9a00:	6026           	bras ff9a28 <Intel_EraseBlock+0x6c>
+  ff9a02:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff9a08:	202f 0002      	movel %sp@(2),%d0
+  ff9a0c:	2040           	moveal %d0,%a0
+  ff9a0e:	3f50 000a      	movew %a0@,%sp@(10)
+  ff9a12:	4280           	clrl %d0
+  ff9a14:	302f 000a      	movew %sp@(10),%d0
+  ff9a18:	727f           	moveq #127,%d1
+  ff9a1a:	4601           	notb %d1
+  ff9a1c:	c081           	andl %d1,%d0
+  ff9a1e:	4a80           	tstl %d0
+  ff9a20:	6702           	beqs ff9a24 <Intel_EraseBlock+0x68>
+  ff9a22:	600e           	bras ff9a32 <Intel_EraseBlock+0x76>
+  ff9a24:	52af 0006      	addql #1,%sp@(6)
+  ff9a28:	0caf 0063 ffff 	cmpil #6553599,%sp@(6)
+  ff9a2e:	0006 
+  ff9a30:	6fd0           	bles ff9a02 <Intel_EraseBlock+0x46>
+  ff9a32:	026f 00e8 000a 	andiw #232,%sp@(10)
+  ff9a38:	202f 0002      	movel %sp@(2),%d0
+  ff9a3c:	2040           	moveal %d0,%a0
+  ff9a3e:	30bc ffff      	movew #-1,%a0@
+  ff9a42:	202f 0002      	movel %sp@(2),%d0
+  ff9a46:	2040           	moveal %d0,%a0
+  ff9a48:	30bc ffff      	movew #-1,%a0@
+  ff9a4c:	42a7           	clrl %sp@-
+  ff9a4e:	4eba fe90      	jsr %pc@(ff98e0 <FlashUnlock>)
+  ff9a52:	588f           	addql #4,%sp
+  ff9a54:	0c6f 0080 000a 	cmpiw #128,%sp@(10)
+  ff9a5a:	6604           	bnes ff9a60 <Intel_EraseBlock+0xa4>
+  ff9a5c:	426f 000a      	clrw %sp@(10)
+  ff9a60:	302f 000a      	movew %sp@(10),%d0
+  ff9a64:	1000           	moveb %d0,%d0
+  ff9a66:	508f           	addql #8,%sp
+  ff9a68:	588f           	addql #4,%sp
+  ff9a6a:	4e75           	rts
+
+00ff9a6c <Intel_WriteToFlash>:
+  ff9a6c:	4fef ffe0      	lea %sp@(-32),%sp
+  ff9a70:	422f 001f      	clrb %sp@(31)
+  ff9a74:	4aaf 0030      	tstl %sp@(48)
+  ff9a78:	660a           	bnes ff9a84 <Intel_WriteToFlash+0x18>
+  ff9a7a:	4878 0001      	pea 1 <KernelStart-0xff7fff>
+  ff9a7e:	4eba fe60      	jsr %pc@(ff98e0 <FlashUnlock>)
+  ff9a82:	588f           	addql #4,%sp
+  ff9a84:	2f6f 002c 000e 	movel %sp@(44),%sp@(14)
+  ff9a8a:	2f6f 0028 000a 	movel %sp@(40),%sp@(10)
+  ff9a90:	42af 0018      	clrl %sp@(24)
+  ff9a94:	6000 00d8      	braw ff9b6e <Intel_WriteToFlash+0x102>
+  ff9a98:	202f 0018      	movel %sp@(24),%d0
+  ff9a9c:	d080           	addl %d0,%d0
+  ff9a9e:	222f 000a      	movel %sp@(10),%d1
+  ff9aa2:	d280           	addl %d0,%d1
+  ff9aa4:	2f41 0006      	movel %d1,%sp@(6)
+  ff9aa8:	202f 0018      	movel %sp@(24),%d0
+  ff9aac:	d080           	addl %d0,%d0
+  ff9aae:	d0af 000e      	addl %sp@(14),%d0
+  ff9ab2:	2040           	moveal %d0,%a0
+  ff9ab4:	3f50 0004      	movew %a0@,%sp@(4)
+  ff9ab8:	4aaf 0030      	tstl %sp@(48)
+  ff9abc:	6628           	bnes ff9ae6 <Intel_WriteToFlash+0x7a>
+  ff9abe:	202f 0006      	movel %sp@(6),%d0
+  ff9ac2:	2040           	moveal %d0,%a0
+  ff9ac4:	30bc 5050      	movew #20560,%a0@
+  ff9ac8:	202f 0006      	movel %sp@(6),%d0
+  ff9acc:	2040           	moveal %d0,%a0
+  ff9ace:	30bc 4040      	movew #16448,%a0@
+  ff9ad2:	202f 0006      	movel %sp@(6),%d0
+  ff9ad6:	2040           	moveal %d0,%a0
+  ff9ad8:	30af 0004      	movew %sp@(4),%a0@
+  ff9adc:	202f 0006      	movel %sp@(6),%d0
+  ff9ae0:	2040           	moveal %d0,%a0
+  ff9ae2:	30bc 7070      	movew #28784,%a0@
+  ff9ae6:	422f 0017      	clrb %sp@(23)
+  ff9aea:	42af 0012      	clrl %sp@(18)
+  ff9aee:	603a           	bras ff9b2a <Intel_WriteToFlash+0xbe>
+  ff9af0:	4aaf 0030      	tstl %sp@(48)
+  ff9af4:	6708           	beqs ff9afe <Intel_WriteToFlash+0x92>
+  ff9af6:	3f7c 0080 001c 	movew #128,%sp@(28)
+  ff9afc:	600a           	bras ff9b08 <Intel_WriteToFlash+0x9c>
+  ff9afe:	202f 0006      	movel %sp@(6),%d0
+  ff9b02:	2040           	moveal %d0,%a0
+  ff9b04:	3f50 001c      	movew %a0@,%sp@(28)
+  ff9b08:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff9b0e:	4280           	clrl %d0
+  ff9b10:	302f 001c      	movew %sp@(28),%d0
+  ff9b14:	727f           	moveq #127,%d1
+  ff9b16:	4601           	notb %d1
+  ff9b18:	c081           	andl %d1,%d0
+  ff9b1a:	4a80           	tstl %d0
+  ff9b1c:	6708           	beqs ff9b26 <Intel_WriteToFlash+0xba>
+  ff9b1e:	1f7c 0001 0017 	moveb #1,%sp@(23)
+  ff9b24:	600e           	bras ff9b34 <Intel_WriteToFlash+0xc8>
+  ff9b26:	52af 0012      	addql #1,%sp@(18)
+  ff9b2a:	0caf 0000 0fff 	cmpil #4095,%sp@(18)
+  ff9b30:	0012 
+  ff9b32:	6fbc           	bles ff9af0 <Intel_WriteToFlash+0x84>
+  ff9b34:	4a2f 0017      	tstb %sp@(23)
+  ff9b38:	6630           	bnes ff9b6a <Intel_WriteToFlash+0xfe>
+  ff9b3a:	302f 001c      	movew %sp@(28),%d0
+  ff9b3e:	1f40 001f      	moveb %d0,%sp@(31)
+  ff9b42:	4aaf 0030      	tstl %sp@(48)
+  ff9b46:	661c           	bnes ff9b64 <Intel_WriteToFlash+0xf8>
+  ff9b48:	202f 0006      	movel %sp@(6),%d0
+  ff9b4c:	2040           	moveal %d0,%a0
+  ff9b4e:	30bc ffff      	movew #-1,%a0@
+  ff9b52:	202f 0006      	movel %sp@(6),%d0
+  ff9b56:	2040           	moveal %d0,%a0
+  ff9b58:	30bc ffff      	movew #-1,%a0@
+  ff9b5c:	42a7           	clrl %sp@-
+  ff9b5e:	4eba fd80      	jsr %pc@(ff98e0 <FlashUnlock>)
+  ff9b62:	588f           	addql #4,%sp
+  ff9b64:	102f 001f      	moveb %sp@(31),%d0
+  ff9b68:	6054           	bras ff9bbe <Intel_WriteToFlash+0x152>
+  ff9b6a:	52af 0018      	addql #1,%sp@(24)
+  ff9b6e:	202f 0024      	movel %sp@(36),%d0
+  ff9b72:	e288           	lsrl #1,%d0
+  ff9b74:	b0af 0018      	cmpl %sp@(24),%d0
+  ff9b78:	6200 ff1e      	bhiw ff9a98 <Intel_WriteToFlash+0x2c>
+  ff9b7c:	4aaf 0030      	tstl %sp@(48)
+  ff9b80:	661c           	bnes ff9b9e <Intel_WriteToFlash+0x132>
+  ff9b82:	2eaf 0028      	movel %sp@(40),%sp@
+  ff9b86:	2017           	movel %sp@,%d0
+  ff9b88:	2040           	moveal %d0,%a0
+  ff9b8a:	30bc ffff      	movew #-1,%a0@
+  ff9b8e:	2017           	movel %sp@,%d0
+  ff9b90:	2040           	moveal %d0,%a0
+  ff9b92:	30bc ffff      	movew #-1,%a0@
+  ff9b96:	42a7           	clrl %sp@-
+  ff9b98:	4eba fd46      	jsr %pc@(ff98e0 <FlashUnlock>)
+  ff9b9c:	588f           	addql #4,%sp
+  ff9b9e:	4280           	clrl %d0
+  ff9ba0:	302f 001c      	movew %sp@(28),%d0
+  ff9ba4:	7267           	moveq #103,%d1
+  ff9ba6:	4601           	notb %d1
+  ff9ba8:	c081           	andl %d1,%d0
+  ff9baa:	0c80 0000 0080 	cmpil #128,%d0
+  ff9bb0:	6708           	beqs ff9bba <Intel_WriteToFlash+0x14e>
+  ff9bb2:	302f 001c      	movew %sp@(28),%d0
+  ff9bb6:	1f40 001f      	moveb %d0,%sp@(31)
+  ff9bba:	102f 001f      	moveb %sp@(31),%d0
+  ff9bbe:	4fef 0020      	lea %sp@(32),%sp
+  ff9bc2:	4e75           	rts
+
+00ff9bc4 <Amd_GetFlashId>:
+  ff9bc4:	518f           	subql #8,%sp
+  ff9bc6:	2f02           	movel %d2,%sp@-
+  ff9bc8:	203c 00ff fa4c 	movel #16775756,%d0
+  ff9bce:	2040           	moveal %d0,%a0
+  ff9bd0:	30bc 0007      	movew #7,%a0@
+  ff9bd4:	203c 00ff fa4a 	movel #16775754,%d0
+  ff9bda:	2040           	moveal %d0,%a0
+  ff9bdc:	30bc 6820      	movew #26656,%a0@
+  ff9be0:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9be6:	2040           	moveal %d0,%a0
+  ff9be8:	30bc 7060      	movew #28768,%a0@
+  ff9bec:	203c 0000 0aaa 	movel #2730,%d0
+  ff9bf2:	2040           	moveal %d0,%a0
+  ff9bf4:	30bc aaaa      	movew #-21846,%a0@
+  ff9bf8:	203c 0000 0554 	movel #1364,%d0
+  ff9bfe:	2040           	moveal %d0,%a0
+  ff9c00:	30bc 5555      	movew #21845,%a0@
+  ff9c04:	203c 0000 0aaa 	movel #2730,%d0
+  ff9c0a:	2040           	moveal %d0,%a0
+  ff9c0c:	30bc 9090      	movew #-28528,%a0@
+  ff9c10:	4280           	clrl %d0
+  ff9c12:	2040           	moveal %d0,%a0
+  ff9c14:	3f50 000a      	movew %a0@,%sp@(10)
+  ff9c18:	7002           	moveq #2,%d0
+  ff9c1a:	2040           	moveal %d0,%a0
+  ff9c1c:	3f50 0008      	movew %a0@,%sp@(8)
+  ff9c20:	4280           	clrl %d0
+  ff9c22:	302f 000a      	movew %sp@(10),%d0
+  ff9c26:	2200           	movel %d0,%d1
+  ff9c28:	4841           	swap %d1
+  ff9c2a:	4241           	clrw %d1
+  ff9c2c:	4280           	clrl %d0
+  ff9c2e:	302f 0008      	movew %sp@(8),%d0
+  ff9c32:	2401           	movel %d1,%d2
+  ff9c34:	8480           	orl %d0,%d2
+  ff9c36:	2f42 0004      	movel %d2,%sp@(4)
+  ff9c3a:	4280           	clrl %d0
+  ff9c3c:	2040           	moveal %d0,%a0
+  ff9c3e:	30bc ffff      	movew #-1,%a0@
+  ff9c42:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9c48:	2040           	moveal %d0,%a0
+  ff9c4a:	30bc 1060      	movew #4192,%a0@
+  ff9c4e:	202f 0004      	movel %sp@(4),%d0
+  ff9c52:	241f           	movel %sp@+,%d2
+  ff9c54:	508f           	addql #8,%sp
+  ff9c56:	4e75           	rts
+
+00ff9c58 <Amd_EraseBlock>:
+  ff9c58:	518f           	subql #8,%sp
+  ff9c5a:	518f           	subql #8,%sp
+  ff9c5c:	426f 000e      	clrw %sp@(14)
+  ff9c60:	2f6f 0014 0006 	movel %sp@(20),%sp@(6)
+  ff9c66:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9c6c:	2040           	moveal %d0,%a0
+  ff9c6e:	30bc 7060      	movew #28768,%a0@
+  ff9c72:	203c 0000 0aaa 	movel #2730,%d0
+  ff9c78:	2040           	moveal %d0,%a0
+  ff9c7a:	30bc aaaa      	movew #-21846,%a0@
+  ff9c7e:	203c 0000 0554 	movel #1364,%d0
+  ff9c84:	2040           	moveal %d0,%a0
+  ff9c86:	30bc 5555      	movew #21845,%a0@
+  ff9c8a:	203c 0000 0aaa 	movel #2730,%d0
+  ff9c90:	2040           	moveal %d0,%a0
+  ff9c92:	30bc 8080      	movew #-32640,%a0@
+  ff9c96:	203c 0000 0aaa 	movel #2730,%d0
+  ff9c9c:	2040           	moveal %d0,%a0
+  ff9c9e:	30bc aaaa      	movew #-21846,%a0@
+  ff9ca2:	203c 0000 0554 	movel #1364,%d0
+  ff9ca8:	2040           	moveal %d0,%a0
+  ff9caa:	30bc 5555      	movew #21845,%a0@
+  ff9cae:	202f 0006      	movel %sp@(6),%d0
+  ff9cb2:	2040           	moveal %d0,%a0
+  ff9cb4:	30bc 3030      	movew #12336,%a0@
+  ff9cb8:	426f 0004      	clrw %sp@(4)
+  ff9cbc:	426f 0002      	clrw %sp@(2)
+  ff9cc0:	42af 000a      	clrl %sp@(10)
+  ff9cc4:	6058           	bras ff9d1e <Amd_EraseBlock+0xc6>
+  ff9cc6:	202f 0006      	movel %sp@(6),%d0
+  ff9cca:	2040           	moveal %d0,%a0
+  ff9ccc:	3010           	movew %a0@,%d0
+  ff9cce:	3200           	movew %d0,%d1
+  ff9cd0:	0241 0040      	andiw #64,%d1
+  ff9cd4:	3f41 0004      	movew %d1,%sp@(4)
+  ff9cd8:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff9cde:	202f 0006      	movel %sp@(6),%d0
+  ff9ce2:	2040           	moveal %d0,%a0
+  ff9ce4:	3010           	movew %a0@,%d0
+  ff9ce6:	3200           	movew %d0,%d1
+  ff9ce8:	0241 0040      	andiw #64,%d1
+  ff9cec:	3f41 0002      	movew %d1,%sp@(2)
+  ff9cf0:	302f 0002      	movew %sp@(2),%d0
+  ff9cf4:	b06f 0004      	cmpw %sp@(4),%d0
+  ff9cf8:	6602           	bnes ff9cfc <Amd_EraseBlock+0xa4>
+  ff9cfa:	602c           	bras ff9d28 <Amd_EraseBlock+0xd0>
+  ff9cfc:	202f 0006      	movel %sp@(6),%d0
+  ff9d00:	2040           	moveal %d0,%a0
+  ff9d02:	3010           	movew %a0@,%d0
+  ff9d04:	3200           	movew %d0,%d1
+  ff9d06:	0241 0020      	andiw #32,%d1
+  ff9d0a:	3e81           	movew %d1,%sp@
+  ff9d0c:	4a57           	tstw %sp@
+  ff9d0e:	6606           	bnes ff9d16 <Amd_EraseBlock+0xbe>
+  ff9d10:	52af 000a      	addql #1,%sp@(10)
+  ff9d14:	6008           	bras ff9d1e <Amd_EraseBlock+0xc6>
+  ff9d16:	3f7c 00a0 000e 	movew #160,%sp@(14)
+  ff9d1c:	600a           	bras ff9d28 <Amd_EraseBlock+0xd0>
+  ff9d1e:	0caf 0127 ffff 	cmpil #19398655,%sp@(10)
+  ff9d24:	000a 
+  ff9d26:	6f9e           	bles ff9cc6 <Amd_EraseBlock+0x6e>
+  ff9d28:	0c6f 00a0 000e 	cmpiw #160,%sp@(14)
+  ff9d2e:	663a           	bnes ff9d6a <Amd_EraseBlock+0x112>
+  ff9d30:	202f 0006      	movel %sp@(6),%d0
+  ff9d34:	2040           	moveal %d0,%a0
+  ff9d36:	3010           	movew %a0@,%d0
+  ff9d38:	3200           	movew %d0,%d1
+  ff9d3a:	0241 0040      	andiw #64,%d1
+  ff9d3e:	3f41 0004      	movew %d1,%sp@(4)
+  ff9d42:	202f 0006      	movel %sp@(6),%d0
+  ff9d46:	2040           	moveal %d0,%a0
+  ff9d48:	3010           	movew %a0@,%d0
+  ff9d4a:	3200           	movew %d0,%d1
+  ff9d4c:	0241 0040      	andiw #64,%d1
+  ff9d50:	3f41 0002      	movew %d1,%sp@(2)
+  ff9d54:	302f 0002      	movew %sp@(2),%d0
+  ff9d58:	b06f 0004      	cmpw %sp@(4),%d0
+  ff9d5c:	6708           	beqs ff9d66 <Amd_EraseBlock+0x10e>
+  ff9d5e:	3f7c 00b0 000e 	movew #176,%sp@(14)
+  ff9d64:	6004           	bras ff9d6a <Amd_EraseBlock+0x112>
+  ff9d66:	426f 000e      	clrw %sp@(14)
+  ff9d6a:	202f 0006      	movel %sp@(6),%d0
+  ff9d6e:	2040           	moveal %d0,%a0
+  ff9d70:	30bc f0f0      	movew #-3856,%a0@
+  ff9d74:	202f 0006      	movel %sp@(6),%d0
+  ff9d78:	2040           	moveal %d0,%a0
+  ff9d7a:	30bc f0f0      	movew #-3856,%a0@
+  ff9d7e:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9d84:	2040           	moveal %d0,%a0
+  ff9d86:	30bc 1060      	movew #4192,%a0@
+  ff9d8a:	302f 000e      	movew %sp@(14),%d0
+  ff9d8e:	1000           	moveb %d0,%d0
+  ff9d90:	508f           	addql #8,%sp
+  ff9d92:	508f           	addql #8,%sp
+  ff9d94:	4e75           	rts
+
+00ff9d96 <Amd_WriteToFlash>:
+  ff9d96:	4fef ffe0      	lea %sp@(-32),%sp
+  ff9d9a:	422f 0015      	clrb %sp@(21)
+  ff9d9e:	2f6f 002c 0010 	movel %sp@(44),%sp@(16)
+  ff9da4:	2f6f 0028 000c 	movel %sp@(40),%sp@(12)
+  ff9daa:	42af 001c      	clrl %sp@(28)
+  ff9dae:	6000 00e6      	braw ff9e96 <Amd_WriteToFlash+0x100>
+  ff9db2:	202f 001c      	movel %sp@(28),%d0
+  ff9db6:	d080           	addl %d0,%d0
+  ff9db8:	222f 000c      	movel %sp@(12),%d1
+  ff9dbc:	d280           	addl %d0,%d1
+  ff9dbe:	2f41 0008      	movel %d1,%sp@(8)
+  ff9dc2:	202f 001c      	movel %sp@(28),%d0
+  ff9dc6:	d080           	addl %d0,%d0
+  ff9dc8:	d0af 0010      	addl %sp@(16),%d0
+  ff9dcc:	2040           	moveal %d0,%a0
+  ff9dce:	3f50 0006      	movew %a0@,%sp@(6)
+  ff9dd2:	4aaf 0030      	tstl %sp@(48)
+  ff9dd6:	663a           	bnes ff9e12 <Amd_WriteToFlash+0x7c>
+  ff9dd8:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9dde:	2040           	moveal %d0,%a0
+  ff9de0:	30bc 7060      	movew #28768,%a0@
+  ff9de4:	203c 0000 0aaa 	movel #2730,%d0
+  ff9dea:	2040           	moveal %d0,%a0
+  ff9dec:	30bc aaaa      	movew #-21846,%a0@
+  ff9df0:	203c 0000 0554 	movel #1364,%d0
+  ff9df6:	2040           	moveal %d0,%a0
+  ff9df8:	30bc 5555      	movew #21845,%a0@
+  ff9dfc:	203c 0000 0aaa 	movel #2730,%d0
+  ff9e02:	2040           	moveal %d0,%a0
+  ff9e04:	30bc a0a0      	movew #-24416,%a0@
+  ff9e08:	202f 0008      	movel %sp@(8),%d0
+  ff9e0c:	2040           	moveal %d0,%a0
+  ff9e0e:	30af 0006      	movew %sp@(6),%a0@
+  ff9e12:	422f 001b      	clrb %sp@(27)
+  ff9e16:	42af 0016      	clrl %sp@(22)
+  ff9e1a:	6034           	bras ff9e50 <Amd_WriteToFlash+0xba>
+  ff9e1c:	4eb9 00ff 8bdc 	jsr ff8bdc <ScratchWatchdog>
+  ff9e22:	4aaf 0030      	tstl %sp@(48)
+  ff9e26:	660a           	bnes ff9e32 <Amd_WriteToFlash+0x9c>
+  ff9e28:	202f 0008      	movel %sp@(8),%d0
+  ff9e2c:	2040           	moveal %d0,%a0
+  ff9e2e:	3010           	movew %a0@,%d0
+  ff9e30:	6004           	bras ff9e36 <Amd_WriteToFlash+0xa0>
+  ff9e32:	302f 0006      	movew %sp@(6),%d0
+  ff9e36:	3f40 0004      	movew %d0,%sp@(4)
+  ff9e3a:	302f 0006      	movew %sp@(6),%d0
+  ff9e3e:	b06f 0004      	cmpw %sp@(4),%d0
+  ff9e42:	6608           	bnes ff9e4c <Amd_WriteToFlash+0xb6>
+  ff9e44:	1f7c 0001 001b 	moveb #1,%sp@(27)
+  ff9e4a:	600e           	bras ff9e5a <Amd_WriteToFlash+0xc4>
+  ff9e4c:	52af 0016      	addql #1,%sp@(22)
+  ff9e50:	0caf 0000 0fff 	cmpil #4095,%sp@(22)
+  ff9e56:	0016 
+  ff9e58:	6fc2           	bles ff9e1c <Amd_WriteToFlash+0x86>
+  ff9e5a:	4a2f 001b      	tstb %sp@(27)
+  ff9e5e:	6632           	bnes ff9e92 <Amd_WriteToFlash+0xfc>
+  ff9e60:	1f7c ffaa 0015 	moveb #-86,%sp@(21)
+  ff9e66:	4aaf 0030      	tstl %sp@(48)
+  ff9e6a:	6620           	bnes ff9e8c <Amd_WriteToFlash+0xf6>
+  ff9e6c:	202f 0008      	movel %sp@(8),%d0
+  ff9e70:	2040           	moveal %d0,%a0
+  ff9e72:	30bc f0f0      	movew #-3856,%a0@
+  ff9e76:	202f 0008      	movel %sp@(8),%d0
+  ff9e7a:	2040           	moveal %d0,%a0
+  ff9e7c:	30bc f0f0      	movew #-3856,%a0@
+  ff9e80:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9e86:	2040           	moveal %d0,%a0
+  ff9e88:	30bc 1060      	movew #4192,%a0@
+  ff9e8c:	102f 0015      	moveb %sp@(21),%d0
+  ff9e90:	603a           	bras ff9ecc <Amd_WriteToFlash+0x136>
+  ff9e92:	52af 001c      	addql #1,%sp@(28)
+  ff9e96:	202f 0024      	movel %sp@(36),%d0
+  ff9e9a:	e288           	lsrl #1,%d0
+  ff9e9c:	b0af 001c      	cmpl %sp@(28),%d0
+  ff9ea0:	6200 ff10      	bhiw ff9db2 <Amd_WriteToFlash+0x1c>
+  ff9ea4:	4aaf 0030      	tstl %sp@(48)
+  ff9ea8:	6620           	bnes ff9eca <Amd_WriteToFlash+0x134>
+  ff9eaa:	2eaf 0028      	movel %sp@(40),%sp@
+  ff9eae:	2017           	movel %sp@,%d0
+  ff9eb0:	2040           	moveal %d0,%a0
+  ff9eb2:	30bc f0f0      	movew #-3856,%a0@
+  ff9eb6:	2017           	movel %sp@,%d0
+  ff9eb8:	2040           	moveal %d0,%a0
+  ff9eba:	30bc f0f0      	movew #-3856,%a0@
+  ff9ebe:	203c 00ff fa4e 	movel #16775758,%d0
+  ff9ec4:	2040           	moveal %d0,%a0
+  ff9ec6:	30bc 1060      	movew #4192,%a0@
+  ff9eca:	4200           	clrb %d0
+  ff9ecc:	4fef 0020      	lea %sp@(32),%sp
+  ff9ed0:	4e75           	rts
+
+Disassembly of section .text:
+
+12340000 <_start>:
+12340000:	4e75           	rts
+12340002:	0000 4743      	orib #67,%d0
+12340006:	433a 2028      	chkl %pc@(12342030 <_start+0x2030>),%d1
+1234000a:	474e           	.short 0x474e
+1234000c:	5529 2034      	subqb #2,%a1@(8244)
+12340010:	2e38 2e30      	movel 2e30 <KernelStart-0xff51d0>,%d7
+	...
+
+Disassembly of section .kernel_data:
+
+00ff9ed2 <flashIdentifier>:
+  ff9ed2:	0000 0000      	orib #0,%d0
+
+00ff9ed6 <crcTable>:
+	...
+
+00ffa2d6 <crcStartAddress>:
+  ffa2d6:	0000 0000      	orib #0,%d0
+
+00ffa2da <crcLength>:
+  ffa2da:	0000 0000      	orib #0,%d0
+
+00ffa2de <crcIndex>:
+  ffa2de:	0000 0000      	orib #0,%d0
+
+00ffa2e2 <crcRemainder>:
+  ffa2e2:	0000 0000      	orib #0,%d0
+
+00ffa2e6 <MessageBuffer>:
+	...
+
+00ffb2fa <BreadcrumbBuffer>:
+	...
+
+00ffb35e <breadcrumbs>:
+  ffb35e:	0000 0000      	orib #0,%d0
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	4743           	.short 0x4743
+   2:	433a 2028      	chkl %pc@(202c <KernelStart-0xff5fd4>),%d1
+   6:	474e           	.short 0x474e
+   8:	5529 2034      	subqb #2,%a1@(8244)
+   c:	2e38 2e30      	movel 2e30 <KernelStart-0xff51d0>,%d7
+	...

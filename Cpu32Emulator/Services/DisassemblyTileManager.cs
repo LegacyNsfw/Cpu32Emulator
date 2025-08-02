@@ -53,7 +53,7 @@ public class DisassemblyTileManager
     /// Phase 3: Creates a visual tile preview with full feature support
     /// Includes breakpoint indicators, current instruction highlighting, and proper visual styling
     /// </summary>
-    public FrameworkElement CreateTilePreview(List<LstEntry> entries, int width, int lineHeight, 
+    public FrameworkElement CreateTilePreview(List<AssemblyEntry> entries, int width, int lineHeight, 
         IEnumerable<DisassemblyLineViewModel>? dataSource = null)
     {
         if (!entries.Any())

@@ -156,6 +156,23 @@
                       Style="{StaticResource ButtonRevealStyle}"
                       Command="{Binding ReloadLstCommand}" />
               
+              <!-- Dump Operations -->
+              <Button Content="Load .dump.txt"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding LoadDumpCommand}" />
+              
+              <Button Content="Reload .dump.txt"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      Margin="10,5"
+                      Padding="15,10"
+                      Style="{StaticResource ButtonRevealStyle}"
+                      Command="{Binding ReloadDumpCommand}" />
+              
               <!-- Separator -->
               <Border Height="1"
                       Background="{ThemeResource SystemControlForegroundBaseLowBrush}"
