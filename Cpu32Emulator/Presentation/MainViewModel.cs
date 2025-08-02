@@ -447,15 +447,50 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            foreach (var memWatch in MemoryWatches)
+            _logger.LogDebug("Starting memory watch refresh for {Count} watches", MemoryWatches.Count);
+            RefreshAllMemoryWatchesInternal();
+            _logger.LogDebug("Completed memory watch refresh");
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("AddingDuplicate") || ex.Message.Contains("Argument_AddingDuplicate"))
+        {
+            _logger.LogWarning(ex, "UI dependency property conflict during memory watch refresh - retrying after delay");
+            // Small delay to let UI settle and retry once
+            Task.Delay(100).ContinueWith(_ => 
             {
-                memWatch.RefreshValue(_emulatorService);
-            }
+                try
+                {
+                    RefreshAllMemoryWatchesInternal();
+                }
+                catch (Exception retryEx)
+                {
+                    _logger.LogError(retryEx, "Failed to refresh memory watches on retry");
+                }
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh memory watch values");
             StatusMessage = $"Error refreshing memory watches: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Internal method for refreshing memory watches without exception handling
+    /// </summary>
+    private void RefreshAllMemoryWatchesInternal()
+    {
+        foreach (var memWatch in MemoryWatches)
+        {
+            try
+            {
+                _logger.LogTrace("Refreshing memory watch at {Address}", memWatch.Address);
+                memWatch.RefreshValue(_emulatorService);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to refresh memory watch at {Address}", memWatch.Address);
+                // Continue with other watches rather than failing completely
+            }
         }
     }
 
@@ -532,34 +567,104 @@ public partial class MainViewModel : ObservableObject
                 return;
             }
 
-            var cpuState = _emulatorService.GetCpuState();
-            
-            // Update data registers D0-D7
-            for (int i = 0; i < 8; i++)
+            _logger.LogDebug("Starting register refresh");
+            RefreshAllRegistersInternal();
+            _logger.LogDebug("Completed register refresh");
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("AddingDuplicate") || ex.Message.Contains("Argument_AddingDuplicate"))
+        {
+            _logger.LogWarning(ex, "UI dependency property conflict during register refresh - retrying after delay");
+            // Small delay to let UI settle and retry once
+            Task.Delay(100).ContinueWith(_ => 
             {
-                Registers[i].UpdateValue(cpuState.GetDataRegister(i));
-            }
-
-            // Update address registers A0-A6 and USP
-            for (int i = 0; i < 7; i++)
-            {
-                Registers[8 + i].UpdateValue(cpuState.GetAddressRegister(i));
-            }
-            Registers[15].UpdateValue(cpuState.USP);     // USP
-
-            // Update special registers
-            Registers[16].UpdateValue(cpuState.PC);      // PC
-            Registers[17].UpdateValue(cpuState.CCR);     // CCR
-            Registers[18].UpdateValue(cpuState.SR);      // SR  
-            Registers[19].UpdateValue(cpuState.SSP);     // SSP
-            Registers[20].UpdateValue(cpuState.VBR);     // VBR
-            Registers[21].UpdateValue(cpuState.SFC);     // SFC
-            Registers[22].UpdateValue(cpuState.DFC);     // DFC
+                try
+                {
+                    if (_emulatorService.IsInitialized)
+                    {
+                        RefreshAllRegistersInternal();
+                    }
+                }
+                catch (Exception retryEx)
+                {
+                    _logger.LogError(retryEx, "Failed to refresh registers on retry");
+                }
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh register values");
             StatusMessage = $"Error refreshing registers: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Internal method for refreshing registers without exception handling
+    /// </summary>
+    private void RefreshAllRegistersInternal()
+    {
+        var cpuState = _emulatorService.GetCpuState();
+        
+        // Update data registers D0-D7
+        for (int i = 0; i < 8; i++)
+        {
+            try
+            {
+                _logger.LogTrace("Updating data register D{Register}", i);
+                Registers[i].UpdateValue(cpuState.GetDataRegister(i));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to update data register D{Register}", i);
+            }
+        }
+
+        // Update address registers A0-A6 and USP
+        for (int i = 0; i < 7; i++)
+        {
+            try
+            {
+                _logger.LogTrace("Updating address register A{Register}", i);
+                Registers[8 + i].UpdateValue(cpuState.GetAddressRegister(i));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to update address register A{Register}", i);
+            }
+        }
+        
+        try
+        {
+            _logger.LogTrace("Updating USP register");
+            Registers[15].UpdateValue(cpuState.USP);     // USP
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to update USP register");
+        }
+
+        // Update special registers
+        var specialRegisters = new (int index, string name, uint value)[]
+        {
+            (16, "PC", cpuState.PC),
+            (17, "CCR", cpuState.CCR),
+            (18, "SR", cpuState.SR),
+            (19, "SSP", cpuState.SSP),
+            (20, "VBR", cpuState.VBR),
+            (21, "SFC", cpuState.SFC),
+            (22, "DFC", cpuState.DFC)
+        };
+
+        foreach (var (index, name, value) in specialRegisters)
+        {
+            try
+            {
+                _logger.LogTrace("Updating special register {Register}", name);
+                Registers[index].UpdateValue(value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to update special register {Register}", name);
+            }
         }
     }
 
@@ -1909,7 +2014,26 @@ public partial class MainViewModel : ObservableObject
             var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
             var currentPc = pcRegister?.GetNumericValue() ?? 0;
             
+            _logger.LogDebug("Starting disassembly display refresh at PC: 0x{PC:X8}", currentPc);
             RefreshDisassemblyWindow(currentPc);
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("AddingDuplicate") || ex.Message.Contains("Argument_AddingDuplicate"))
+        {
+            _logger.LogWarning(ex, "UI dependency property conflict during disassembly refresh - retrying after delay");
+            // Small delay to let UI settle and retry once
+            Task.Delay(100).ContinueWith(_ => 
+            {
+                try
+                {
+                    var pcRegister = Registers.FirstOrDefault(r => r.Name == "PC");
+                    var currentPc = pcRegister?.GetNumericValue() ?? 0;
+                    RefreshDisassemblyWindow(currentPc);
+                }
+                catch (Exception retryEx)
+                {
+                    _logger.LogError(retryEx, "Failed to refresh disassembly display on retry");
+                }
+            });
         }
         catch (Exception ex)
         {
@@ -1924,71 +2048,96 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            // Calculate the display range
-            var startAddress = centerAddress >= DISASSEMBLY_WINDOW_SIZE ? 
-                              centerAddress - DISASSEMBLY_WINDOW_SIZE : 0;
-            var endAddress = centerAddress + DISASSEMBLY_WINDOW_SIZE;
-            
-            // Update current display range
-            _currentDisplayRangeStart = startAddress;
-            _currentDisplayRangeEnd = endAddress;
-            
-            DisassemblyLines.Clear();
-
-            // Get entries within the display range from the disassembly service
-            var entriesInRange = _disassemblyService.GetEntriesInRange(startAddress, endAddress);
-            
-            if (entriesInRange.Any())
+            _logger.LogDebug("Refreshing disassembly window around 0x{Address:X8}", centerAddress);
+            RefreshDisassemblyWindowInternal(centerAddress);
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("AddingDuplicate") || ex.Message.Contains("Argument_AddingDuplicate"))
+        {
+            _logger.LogWarning(ex, "UI dependency property conflict during disassembly window refresh - retrying after delay");
+            // Small delay to let UI settle and retry once
+            Task.Delay(100).ContinueWith(_ => 
             {
-                foreach (var entry in entriesInRange)
+                try
                 {
-                    var viewModel = new DisassemblyLineViewModel(
-                        $"0x{entry.Address:X8}",
-                        entry.SymbolName ?? "",
-                        entry.Instruction
-                    );
-                    
-                    // Mark current instruction
-                    if (entry.Address == centerAddress)
-                    {
-                        viewModel.IsCurrentInstruction = true;
-                    }
-                    
-                    DisassemblyLines.Add(viewModel);
+                    RefreshDisassemblyWindowInternal(centerAddress);
                 }
-            }
-            else
-            {
-                // No entries found in range - add placeholder entries to show the address range
-                var placeholderEntries = new List<DisassemblyLineViewModel>();
-                
-                // Add a few placeholder entries around the center address
-                for (int i = -5; i <= 5; i++)
+                catch (Exception retryEx)
                 {
-                    var addr = centerAddress + (uint)(i * 4); // Assume 4-byte instructions
-                    var isCenter = (i == 0);
-                    
-                    var viewModel = new DisassemblyLineViewModel(
-                        $"0x{addr:X8}",
-                        isCenter ? "PC" : "",
-                        isCenter ? "<-- Program Counter -->" : "<no disassembly data>"
-                    );
-                    
-                    viewModel.IsCurrentInstruction = isCenter;
-                    DisassemblyLines.Add(viewModel);
+                    _logger.LogError(retryEx, "Failed to refresh disassembly window on retry");
                 }
-            }
-
-            // Notify UI to scroll to current instruction after refreshing the window
-            CurrentInstructionChanged?.Invoke(this, EventArgs.Empty);
-
-            _logger.LogDebug("Disassembly window refreshed: 0x{Start:X8} - 0x{End:X8} ({Count} entries)", 
-                           startAddress, endAddress, DisassemblyLines.Count);
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh disassembly window around 0x{Address:X8}", centerAddress);
         }
+    }
+
+    /// <summary>
+    /// Internal method for refreshing disassembly window without exception handling
+    /// </summary>
+    private void RefreshDisassemblyWindowInternal(uint centerAddress)
+    {
+        // Calculate the display range
+        var startAddress = centerAddress >= DISASSEMBLY_WINDOW_SIZE ? 
+                          centerAddress - DISASSEMBLY_WINDOW_SIZE : 0;
+        var endAddress = centerAddress + DISASSEMBLY_WINDOW_SIZE;
+        
+        // Update current display range
+        _currentDisplayRangeStart = startAddress;
+        _currentDisplayRangeEnd = endAddress;
+        
+        DisassemblyLines.Clear();
+
+        // Get entries within the display range from the disassembly service
+        var entriesInRange = _disassemblyService.GetEntriesInRange(startAddress, endAddress);
+        
+        if (entriesInRange.Any())
+        {
+            foreach (var entry in entriesInRange)
+            {
+                var viewModel = new DisassemblyLineViewModel(
+                    $"0x{entry.Address:X8}",
+                    entry.SymbolName ?? "",
+                    entry.Instruction
+                );
+                
+                // Mark current instruction
+                if (entry.Address == centerAddress)
+                {
+                    viewModel.IsCurrentInstruction = true;
+                }
+                
+                DisassemblyLines.Add(viewModel);
+            }
+        }
+        else
+        {
+            // No entries found in range - add placeholder entries to show the address range
+            var placeholderEntries = new List<DisassemblyLineViewModel>();
+            
+            // Add a few placeholder entries around the center address
+            for (int i = -5; i <= 5; i++)
+            {
+                var addr = centerAddress + (uint)(i * 4); // Assume 4-byte instructions
+                var isCenter = (i == 0);
+                
+                var viewModel = new DisassemblyLineViewModel(
+                    $"0x{addr:X8}",
+                    isCenter ? "PC" : "",
+                    isCenter ? "<-- Program Counter -->" : "<no disassembly data>"
+                );
+                
+                viewModel.IsCurrentInstruction = isCenter;
+                DisassemblyLines.Add(viewModel);
+            }
+        }
+
+        // Notify UI to scroll to current instruction after refreshing the window
+        CurrentInstructionChanged?.Invoke(this, EventArgs.Empty);
+
+        _logger.LogDebug("Disassembly window refreshed: 0x{Start:X8} - 0x{End:X8} ({Count} entries)", 
+                       startAddress, endAddress, DisassemblyLines.Count);
     }
 
     [RelayCommand]

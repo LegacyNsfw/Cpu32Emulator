@@ -55,16 +55,27 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Link>unicorn.dll</Link>
     </None>
+    <None Include="..\dependencies\unicorn.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>unicorn.pdb</Link>
+    </None>
   </ItemGroup>
   
-  <!-- Copy unicorn.dll to the main output directory after build -->
-  <Target Name="CopyUnicornDllToMainOutput" AfterTargets="Build">
-    <Copy SourceFiles="$(OutputPath)win-x64\unicorn.dll" 
-          DestinationFiles="$(OutputPath)unicorn.dll" 
-          Condition="Exists('$(OutputPath)win-x64\unicorn.dll')"
+  <!-- Copy unicorn.dll and unicorn.pdb to the main output directory after build -->
+  <Target Name="CopyUnicornDllToMainOutput" AfterTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <MainOutputPath>$(OutputPath)..\</MainOutputPath>
+    </PropertyGroup>
+    <Copy SourceFiles="$(OutputPath)unicorn.dll" 
+          DestinationFiles="$(MainOutputPath)unicorn.dll" 
+          Condition="Exists('$(OutputPath)unicorn.dll')"
           SkipUnchangedFiles="true" />
-    <Message Text="Copied unicorn.dll from $(OutputPath)win-x64\ to $(OutputPath)" 
-             Condition="Exists('$(OutputPath)win-x64\unicorn.dll')" 
+    <Copy SourceFiles="$(OutputPath)unicorn.pdb" 
+          DestinationFiles="$(MainOutputPath)unicorn.pdb" 
+          Condition="Exists('$(OutputPath)unicorn.pdb')"
+          SkipUnchangedFiles="true" />
+    <Message Text="Copied unicorn.dll and unicorn.pdb from $(OutputPath) to $(MainOutputPath)" 
+             Condition="Exists('$(OutputPath)unicorn.dll') OR Exists('$(OutputPath)unicorn.pdb')" 
              Importance="high" />
   </Target>
   <Import Project="..\Cpu32Emulator.Shared\base.props" />

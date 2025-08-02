@@ -17,6 +17,7 @@ namespace Cpu32Emulator.Services
         private readonly List<MemoryRegion> _memoryRegions = new();
         private MemoryManagerService? _memoryManager;
         private bool _disposed = false;
+        private ILogger<UnicornEmulatorService> _logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<UnicornEmulatorService>.Instance;
 
         /// <summary>
         /// Gets whether the emulator is initialized
@@ -47,6 +48,28 @@ namespace Cpu32Emulator.Services
             try
             {
                 _engine = new Unicorn(Common.UC_ARCH_M68K, Common.UC_MODE_BIG_ENDIAN);
+
+                _engine.AddCodeHook((uc, addr, size, userData) => {
+                    string logMessage = string.Format("Executing {0} bytes at {1:X} (userData: {2})", size, addr, userData);
+                    _logger.LogInformation(logMessage);
+                }, 1, 0);
+
+                _engine.AddInterruptHook((uc, intNo, userData) => {
+                    string logMessage = string.Format("Interrupt {0} triggered (userData: {1})", intNo, userData);
+                    _logger.LogInformation(logMessage);
+                });
+
+                _engine.AddSyscallHook((uc, userData) => {
+                    string logMessage = string.Format("Syscall called (userData: {0})", userData);
+                    _logger.LogInformation(logMessage);
+                });
+
+                _engine.AddEventMemHook((Unicorn u, int eventType, long address, int size, long value, object userData) => {
+                    string logMessage = string.Format("Memory event {0} at {1:X} with size {2} and value {3} (userData: {4})", eventType, address, size, value, userData);
+                    _logger.LogInformation(logMessage);
+                    return true;
+                }, Common.UC_HOOK_MEM_READ_UNMAPPED | Common.UC_HOOK_MEM_WRITE_UNMAPPED);
+
                 LastException = null;
             }
             catch (Exception ex)
