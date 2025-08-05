@@ -96,6 +96,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string? _loadedLstPath;
 
+    [ObservableProperty]
+    private string? _loadedDumpPath;
+
     // Phase 1: Feature flag for tile-based disassembly view
     [ObservableProperty]
     // Phase 4: Migration complete - tile view is now the default and only implementation
@@ -213,6 +216,7 @@ public partial class MainViewModel : ObservableObject
                 LoadedRomPath = project.RomFilePath;
                 LoadedRamPath = project.RamFilePath;
                 LoadedLstPath = project.LstFilePath;
+                LoadedDumpPath = project.DumpFilePath;
                 HasUnsavedChanges = false;
 
                 // Load ROM file if specified
@@ -275,6 +279,21 @@ public partial class MainViewModel : ObservableObject
                         _logger.LogWarning(ex, "Failed to load LST from last project: {Path}", project.LstFilePath);
                         StatusMessage = $"Loading LST: {ex.Message}";
                         return; // Stop loading process on LST failure
+                    }
+                }
+                // Load dump file if specified (alternative to LST)
+                else if (!string.IsNullOrEmpty(project.DumpFilePath) && File.Exists(project.DumpFilePath))
+                {
+                    try
+                    {
+                        await LoadDumpFileInternal(project.DumpFilePath);
+                        _logger.LogInformation("Dump file loaded: {Path}", project.DumpFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to load dump from last project: {Path}", project.DumpFilePath);
+                        StatusMessage = $"Loading dump: {ex.Message}";
+                        return; // Stop loading process on dump failure
                     }
                 }
 
@@ -984,6 +1003,8 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void StepInto()
     {
+        UnicornTest.TestUnicorn();
+
         if (IsRunning)
         {
             StatusMessage = "Cannot step while execution is running";
@@ -1377,6 +1398,7 @@ public partial class MainViewModel : ObservableObject
             LoadedRomPath = null;
             LoadedRamPath = null;
             LoadedLstPath = null;
+            LoadedDumpPath = null;
             
             // Reset emulator state - clear all memory regions and reset CPU
             _emulatorService.UnmapAllMemory();
@@ -1449,6 +1471,7 @@ public partial class MainViewModel : ObservableObject
                     LoadedRomPath = project.RomFilePath;
                     LoadedRamPath = project.RamFilePath;
                     LoadedLstPath = project.LstFilePath;
+                    LoadedDumpPath = project.DumpFilePath;
                     HasUnsavedChanges = false;
 
                     // Restore memory watches
@@ -1529,7 +1552,16 @@ public partial class MainViewModel : ObservableObject
             var project = _projectService.CurrentProject;
             project.RomFilePath = LoadedRomPath;
             project.RamFilePath = LoadedRamPath;
-            project.LstFilePath = LoadedLstPath;
+
+            if (LoadedLstPath != null)
+            {
+                project.SetLstFilePath(LoadedLstPath);
+            }
+
+            if (LoadedDumpPath != null)
+            {
+                project.SetDumpFilePath(LoadedDumpPath);
+            }
             
             // Update watched memory locations
             project.WatchedMemoryLocations.Clear();
@@ -1603,8 +1635,17 @@ public partial class MainViewModel : ObservableObject
                 var project = _projectService.CurrentProject;
                 project.RomFilePath = LoadedRomPath;
                 project.RamFilePath = LoadedRamPath;
-                project.LstFilePath = LoadedLstPath;
-                
+
+                if (LoadedLstPath != null)
+                {
+                    project.SetLstFilePath(LoadedLstPath);
+                }
+
+                if (LoadedDumpPath != null)
+                {
+                    project.SetDumpFilePath(LoadedDumpPath);
+                }
+
                 // Update watched memory locations
                 project.WatchedMemoryLocations.Clear();
                 foreach (var watch in MemoryWatches.Where(w => !w.IsSpecialAddress))
@@ -1625,7 +1666,7 @@ public partial class MainViewModel : ObservableObject
                 await _projectService.SaveProjectAsAsync(file.Path);
                 HasUnsavedChanges = false;
                 StatusMessage = $"Project saved as '{file.Name}' successfully";
-                
+
                 // Save this as the last project path
                 await _settingsService.SetLastProjectPathAsync(file.Path);
             }
@@ -1993,11 +2034,11 @@ public partial class MainViewModel : ObservableObject
         _logger.LogInformation("Reload LST command executed");
         StatusMessage = "Reloading LST file...";
         
-        if (!string.IsNullOrEmpty(_disassemblyService.LoadedFilePath))
+        if (!string.IsNullOrEmpty(LoadedLstPath))
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(_disassemblyService.LoadedFilePath);
+                var file = await StorageFile.GetFileFromPathAsync(LoadedLstPath);
                 await LoadLstFile(file);
             }
             catch (Exception ex)
@@ -2053,11 +2094,11 @@ public partial class MainViewModel : ObservableObject
         _logger.LogInformation("Reload Dump command executed");
         StatusMessage = "Reloading dump file...";
         
-        if (!string.IsNullOrEmpty(_disassemblyService.LoadedFilePath))
+        if (!string.IsNullOrEmpty(LoadedDumpPath))
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(_disassemblyService.LoadedFilePath);
+                var file = await StorageFile.GetFileFromPathAsync(LoadedDumpPath);
                 await LoadDumpFile(file);
             }
             catch (Exception ex)
@@ -2102,13 +2143,13 @@ public partial class MainViewModel : ObservableObject
                 StatusMessage = "Rebuilding address map...";
                 _disassemblyService.LoadEntries(entries, file.Path);
                 LoadedLstPath = file.Path;
+                LoadedDumpPath = null; // Clear dump path since we're loading LST
                 HasUnsavedChanges = true;
 
                 // Update project if one is loaded
                 if (_projectService.CurrentProject != null)
                 {
-                    _projectService.CurrentProject.LstFilePath = file.Path;
-                    _projectService.CurrentProject.MarkAsModified();
+                    _projectService.CurrentProject.SetLstFilePath(file.Path);
                 }
                 
                 // Only show a window around the current PC instead of all entries
@@ -2179,14 +2220,14 @@ public partial class MainViewModel : ObservableObject
             {
                 StatusMessage = "Rebuilding address map...";
                 _disassemblyService.LoadEntries(entries, file.Path);
-                LoadedLstPath = file.Path; // Reusing the same property for now
+                LoadedDumpPath = file.Path;
+                LoadedLstPath = null; // Clear LST path since we're loading dump
                 HasUnsavedChanges = true;
 
                 // Update project if one is loaded
                 if (_projectService.CurrentProject != null)
                 {
-                    _projectService.CurrentProject.LstFilePath = file.Path; // Reusing the same property for now
-                    _projectService.CurrentProject.MarkAsModified();
+                    _projectService.CurrentProject.SetDumpFilePath(file.Path);
                 }
                 
                 // Only show a window around the current PC instead of all entries

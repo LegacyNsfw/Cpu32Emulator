@@ -14,7 +14,8 @@ namespace Cpu32Emulator.Models
         public uint RomBaseAddress { get; set; }
         public string? RamFilePath { get; set; }
         public uint RamBaseAddress { get; set; }
-        public string? LstFilePath { get; set; }
+        public string? LstFilePath { get; private set; }
+        public string? DumpFilePath { get; private set; }
         public List<WatchedMemoryConfig> WatchedMemoryLocations { get; set; } = new();
         public uint ResetAddress { get; set; }
         public CpuStateConfig? SavedCpuState { get; set; }
@@ -44,6 +45,44 @@ namespace Cpu32Emulator.Models
         }
 
         /// <summary>
+        /// Sets the LST file path and clears the dump file path
+        /// </summary>
+        public void SetLstFilePath(string? lstFilePath)
+        {
+            LstFilePath = lstFilePath;
+            DumpFilePath = null;
+            MarkAsModified();
+        }
+
+        /// <summary>
+        /// Sets the dump file path and clears the LST file path
+        /// </summary>
+        public void SetDumpFilePath(string? dumpFilePath)
+        {
+            DumpFilePath = dumpFilePath;
+            LstFilePath = null;
+            MarkAsModified();
+        }
+
+        /// <summary>
+        /// Gets the active assembly file path (either LST or dump)
+        /// </summary>
+        public string? GetActiveAssemblyFilePath()
+        {
+            return LstFilePath ?? DumpFilePath;
+        }
+
+        /// <summary>
+        /// Returns true if a dump file is currently configured
+        /// </summary>
+        public bool HasDumpFile => !string.IsNullOrEmpty(DumpFilePath);
+
+        /// <summary>
+        /// Returns true if an LST file is currently configured
+        /// </summary>
+        public bool HasLstFile => !string.IsNullOrEmpty(LstFilePath);
+
+        /// <summary>
         /// Validates the project configuration
         /// </summary>
         public List<string> Validate()
@@ -62,12 +101,16 @@ namespace Cpu32Emulator.Models
             if (!string.IsNullOrEmpty(LstFilePath) && !System.IO.File.Exists(LstFilePath))
                 errors.Add($"LST file not found: {LstFilePath}");
 
+            if (!string.IsNullOrEmpty(DumpFilePath) && !System.IO.File.Exists(DumpFilePath))
+                errors.Add($"Dump file not found: {DumpFilePath}");
+
             return errors;
         }
 
         public override string ToString()
         {
-            return $"Project: {ProjectName} (Modified: {LastModifiedAt:yyyy-MM-dd HH:mm:ss})";
+            var assemblyFile = HasLstFile ? "LST" : HasDumpFile ? "Dump" : "None";
+            return $"Project: {ProjectName} (Assembly: {assemblyFile}, Modified: {LastModifiedAt:yyyy-MM-dd HH:mm:ss})";
         }
     }
 

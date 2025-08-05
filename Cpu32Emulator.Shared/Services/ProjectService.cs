@@ -169,21 +169,6 @@ namespace Cpu32Emulator.Services
         }
 
         /// <summary>
-        /// Updates the LST file configuration
-        /// </summary>
-        public void SetLstFile(string filePath)
-        {
-            if (_currentProject == null)
-                throw new InvalidOperationException("No project is loaded");
-
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException($"LST file not found: {filePath}");
-
-            _currentProject.LstFilePath = filePath;
-            MarkAsModified();
-        }
-
-        /// <summary>
         /// Updates the watched memory locations
         /// </summary>
         public void SetWatchedMemoryLocations(List<WatchedMemory> watchedLocations)
