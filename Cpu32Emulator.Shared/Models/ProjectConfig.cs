@@ -14,8 +14,8 @@ namespace Cpu32Emulator.Models
         public uint RomBaseAddress { get; set; }
         public string? RamFilePath { get; set; }
         public uint RamBaseAddress { get; set; }
-        public string? LstFilePath { get; private set; }
-        public string? DumpFilePath { get; private set; }
+        public string? LstFilePath { get; set; }
+        public string? DumpFilePath { get; set; }
         public List<WatchedMemoryConfig> WatchedMemoryLocations { get; set; } = new();
         public uint ResetAddress { get; set; }
         public CpuStateConfig? SavedCpuState { get; set; }

@@ -57,6 +57,12 @@ public class UnicornTest
             try
             {
                 uc.EmuStart(0xFF8000, 0xFFFFFF, 0, 1);
+                long pc = uc.RegRead(M68k.UC_M68K_REG_PC);
+                uc.EmuStart(pc, 0xFFFFFF, 0, 1);
+                pc = uc.RegRead(M68k.UC_M68K_REG_PC);
+                uc.EmuStart(pc, 0xFFFFFF, 0, 1);
+                pc = uc.RegRead(M68k.UC_M68K_REG_PC);
+                uc.EmuStart(pc, 0xFFFFFF, 0, 1);
             }
             catch (Exception ex)
             {
